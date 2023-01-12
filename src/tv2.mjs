@@ -7,10 +7,10 @@ export const tv = (config) => (props) => {
     return cx(config?.base, props?.class, props?.className);
   }
 
-  const {variants, defaultVariants, parts: partsProp = []} = config;
+  const {variants, defaultVariants, slots: slotsProp = []} = config;
 
-  const parts = Array.isArray(partsProp)
-    ? ["base", ...partsProp.filter((part) => part !== "base")]
+  const slots = Array.isArray(slotsProp)
+    ? ["base", ...slotsProp.filter((part) => part !== "base")]
     : [];
 
   const getVariantValue = (variant) => {
@@ -73,11 +73,11 @@ export const tv = (config) => (props) => {
 
   const getCompoundVariantClassNamesByPart = (part) => {};
 
-  // multiparts variants - parts > 1 because base is always included
-  if (parts.length > 1) {
+  // slots variants - slots.length > 1 because base is always included
+  if (slots.length > 1) {
     const baseClassNames = getVariantClassNamesByPart("base");
 
-    const partsFns = parts.slice(1).reduce((acc, part) => {
+    const slotsFns = slots.slice(1).reduce((acc, part) => {
       acc[part] = (partProps) =>
         cx(getVariantClassNamesByPart(part), partProps?.class, partProps?.className);
 
@@ -86,11 +86,11 @@ export const tv = (config) => (props) => {
 
     return {
       base: (partProps) => cx(config?.base, baseClassNames, partProps?.class, partProps?.className),
-      ...partsFns,
+      ...slotsFns,
     };
   }
 
-  // single variants
+  // normal variants
   return cx(
     config?.base,
     getVariantClassNames,
@@ -102,7 +102,7 @@ export const tv = (config) => (props) => {
 
 const menuRoot = tv({
   base: "font-bold",
-  parts: ["trigger", "menu", "item"],
+  slots: ["trigger", "menu", "item"],
   variants: {
     normal: {
       true: "variants-normal-true",
