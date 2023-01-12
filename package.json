@@ -1,0 +1,85 @@
+{
+  "name": "tailwind-variants",
+  "version": "0.0.1",
+  "description": "🦄 Tailwindcss first-class variant API",
+  "author": "Junior Garcia <jrgarciadev@gmail.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jrgarciadev/tailwind-variants"
+  },
+  "bugs": {
+    "url": "https://github.com/jrgarciadev/tailwind-variants/issues"
+  },
+  "main": "src/index.ts",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --dts",
+    "build:fast": "tsup src/index.ts",
+    "dev": "pnpm build:fast -- --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore",
+    "lint": "eslint -c .eslintrc.json ./src/**/*.{ts,tsx}",
+    "lint:fix": "eslint --fix -c .eslintrc.json ./src/**/*.{ts,tsx}",
+    "test": "jest --verbose"
+  },
+  "dependencies": {
+    "class-variance-authority": "0.4.0",
+    "tailwind-merge": "^1.8.1"
+  },
+  "devDependencies": {
+    "clean-package": "2.1.1",
+    "typescript": "4.6.2",
+    "@swc/cli": "0.1.57",
+    "@swc/core": "1.2.198",
+    "@swc-node/jest": "^1.5.2",
+    "@types/jest": "28.1.1",
+    "eslint": "^7.29.0",
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^12.0.0",
+    "prettier-eslint-cli": "^5.0.1",
+    "eslint-config-prettier": "^8.2.0",
+    "eslint-config-ts-lambdas": "^1.2.3",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "@commitlint/config-conventional": "^17.2.0",
+    "@commitlint/cli": "^17.2.0",
+    "webpack": "^5.53.0",
+    "tsup": "6.4.0"
+  },
+  "keywords": [
+    "tailwindcss",
+    "classes",
+    "variants",
+    "styled.",
+    "styles"
+  ],
+  "engines": {
+    "node": ">=16.x",
+    "pnpm": ">=7.x"
+  },
+  "tsup": {
+    "clean": true,
+    "target": "es2019",
+    "format": [
+      "cjs",
+      "esm"
+    ]
+  },
+  "packageManager": "pnpm@7.14.2"
+}
