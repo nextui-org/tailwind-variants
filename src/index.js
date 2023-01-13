@@ -1,12 +1,4 @@
-import {cx as cxBase} from "class-variance-authority";
-import {twMerge} from "tailwind-merge";
-
-import {cleanArray, falsyToString} from "./utils.mjs";
-
-const cx =
-  (...classes) =>
-  (config = {}) =>
-    config.merge ? twMerge(cxBase(classes)) : cxBase(classes);
+import {cx, cleanArray, falsyToString} from "./utils.js";
 
 export const tv =
   (
@@ -20,7 +12,7 @@ export const tv =
       return cx(styles?.base, props?.class, props?.className)(config);
     }
 
-    const {variants, defaultVariants, slots: slotsProp = []} = styles;
+    const {slots: slotsProp = [], variants, defaultVariants} = styles;
 
     const slots = Array.isArray(slotsProp)
       ? ["base", ...slotsProp.filter((part) => part !== "base")]
@@ -44,11 +36,11 @@ export const tv =
         Object.keys(variants).map((variant) => {
           const variantValue = getVariantValue(variant);
 
-          if (typeof variantValue === "object") {
-            return variantValue[part];
+          if (!variantValue || typeof variantValue !== "object") {
+            return null;
           }
 
-          return null;
+          return variantValue[part];
         }),
       );
 
@@ -248,7 +240,11 @@ const menuWithoutSlots = tv({
 
 // console.log(menuRoot({normal: true}));
 
+// print the excecution time of the tv function
+console.time("tv");
 const {base, trigger, menu, item} = menuRoot({normal: true});
+
+console.timeEnd("tv");
 
 console.log("base ---->", base());
 console.log("trigger ---->", trigger());
