@@ -31,7 +31,7 @@ export const tv = (config) => (props) => {
       acc[key] = value;
 
       return acc;
-    });
+    }, {});
 
   const getCompoundVariantClassNames = config?.compoundVariants?.reduce(
     (acc, {class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
@@ -64,8 +64,11 @@ export const tv = (config) => (props) => {
 
 const result = tv({
   base: "flex",
-  parts: [],
   variants: {
+    normal: {
+      true: "flex-row",
+      false: "flex-col",
+    },
     color: {
       primary: "bg-primary",
       secondary: "bg-secondary",
@@ -80,6 +83,13 @@ const result = tv({
     color: "primary",
     size: "md",
   },
+  compoundVariants: [
+    {
+      normal: true,
+      color: "primary",
+      class: "bg-red",
+    },
+  ],
 });
 
-console.log(result());
+console.log(result({normal: true}));

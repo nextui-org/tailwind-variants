@@ -49,7 +49,7 @@ export const tv = (config) => (props) => {
       acc[key] = value;
 
       return acc;
-    });
+    }, {});
 
   const getCompoundVariantClassNames = config?.compoundVariants?.reduce(
     (acc, {class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
@@ -71,21 +71,54 @@ export const tv = (config) => (props) => {
     [],
   );
 
-  const getCompoundVariantClassNamesByPart = (part) => {};
+  const getCompoundVariantClassNamesByPart = () => {
+    const compoundClassNames = cleanArray(getCompoundVariantClassNames);
+
+    if (!Array.isArray(compoundClassNames)) {
+      return compoundClassNames;
+    }
+
+    return compoundClassNames.reduce((acc, className) => {
+      if (typeof className === "string") {
+        acc.base = cx(acc.base, className);
+      }
+
+      if (typeof className === "object") {
+        Object.entries(className).forEach(([part, className]) => {
+          acc[part] = cx(acc[part], className);
+        });
+      }
+
+      return acc;
+    }, {});
+  };
 
   // slots variants - slots.length > 1 because base is always included
   if (slots.length > 1) {
     const baseClassNames = getVariantClassNamesByPart("base");
+    const compoundClassNames = getCompoundVariantClassNamesByPart();
 
     const slotsFns = slots.slice(1).reduce((acc, part) => {
       acc[part] = (partProps) =>
-        cx(getVariantClassNamesByPart(part), partProps?.class, partProps?.className);
+        cx(
+          getVariantClassNamesByPart(part),
+          compoundClassNames[part],
+          partProps?.class,
+          partProps?.className,
+        );
 
       return acc;
     }, {});
 
     return {
-      base: (partProps) => cx(config?.base, baseClassNames, partProps?.class, partProps?.className),
+      base: (partProps) =>
+        cx(
+          config?.base,
+          baseClassNames,
+          compoundClassNames["base"],
+          partProps?.class,
+          partProps?.className,
+        ),
       ...slotsFns,
     };
   }
@@ -101,7 +134,7 @@ export const tv = (config) => (props) => {
 };
 
 const menuRoot = tv({
-  base: "font-bold",
+  base: "base-styles",
   slots: ["trigger", "menu", "item"],
   variants: {
     normal: {
@@ -110,11 +143,60 @@ const menuRoot = tv({
     },
     color: {
       primary: {
-        base: "color-primary-base",
-        trigger: "color-primary-trigger",
-        menu: "color-primary-menu",
-        item: "color-primary-item",
+        base: "variants-color-primary-base",
+        trigger: "variants-color-primary-trigger",
+        menu: "variants-color-primary-menu",
+        item: "variants-color-primary-item",
       },
+      secondary: "variants-color-secondary",
+    },
+    size: {
+      small: "variants-size-small",
+      medium: "variants-size-medium",
+    },
+  },
+  compoundVariants: [
+    {
+      normal: true,
+      color: "primary",
+      class: "compound-normal-primary",
+    },
+    {
+      color: "primary",
+      size: "medium",
+      class: {
+        base: "compound-primary-medium-base",
+        trigger: "compound-primary-medium-trigger",
+        menu: "compound-primary-medium-menu",
+        item: "compound-primary-medium-item",
+      },
+    },
+    {
+      color: "secondary",
+      size: "small",
+      className: {
+        base: "compound-secondary-small-base",
+        trigger: "compound-secondary-small-trigger",
+        menu: "compound-secondary-small-menu",
+        item: "compound-secondary-small-item",
+      },
+    },
+  ],
+  defaultVariants: {
+    color: "primary",
+    size: "medium",
+  },
+});
+
+const menuWithoutSlots = tv({
+  base: "font-bold",
+  variants: {
+    normal: {
+      true: "variants-normal-true",
+      false: "variants-normal-false",
+    },
+    color: {
+      primary: "color-primary-base",
       secondary: "color-secondary",
     },
     size: {
@@ -126,22 +208,17 @@ const menuRoot = tv({
     {
       color: "primary",
       size: "medium",
-      class: {
-        base: "uppercase",
-        trigger: "bold",
-        menu: "shadow",
-        item: "text-center",
-      },
+      class: "compound-primary-medium",
     },
     {
       color: "secondary",
       size: "small",
-      className: {
-        base: "menu-secondary-small",
-        trigger: "menu-secondary-small-trigger",
-        menu: "menu-secondary-small-menu",
-        item: "menu-secondary-small-item",
-      },
+      class: "compound-secondary-small",
+    },
+    {
+      normal: true,
+      size: "medium",
+      class: "compound-normal-medium",
     },
   ],
   defaultVariants: {
@@ -158,3 +235,9 @@ console.log("base ---->", base());
 console.log("trigger ---->", trigger());
 console.log("menu ---->", menu());
 console.log("item ---->", item());
+
+console.log("--------------------");
+
+const menuWoSlots = menuWithoutSlots({normal: true});
+
+console.log("menuWoSlots ---->", menuWoSlots);
