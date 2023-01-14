@@ -20,21 +20,21 @@ type TVDefaultVariants<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: keyof V[K];
 };
 
-type TVReturnType<S extends TVSlots> = S extends TVSlots
+type TVReturnType<S extends TVSlots> = S extends undefined
   ? {[K in S[number]]: (slotProps: ClassProp) => string}
   : (slotProps: ClassProp) => string;
 
 export declare function tv<
-  S extends TVSlots,
   V extends TVVariants<S>,
   CV extends TVCompoundVariants<V, S>,
   DV extends TVDefaultVariants<V, S>,
   C extends TVConfig,
+  S extends TVSlots = TVSlots,
 >(
   options: {
-    base: ClassValue;
-    slots: S;
-    variants: V;
+    base?: ClassValue;
+    slots?: S;
+    variants?: V;
     compoundVariants?: CV;
     defaultVariants?: DV;
   },
