@@ -6,9 +6,6 @@ const menu = tv({
   variants: {
     background: {
       primary: "123123",
-      myColor: {
-        trigger: "12312"
-      },
       secondary: "bg-purple-500",
     },
     color: {
@@ -22,7 +19,7 @@ const menu = tv({
     } 
   }, 
   defaultVariants: {
-    background: "myColor",
+    background: "primary",
     color: "primary",
     size: "large"
   },
@@ -31,7 +28,7 @@ const menu = tv({
       background: "primary",
       size:"medium",
       class: {
-        trigger: "bg-blue-500 text-blue-500",
+        item: "123123"
       }
     }
   ]
