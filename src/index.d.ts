@@ -2,29 +2,25 @@ import {TVConfig} from "./config";
 import {ClassValue, ClassProp, OmitUndefined} from "./utils";
 
 type TVSlots = string[];
+// type TVSlots = ["trigger", "menu", "item"];
 
-// type TVSlotsTest = ["trigger", "menu", "item"];
-// type Result = {[K in TVSlotsTest[number]]?: ClassValue};
-
-type TVVariants<S extends string[]> = {
+type TVVariants<S extends TVSlots> = {
   [key: string]: {
-    [key: string]: S extends undefined ? ClassValue : {[K in S[number]]?: ClassValue} | ClassValue;
+    [key: string]: {[P in S[number]]?: ClassValue} | ClassValue;
   };
 };
 
-type TVCompoundVariants<V extends TVVariants<S>, S extends string[]> = Array<
+type TVCompoundVariants<V extends TVVariants<S>, S extends TVSlots> = Array<
   {
     [K in keyof V]?: keyof V[K];
-  } & S extends undefined
-    ? ClassProp
-    : ClassProp<{[K in S[number]]?: ClassValue} | ClassValue>
+  } & ClassProp<{[K in S[number]]?: ClassValue} | ClassValue>
 >;
 
-type TVDefaultVariants<V extends TVVariants<S>, S extends string[]> = {
+type TVDefaultVariants<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: keyof V[K];
 };
 
-type TVReturnType<S extends TVSlots> = S extends string[]
+type TVReturnType<S extends TVSlots> = S extends TVSlots
   ? {[K in S[number]]: (slotProps: ClassProp) => string}
   : (slotProps: ClassProp) => string;
 
@@ -36,9 +32,9 @@ export declare function tv<
   C extends TVConfig,
 >(
   options: {
-    base?: ClassValue;
-    slots?: S;
-    variants?: V;
+    base: ClassValue;
+    slots: S;
+    variants: V;
     compoundVariants?: CV;
     defaultVariants?: DV;
   },

@@ -2,9 +2,12 @@ import {tv} from '../src/index.js';
 
 const menu = tv({
   base: ['font-bold', 'text-red-500'],
+  slots: ['trigger', 'menu', 'item'],
   variants: {
     background: {
-      primary: "bg-blue-500",
+      primary: {
+       trigger: "12312"
+      },
       secondary: "bg-purple-500",
     },
     color: {
