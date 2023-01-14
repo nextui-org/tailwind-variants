@@ -7,7 +7,7 @@ const menu = tv({
     background: {
       primary: "123123",
       myColor: {
-        trigger:"12312"
+        trigger: "12312"
       },
       secondary: "bg-purple-500",
     },

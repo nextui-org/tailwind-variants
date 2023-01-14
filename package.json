@@ -9,10 +9,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jrgarciadev/tailwind-variants"
+    "url": "https://github.com/nextui-org/tailwind-variants"
   },
   "bugs": {
-    "url": "https://github.com/jrgarciadev/tailwind-variants/issues"
+    "url": "https://github.com/nextui-org/tailwind-variants/issues"
   },
   "type": "module",
   "main": "src/index.ts",
