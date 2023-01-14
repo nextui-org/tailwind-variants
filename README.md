@@ -16,4 +16,6 @@ Please adhere to this project's [CODE_OF_CONDUCT](./CODE_OF_CONDUCT.md).
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+Licensed under the MIT License.
+
+See[LICENSE](./LICENSE.md) for more information.
