@@ -14,17 +14,26 @@
   "bugs": {
     "url": "https://github.com/jrgarciadev/tailwind-variants/issues"
   },
+  "type": "module",
   "main": "src/index.ts",
+  "typings": "./dist/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "types": "./types/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "tsup src/index.ts --dts",
-    "build:fast": "tsup src/index.ts",
+    "build": "tsup src/index.js && node copy-types.cjs",
     "dev": "pnpm build:fast -- --watch",
     "clean": "rimraf dist .turbo",
     "typecheck": "tsc --noEmit",
+    "dry-run": "pnpm ts-node tests/dry-run.js",
     "prepack": "clean-package",
     "postpack": "clean-package restore",
     "lint": "eslint -c .eslintrc.json ./src/**/*.{ts,tsx}",
@@ -36,16 +45,16 @@
     "tailwind-merge": "^1.8.1"
   },
   "devDependencies": {
-    "clean-package": "2.1.1",
-    "typescript": "4.6.2",
+    "@commitlint/cli": "^17.2.0",
+    "@commitlint/config-conventional": "^17.2.0",
+    "@swc-node/jest": "^1.5.2",
     "@swc/cli": "0.1.57",
     "@swc/core": "1.2.198",
-    "@swc-node/jest": "^1.5.2",
     "@types/jest": "28.1.1",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "clean-package": "2.1.1",
     "eslint": "^7.29.0",
-    "prettier": "^2.2.1",
-    "prettier-eslint": "^12.0.0",
-    "prettier-eslint-cli": "^5.0.1",
     "eslint-config-prettier": "^8.2.0",
     "eslint-config-ts-lambdas": "^1.2.3",
     "eslint-import-resolver-typescript": "^2.4.0",
@@ -55,12 +64,13 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "@typescript-eslint/parser": "^5.42.0",
-    "@commitlint/config-conventional": "^17.2.0",
-    "@commitlint/cli": "^17.2.0",
-    "webpack": "^5.53.0",
-    "tsup": "6.4.0"
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^12.0.0",
+    "prettier-eslint-cli": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "tsup": "6.4.0",
+    "typescript": "4.6.2",
+    "webpack": "^5.53.0"
   },
   "keywords": [
     "tailwindcss",
@@ -75,6 +85,8 @@
   },
   "tsup": {
     "clean": true,
+    "minify": true,
+    "treeshake": true,
     "target": "es2019",
     "format": [
       "cjs",

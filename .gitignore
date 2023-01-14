@@ -9,7 +9,7 @@ node_modules
 # testing
 /coverage
 coverage
-types
+
 
 # production
 /build
@@ -37,3 +37,4 @@ esm
 examples/**/yarn.lock
 examples/**/out
 examples/**/.next
+types

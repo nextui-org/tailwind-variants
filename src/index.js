@@ -4,7 +4,8 @@ export const tv =
   (
     styles,
     config = {
-      merge: true,
+      twMerge: true,
+      twMergeConfig: {},
     },
   ) =>
   (props) => {
@@ -15,7 +16,7 @@ export const tv =
     const {slots: slotsProp = [], variants, defaultVariants} = styles;
 
     const slots = Array.isArray(slotsProp)
-      ? ["base", ...slotsProp.filter((part) => part !== "base")]
+      ? new Set(["base", ...slotsProp.filter((slot) => slot !== "base")])
       : [];
 
     const getVariantValue = (variant) => {
@@ -31,7 +32,7 @@ export const tv =
 
     const getVariantClassNames = Object.keys(variants).map(getVariantValue);
 
-    const getVariantClassNamesByPart = (part) =>
+    const getVariantClassNamesBySlot = (slot) =>
       cleanArray(
         Object.keys(variants).map((variant) => {
           const variantValue = getVariantValue(variant);
@@ -40,7 +41,7 @@ export const tv =
             return null;
           }
 
-          return variantValue[part];
+          return variantValue[slot];
         }),
       );
 
@@ -76,7 +77,7 @@ export const tv =
       [],
     );
 
-    const getCompoundVariantClassNamesByPart = () => {
+    const getCompoundVariantClassNamesBySlot = () => {
       const compoundClassNames = cleanArray(getCompoundVariantClassNames);
 
       if (!Array.isArray(compoundClassNames)) {
@@ -89,8 +90,8 @@ export const tv =
         }
 
         if (typeof className === "object") {
-          Object.entries(className).forEach(([part, className]) => {
-            acc[part] = cx(acc[part], className)(config);
+          Object.entries(className).forEach(([slot, className]) => {
+            acc[slot] = cx(acc[slot], className)(config);
           });
         }
 
@@ -100,29 +101,29 @@ export const tv =
 
     // slots variants - slots.length > 1 because base is always included
     if (slots.length > 1) {
-      const baseClassNames = getVariantClassNamesByPart("base");
-      const compoundClassNames = getCompoundVariantClassNamesByPart();
+      const baseClassNames = getVariantClassNamesBySlot("base");
+      const compoundClassNames = getCompoundVariantClassNamesBySlot();
 
-      const slotsFns = slots.slice(1).reduce((acc, part) => {
-        acc[part] = (partProps) =>
+      const slotsFns = slots.slice(1).reduce((acc, slot) => {
+        acc[slot] = (slotProps) =>
           cx(
-            getVariantClassNamesByPart(part),
-            compoundClassNames[part],
-            partProps?.class,
-            partProps?.className,
+            getVariantClassNamesBySlot(slot),
+            compoundClassNames[slot],
+            slotProps?.class,
+            slotProps?.className,
           )(config);
 
         return acc;
       }, {});
 
       return {
-        base: (partProps) =>
+        base: (slotProps) =>
           cx(
             styles?.base,
             baseClassNames,
             compoundClassNames["base"],
-            partProps?.class,
-            partProps?.className,
+            slotProps?.class,
+            slotProps?.className,
           )(config),
         ...slotsFns,
       };
@@ -137,122 +138,3 @@ export const tv =
       props?.className,
     )(config);
   };
-
-const menuRoot = tv(
-  {
-    base: "base-styles",
-    slots: ["trigger", "menu", "item"],
-    variants: {
-      normal: {
-        true: "variants-normal-true",
-        false: "variants-normal-false",
-      },
-      color: {
-        primary: {
-          base: "variants-color-primary-base",
-          trigger: "variants-color-primary-trigger",
-          menu: "variants-color-primary-menu",
-          item: "variants-color-primary-item",
-        },
-        secondary: "variants-color-secondary",
-      },
-      size: {
-        small: "variants-size-small",
-        medium: "variants-size-medium",
-      },
-    },
-    compoundVariants: [
-      {
-        normal: true,
-        color: "primary",
-        class: "compound-normal-primary",
-      },
-      {
-        color: "primary",
-        size: "medium",
-        class: {
-          base: "compound-primary-medium-base",
-          trigger: "compound-primary-medium-trigger",
-          menu: "compound-primary-medium-menu",
-          item: "compound-primary-medium-item",
-        },
-      },
-      {
-        color: "secondary",
-        size: "small",
-        className: {
-          base: "compound-secondary-small-base",
-          trigger: "compound-secondary-small-trigger",
-          menu: "compound-secondary-small-menu",
-          item: "compound-secondary-small-item",
-        },
-      },
-    ],
-    defaultVariants: {
-      color: "primary",
-      size: "medium",
-    },
-  },
-  // config
-  {
-    merge: true,
-  },
-);
-
-const menuWithoutSlots = tv({
-  base: "font-bold",
-  variants: {
-    normal: {
-      true: "variants-normal-true",
-      false: "variants-normal-false",
-    },
-    color: {
-      primary: "color-primary-base",
-      secondary: "color-secondary",
-    },
-    size: {
-      small: "size-small",
-      medium: "size-medium",
-    },
-  },
-  compoundVariants: [
-    {
-      color: "primary",
-      size: "medium",
-      class: "compound-primary-medium",
-    },
-    {
-      color: "secondary",
-      size: "small",
-      class: "compound-secondary-small",
-    },
-    {
-      normal: true,
-      size: "medium",
-      class: "compound-normal-medium",
-    },
-  ],
-  defaultVariants: {
-    color: "primary",
-    size: "medium",
-  },
-});
-
-// console.log(menuRoot({normal: true}));
-
-// print the excecution time of the tv function
-console.time("tv");
-const {base, trigger, menu, item} = menuRoot({normal: true});
-
-console.timeEnd("tv");
-
-console.log("base ---->", base());
-console.log("trigger ---->", trigger());
-console.log("menu ---->", menu());
-console.log("item ---->", item());
-
-console.log("--------------------");
-
-const menuWoSlots = menuWithoutSlots({normal: true});
-
-console.log("menuWoSlots ---->", menuWoSlots);
