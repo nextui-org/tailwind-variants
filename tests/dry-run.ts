@@ -5,8 +5,9 @@ const menu = tv({
   slots: ['trigger', 'menu', 'item'],
   variants: {
     background: {
-      primary: {
-       trigger: "12312"
+      primary: "123123",
+      myColor: {
+        trigger:"12312"
       },
       secondary: "bg-purple-500",
     },
@@ -21,7 +22,7 @@ const menu = tv({
     } 
   }, 
   defaultVariants: {
-    background: "primary",
+    background: "myColor",
     color: "primary",
     size: "large"
   },
