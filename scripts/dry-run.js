@@ -1,27 +1,47 @@
 import {tv} from '../src/index.js';
 
-const h1 = tv({
-  base: 'text-3xl font-bold underline',
-  variants:{
-    color: {
-      red: 'text-red-500',
-      blue: 'text-blue-500',
-      green: 'text-green-500',
-    },
-    isUnderline: {
-      true: 'underline',
-      false: 'no-underline'
+// const h1 = tv({
+//   base: 'text-3xl font-bold underline',
+//   variants:{
+//     color: {
+//       red: 'text-red-500',
+//       blue: 'text-blue-500',
+//       green: 'text-green-500',
+//     },
+//     isUnderline: {
+//       true: 'underline',
+//       false: 'no-underline'
+//     }
+//   }
+// })
+
+// const resultH1 = h1({
+//   color: "blue",
+//   isUnderline: false,
+//   class: 'text-green-500'
+// })
+
+const container = tv({
+  base: 'h-[24.25rem] max-w-xl mx-auto flex items-center justify-center',
+  slots: ['figure', 'img'],
+  variants: {
+    intent: {
+      default: {
+        base: 'bg-slate-100 rounded-xl p-8',
+        figure: 'md:flex bg-slate-100 rounded-xl p-8 md:p-0',
+        img: 'w-32 h-32 md:w-48 md:h-auto md:rounded-none rounded-full mx-auto'
+      }
     }
-  }
+  },
+  defaultVariants: {
+    intent: 'default'
+  },
 })
 
-const resultH1 = h1({
-  color: "blue",
-  isUnderline: false,
-  class: 'text-green-500'
-})
+const results = container({intent: 'default'})
 
-console.log(resultH1)
+
+console.log(results.img())
 
 // const menu = tv({
 //   base: ['font-bold', 'text-red-500'],

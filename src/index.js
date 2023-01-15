@@ -31,17 +31,15 @@ export const tv =
     const getVariantClassNames = Object.keys(variants).map(getVariantValue);
 
     const getVariantClassNamesBySlot = (slot) =>
-      cleanArray(
-        Object.keys(variants).map((variant) => {
-          const variantValue = getVariantValue(variant);
+      Object.keys(variants).map((variant) => {
+        const variantValue = getVariantValue(variant);
 
-          if (!variantValue || typeof variantValue !== "object") {
-            return null;
-          }
+        if (!variantValue || typeof variantValue !== "object") {
+          return null;
+        }
 
-          return variantValue[slot];
-        }),
-      );
+        return variantValue[slot];
+      });
 
     const propsWithoutUndefined =
       props &&
@@ -100,13 +98,14 @@ export const tv =
     // slots variants - slots.length > 1 because base is always included
     if (slots.length > 1) {
       const baseClassNames = getVariantClassNamesBySlot("base");
-      const compoundClassNames = getCompoundVariantClassNamesBySlot();
+      const compoundClassNames = getCompoundVariantClassNamesBySlot() ?? [];
 
-      const slotsFns = slots.slice(1).reduce((acc, slot) => {
+      const slotsFns = slots.reduce((acc, slot) => {
         acc[slot] = (slotProps) =>
           cx(
+            slot === "base" ? [styles?.base, baseClassNames] : [],
             getVariantClassNamesBySlot(slot),
-            compoundClassNames[slot],
+            compoundClassNames?.[slot],
             slotProps?.class,
             slotProps?.className,
           )(config);
@@ -115,14 +114,6 @@ export const tv =
       }, {});
 
       return {
-        base: (slotProps) =>
-          cx(
-            styles?.base,
-            baseClassNames,
-            compoundClassNames["base"],
-            slotProps?.class,
-            slotProps?.className,
-          )(config),
         ...slotsFns,
       };
     }
