@@ -33,7 +33,8 @@
     "dry-run": "node ./scripts/dry-run.js",
     "prepack": "clean-package",
     "new:pack": "npm pack && clean-package restore",
-    "new:publish": "npm publish --dry-run && clean-package restore",
+    "new:publish:dry": "pnpm prepack && npm publish --dry-run && clean-package restore",
+    "new:publish:prod": "pnpm prepack && npm publish && clean-package restore",
     "lint": "eslint -c .eslintrc.json ./src/**/*.{ts,tsx}",
     "lint:fix": "eslint --fix -c .eslintrc.json ./src/**/*.{ts,tsx}",
     "test": "jest --verbose"
