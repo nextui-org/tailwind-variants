@@ -1,8 +1,29 @@
 import {tv} from '../src/index.js';
 
+const h1 = tv({
+  base: 'text-3xl font-bold underline',
+  variants:{
+    color: {
+      red: 'text-red-500',
+      blue: 'text-blue-500',
+      green: 'text-green-500',
+    },
+     isBig: {
+      true: 'text-5xl',
+      false: 'text-3xl',
+     }
+  }
+})
+
+console.log(h1({
+  color: 'green',
+  isBig: true,
+  class: '123123'
+}))
+
 const menu = tv({
   base: ['font-bold', 'text-red-500'],
-  slots: ['trigger', 'menu', 'item'],
+  slots: ['trigger', 'list', 'item'],
   variants: {
     background: {
       primary: "123123",
@@ -33,6 +54,14 @@ const menu = tv({
     }
   ]
 })
+
+const result = menu()
+
+
+
+
+// const {trigger, list, item} = menu()
+// console.log({})
 
 
 // const menuRoot = tv(

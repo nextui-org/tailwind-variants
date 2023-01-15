@@ -21,3 +21,11 @@ export type ClassProp<V extends unknown = ClassValue> =
 
 export type OmitUndefined<T> = T extends undefined ? never : T;
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
+
+export type StringArrayToFunctions<T extends string[], Props = {}> = {
+  [K in T[number]]: (props?: Props) => string;
+};
+
+type Slots = ["trigger", "item", "list"];
+
+type SlotsReturnType = StringArrayToFunctions<Slots>;
