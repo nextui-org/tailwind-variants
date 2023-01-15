@@ -38,3 +38,6 @@ examples/**/yarn.lock
 examples/**/out
 examples/**/.next
 types
+
+# package
+tailwind-variants-*.tgz

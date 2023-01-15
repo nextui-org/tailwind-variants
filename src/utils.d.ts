@@ -8,10 +8,12 @@ export declare const falsyToString: <T extends unknown>(value: T) => string | T;
 
 export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConfig) => CxReturn;
 
-export type ClassPropKey = "class" | "className";
-export type ClassValue = string | string[] | null | undefined;
+export declare const removeDuplicates: <T extends unknown>(array: T[]) => T[];
 
-export type ClassProp<V extends unknown = ClassValue> =
+export declare type ClassPropKey = "class" | "className";
+export declare type ClassValue = string | string[] | null | undefined;
+
+export declare type ClassProp<V extends unknown = ClassValue> =
   | {
       class: V;
       className?: never;
@@ -19,13 +21,12 @@ export type ClassProp<V extends unknown = ClassValue> =
   | {class?: never; className: V}
   | {class?: never; className?: never};
 
-export type OmitUndefined<T> = T extends undefined ? never : T;
-export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
+export declare type OmitUndefined<T> = T extends undefined ? never : T;
 
-export type StringArrayToFunctions<T extends string[], Props = {}> = {
+export declare type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
+
+export declare type StringArrayToFunctions<T extends string[], Props = {}> = {
   [K in T[number]]: (props?: Props) => string;
 };
 
-type Slots = ["trigger", "item", "list"];
-
-type SlotsReturnType = StringArrayToFunctions<Slots>;
+export declare type AddItemToArray<T extends unknown[], V> = [V, ...T];

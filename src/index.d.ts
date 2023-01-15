@@ -5,11 +5,13 @@ import {
   OmitUndefined,
   StringToBoolean,
   StringArrayToFunctions,
+  AddItemToArray,
 } from "./utils";
 
 type TVDefaultSlot = "";
+type TVBaseName = "base";
 
-export type TVVariants<S extends string[]> = {
+export declare type TVVariants<S extends string[]> = {
   [key: string]: {
     [key: string]: S extends TVDefaultSlot
       ? ClassValue
@@ -17,23 +19,25 @@ export type TVVariants<S extends string[]> = {
   };
 };
 
-export type TVCompoundVariants<V extends TVVariants<S>, S extends string[]> = Array<
+export declare type TVCompoundVariants<V extends TVVariants<S>, S extends string[]> = Array<
   {
     [K in keyof V]?: StringToBoolean<keyof V[K]>;
   } & ClassProp<{[K in S[number]]?: ClassValue} | ClassValue>
 >;
 
-export type TVDefaultVariants<V extends TVVariants<S>, S extends string[]> = {
+export declare type TVDefaultVariants<V extends TVVariants<S>, S extends string[]> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]>;
 };
 
-export type TVProps<V extends TVVariants<S>, S extends string[]> = {
+export declare type TVProps<V extends TVVariants<S>, S extends string[]> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]>;
 } & ClassProp;
 
-export type TVReturnType<V extends TVVariants<S>, S extends string> = (
+export declare type TVReturnType<V extends TVVariants<S>, S extends string> = (
   props?: TVProps<V, S[]>,
-) => S extends TVDefaultSlot ? string : StringArrayToFunctions<S[], ClassProp>;
+) => S extends TVDefaultSlot
+  ? string
+  : StringArrayToFunctions<AddItemToArray<S[], TVBaseName>, ClassProp>;
 
 export declare function tv<
   V extends TVVariants<S[]>,

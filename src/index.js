@@ -1,4 +1,4 @@
-import {cx, cleanArray, falsyToString} from "./utils.js";
+import {cx, cleanArray, falsyToString, removeDuplicates} from "./utils.js";
 
 export const tv =
   (
@@ -15,9 +15,7 @@ export const tv =
 
     const {slots: slotsProp = [], variants, defaultVariants} = styles;
 
-    const slots = Array.isArray(slotsProp)
-      ? new Set(["base", ...slotsProp.filter((slot) => slot !== "base")])
-      : [];
+    const slots = Array.isArray(slotsProp) ? removeDuplicates(["base", ...slotsProp]) : [];
 
     const getVariantValue = (variant) => {
       const variantProp = props?.[variant];

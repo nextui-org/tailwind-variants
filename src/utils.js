@@ -11,7 +11,7 @@ const isNotEmptyObject = (obj) => obj && Object.keys(obj).length > 0;
 export const cx =
   (...classes) =>
   (config = {}) => {
-    if (!config.merge) {
+    if (!config.twMerge) {
       return cxBase(classes);
     }
 
@@ -21,3 +21,5 @@ export const cx =
 
     return twMerge(cxBase(classes));
   };
+
+export const removeDuplicates = (array) => Array.from(new Set(array));

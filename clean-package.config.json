@@ -1,0 +1,15 @@
+{
+  "remove": ["tsup", "packageManager"],
+  "replace": {
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.js",
+        "types": "./types/index.d.ts"
+      }
+    }
+  }
+}

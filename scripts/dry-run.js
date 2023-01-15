@@ -8,17 +8,17 @@ const h1 = tv({
       blue: 'text-blue-500',
       green: 'text-green-500',
     },
-     isBig: {
-      true: 'text-5xl',
-      false: 'text-3xl',
-     }
+    isUnderline: {
+      true: 'underline',
+      false: 'no-underline'
+    }
   }
 })
 
 const resultH1 = h1({
-  color: 'green',
-  isBig: true,
-  class: '123123'
+  color: "blue",
+  isUnderline: false,
+  class: 'text-green-500'
 })
 
 console.log(resultH1)
@@ -28,7 +28,10 @@ console.log(resultH1)
 //   slots: ['trigger', 'list', 'item'],
 //   variants: {
 //     background: {
-//       primary: "123123",
+//       primary: {
+//         base: "bg-blue-500",
+//         trigger: "bg-blue-500",
+//       },
 //       secondary: "bg-purple-500",
 //     },
 //     color: {
@@ -58,6 +61,7 @@ console.log(resultH1)
 // })
 
 // const result = menu()
+// console.log(result.base())
 
 
 
