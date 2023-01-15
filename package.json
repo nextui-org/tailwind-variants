@@ -1,6 +1,6 @@
 {
   "name": "tailwind-variants",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "🦄 Tailwindcss first-class variant API",
   "author": "Junior Garcia <jrgarciadev@gmail.com>",
   "license": "MIT",
@@ -21,10 +21,6 @@
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "class-variance-authority": "0.4.0",
-    "tailwind-merge": "^1.8.1"
-  },
   "scripts": {
     "build": "tsup src/index.js && node copy-types.cjs",
     "dev": "pnpm build:fast -- --watch",
@@ -32,12 +28,44 @@
     "typecheck": "tsc --noEmit",
     "dry-run": "node ./scripts/dry-run.js",
     "prepack": "clean-package",
-    "new:pack": "npm pack && clean-package restore",
-    "new:publish:dry": "pnpm prepack && npm publish --dry-run && clean-package restore",
-    "new:publish:prod": "pnpm prepack && npm publish && clean-package restore",
+    "postpack": "clean-package restore",
     "lint": "eslint -c .eslintrc.json ./src/**/*.{ts,tsx}",
     "lint:fix": "eslint --fix -c .eslintrc.json ./src/**/*.{ts,tsx}",
     "test": "jest --verbose"
+  },
+  "dependencies": {
+    "class-variance-authority": "0.4.0",
+    "tailwind-merge": "^1.8.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.2.0",
+    "@commitlint/config-conventional": "^17.2.0",
+    "@swc-node/jest": "^1.5.2",
+    "@swc/cli": "0.1.57",
+    "@swc/core": "1.2.198",
+    "@types/jest": "28.1.1",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "clean-package": "2.1.1",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.2.0",
+    "eslint-config-ts-lambdas": "^1.2.3",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^12.0.0",
+    "prettier-eslint-cli": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
+    "tsup": "6.4.0",
+    "typescript": "4.6.2",
+    "webpack": "^5.53.0"
   },
   "keywords": [
     "tailwindcss",
@@ -46,17 +74,19 @@
     "styled.",
     "styles"
   ],
+  "tsup": {
+    "clean": true,
+    "minify": true,
+    "treeshake": true,
+    "target": "es2019",
+    "format": [
+      "cjs",
+      "esm"
+    ]
+  },
+  "packageManager": "pnpm@7.14.2",
   "engines": {
     "node": ">=16.x",
     "pnpm": ">=7.x"
-  },
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js",
-      "types": "./types/index.d.ts"
-    }
   }
 }

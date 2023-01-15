@@ -1,7 +1,8 @@
 import {cx as cxBase} from "class-variance-authority";
 import {twMerge as twMergeBase, extendTailwindMerge} from "tailwind-merge";
 
-export const cleanArray = (array) => array.filter((item) => item);
+export const cleanArray = (array) =>
+  array?.filter?.((item) => item && String(item).match(/^[\w\s]*$/));
 
 export const falsyToString = (value) =>
   typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
