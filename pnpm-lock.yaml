@@ -7,6 +7,7 @@ specifiers:
   '@swc/cli': 0.1.57
   '@swc/core': 1.2.198
   '@types/jest': 28.1.1
+  '@types/node': ^18.11.18
   '@typescript-eslint/eslint-plugin': ^5.42.0
   '@typescript-eslint/parser': ^5.42.0
   class-variance-authority: 0.4.0
@@ -26,6 +27,7 @@ specifiers:
   prettier-eslint-cli: ^5.0.1
   tailwind-merge: ^1.8.1
   ts-node: ^10.9.1
+  tslib: ^2.4.1
   tsup: 6.4.0
   typescript: 4.6.2
   webpack: ^5.53.0
@@ -41,6 +43,7 @@ devDependencies:
   '@swc/cli': 0.1.57_@swc+core@1.2.198
   '@swc/core': 1.2.198
   '@types/jest': 28.1.1
+  '@types/node': 18.11.18
   '@typescript-eslint/eslint-plugin': 5.48.1_ujhe3r4olrxhtrcg6l2dagdz4q
   '@typescript-eslint/parser': 5.48.1_e6rt7vlgxfprtuallp2t3cvyi4
   clean-package: 2.1.1
@@ -57,7 +60,8 @@ devDependencies:
   prettier: 2.8.2
   prettier-eslint: 12.0.0
   prettier-eslint-cli: 5.0.1
-  ts-node: 10.9.1_she2mj3zgp55zm7trvia7wyjiq
+  ts-node: 10.9.1_dc7bcqawfiyicz6ijhaslbfy3a
+  tslib: 2.4.1
   tsup: 6.4.0_7v26cw4s2qhlngcnshifd4hlqu
   typescript: 4.6.2
   webpack: 5.75.0_@swc+core@1.2.198
@@ -3950,7 +3954,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.0.6
-      ts-node: 10.9.1_she2mj3zgp55zm7trvia7wyjiq
+      ts-node: 10.9.1_dc7bcqawfiyicz6ijhaslbfy3a
       yaml: 1.10.2
     dev: true
 
@@ -4720,6 +4724,38 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
+  /ts-node/10.9.1_dc7bcqawfiyicz6ijhaslbfy3a:
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@swc/core': 1.2.198
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.3
+      '@types/node': 18.11.18
+      acorn: 8.8.1
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.6.2
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    dev: true
+
   /ts-node/10.9.1_qrsd4jofz3j3q4ftuubwgtj4ny:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
@@ -4748,37 +4784,6 @@ packages:
       diff: 4.0.2
       make-error: 1.3.6
       typescript: 4.9.4
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    dev: true
-
-  /ts-node/10.9.1_she2mj3zgp55zm7trvia7wyjiq:
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@swc/core': 1.2.198
-      '@tsconfig/node10': 1.0.9
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.3
-      acorn: 8.8.1
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.6.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true

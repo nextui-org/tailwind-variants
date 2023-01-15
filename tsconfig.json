@@ -1,0 +1,18 @@
+
+{	
+  "$schema": "https://json.schemastore.org/tsconfig",	
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"],	
+  "compilerOptions": {	
+    "target": "esnext",	
+    "module": "esnext",	
+    "isolatedModules": true,	
+    "esModuleInterop": true,	
+    "moduleResolution": "node",	
+    "resolveJsonModule": true,	
+    "strict": true,	
+    "declaration": true,	
+    "skipLibCheck": true,	
+    "allowJs": true	
+  }	
+}	

@@ -15,47 +15,49 @@ const h1 = tv({
   }
 })
 
-console.log(h1({
+const resultH1 = h1({
   color: 'green',
   isBig: true,
   class: '123123'
-}))
-
-const menu = tv({
-  base: ['font-bold', 'text-red-500'],
-  slots: ['trigger', 'list', 'item'],
-  variants: {
-    background: {
-      primary: "123123",
-      secondary: "bg-purple-500",
-    },
-    color: {
-      primary: "text-blue-500",
-      secondary: "text-purple-500",
-    },
-    size: {
-      small: "text-sm",
-      medium: "text-lg",
-      large: "text-xl",
-    } 
-  }, 
-  defaultVariants: {
-    background: "primary",
-    color: "primary",
-    size: "large"
-  },
-  compoundVariants: [
-    {
-      background: "primary",
-      size:"medium",
-      class: {
-        item: "123123"
-      }
-    }
-  ]
 })
 
-const result = menu()
+console.log(resultH1)
+
+// const menu = tv({
+//   base: ['font-bold', 'text-red-500'],
+//   slots: ['trigger', 'list', 'item'],
+//   variants: {
+//     background: {
+//       primary: "123123",
+//       secondary: "bg-purple-500",
+//     },
+//     color: {
+//       primary: "text-blue-500",
+//       secondary: "text-purple-500",
+//     },
+//     size: {
+//       small: "text-sm",
+//       medium: "text-lg",
+//       large: "text-xl",
+//     } 
+//   }, 
+//   defaultVariants: {
+//     background: "primary",
+//     color: "primary",
+//     size: "large"
+//   },
+//   compoundVariants: [
+//     {
+//       background: "primary",
+//       size:"medium",
+//       class: {
+//         item: "123123"
+//       }
+//     }
+//   ]
+// })
+
+// const result = menu()
 
 
 
