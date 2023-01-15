@@ -23,24 +23,36 @@ import {tv} from '../src/index.js';
 
 const container = tv({
   base: 'h-[24.25rem] max-w-xl mx-auto flex items-center justify-center',
-  slots: ['figure', 'img'],
+  slots: ['figure', 'img', 'blockquote', 'cite'],
   variants: {
     intent: {
       default: {
         base: 'bg-slate-100 rounded-xl p-8',
         figure: 'md:flex bg-slate-100 rounded-xl p-8 md:p-0',
-        img: 'w-32 h-32 md:w-48 md:h-auto md:rounded-none rounded-full mx-auto'
+        img: 'w-32 h-32 md:w-48 md:h-auto md:rounded-none rounded-full mx-auto',
       }
+    },
+    myVariant: {
+      true: 'bg-blue-200',
+      false: 'bg-blue-100'
     }
   },
   defaultVariants: {
-    intent: 'default'
+    intent: 'default',
+    myVariant: true,
   },
+  compoundVariants: [
+    {
+      intent: 'default',
+      myVariant: false,
+      class: {
+        base: 'bg-slate-200'
+      }
+    }
+  ]
 })
 
 const results = container({intent: 'default'})
-
-
 console.log(results.img())
 
 // const menu = tv({

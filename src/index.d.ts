@@ -1,28 +1,25 @@
 import {TVConfig} from "./config";
-import {
-  ClassValue,
-  ClassProp,
-  OmitUndefined,
-  StringToBoolean,
-  StringArrayToFunctions,
-  AddItemToArray,
-} from "./utils";
+import {ClassValue, ClassProp, OmitUndefined, StringToBoolean, AddItemToArray} from "./utils";
 
 type TVDefaultSlot = "";
 type TVBaseName = "base";
 
+type SlotsWithBase<S extends string[]> = AddItemToArray<S, TVBaseName>;
+
+type SlotsClassValue<S extends string[]> = {
+  [K in SlotsWithBase<S>[number]]: ClassValue;
+};
+
 export declare type TVVariants<S extends string[]> = {
   [key: string]: {
-    [key: string]: S extends TVDefaultSlot
-      ? ClassValue
-      : {[P in S[number]]?: ClassValue} | ClassValue;
+    [key: string]: S extends TVDefaultSlot ? ClassValue : SlotsClassValue<S> | ClassValue;
   };
 };
 
 export declare type TVCompoundVariants<V extends TVVariants<S>, S extends string[]> = Array<
   {
     [K in keyof V]?: StringToBoolean<keyof V[K]>;
-  } & ClassProp<{[K in S[number]]?: ClassValue} | ClassValue>
+  } & ClassProp<SlotsClassValue<S> | ClassValue>
 >;
 
 export declare type TVDefaultVariants<V extends TVVariants<S>, S extends string[]> = {
@@ -37,12 +34,14 @@ export declare type TVReturnType<V extends TVVariants<S>, S extends string> = (
   props?: TVProps<V, S[]>,
 ) => S extends TVDefaultSlot
   ? string
-  : StringArrayToFunctions<AddItemToArray<S[], TVBaseName>, ClassProp>;
+  : {
+      [K in SlotsWithBase<S[]>[number]]: (props?: ClassProp) => string;
+    };
 
 export declare function tv<
   V extends TVVariants<S[]>,
-  CV extends TVCompoundVariants<V, S[]>,
   DV extends TVDefaultVariants<V, S[]>,
+  CV extends TVCompoundVariants<V, S[]>,
   C extends TVConfig,
   S extends string = TVDefaultSlot,
 >(
