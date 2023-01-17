@@ -9,10 +9,21 @@ export const tv =
     },
   ) =>
   (props) => {
-    const {slots: slotProps = {}, variants, defaultVariants} = options;
+    const {
+      slots: slotProps = {},
+      variants = {},
+      defaultVariants = {},
+      compoundVariants = [],
+    } = options;
 
     if (variants == null && !isNotEmptyObject(slotProps)) {
       return cx(options?.base, props?.class, props?.className)(config);
+    }
+
+    if (compoundVariants && !Array.isArray(compoundVariants)) {
+      throw new TypeError(
+        `The "compoundVariants" prop must be an array. Received: ${typeof compoundVariants}`,
+      );
     }
 
     // add "base" to the slots object
@@ -66,7 +77,7 @@ export const tv =
         return acc;
       }, {});
 
-    const getCompoundVariantClassNames = options?.compoundVariants?.reduce(
+    const getCompoundVariantClassNames = compoundVariants?.reduce(
       (acc, {class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
         Object.entries(compoundVariantOptions).every(([key, value]) =>
           Array.isArray(value)

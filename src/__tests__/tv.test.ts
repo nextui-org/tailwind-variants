@@ -75,6 +75,26 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(result, expectedResult);
   });
 
+  test("should throw error if the compoundVariants is not an array", () => {
+    expect(
+      tv({
+        base: "text-3xl font-bold",
+        variants: {
+          isBig: {
+            true: "text-5xl",
+            false: "text-2xl",
+          },
+          color: {
+            red: "text-red-500",
+            blue: "text-blue-500",
+          },
+        },
+        // @ts-expect-error
+        compoundVariants: {},
+      }),
+    ).toThrow();
+  });
+
   test("should work with custom class & className", () => {
     const h1 = tv({
       base: "text-3xl font-bold",
