@@ -6,6 +6,8 @@ export declare const cleanArray: (array: string[]) => string[] | undefined;
 
 export declare const falsyToString: <T extends unknown>(value: T) => string | T;
 
+export declare const isNotEmptyObject: (obj: object) => boolean;
+
 export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConfig) => CxReturn;
 
 export declare const removeDuplicates: <T extends unknown>(array: T[]) => T[];

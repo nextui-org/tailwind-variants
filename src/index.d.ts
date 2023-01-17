@@ -1,59 +1,61 @@
 import {TVConfig} from "./config";
-import {ClassValue, ClassProp, OmitUndefined, StringToBoolean, AddItemToArray} from "./utils";
+import {ClassValue, ClassProp, OmitUndefined, StringToBoolean} from "./utils";
 
-type TVDefaultSlot = "";
 type TVBaseName = "base";
 
-type SlotsWithBase<S extends string[]> = AddItemToArray<S, TVBaseName>;
+type TVSlots = Record<string, ClassValue> | undefined;
 
-type SlotsClassValue<S extends string[]> = {
-  [K in SlotsWithBase<S>[number]]: ClassValue;
+type SlotsClassValue<S extends TVSlots> = {
+  [K in keyof S]?: ClassValue;
 };
 
-export declare type TVVariants<S extends string[]> = {
+export type TVVariants<S extends TVSlots> = {
   [key: string]: {
-    [key: string]: S extends TVDefaultSlot ? ClassValue : SlotsClassValue<S> | ClassValue;
+    [key: string]: S extends TVSlots ? SlotsClassValue<S> | ClassValue : ClassValue;
   };
 };
 
-export declare type TVCompoundVariants<V extends TVVariants<S>, S extends string[]> = Array<
+export type TVCompoundVariants<V extends TVVariants<S>, S extends TVSlots> = Array<
   {
-    [K in keyof V]?: StringToBoolean<keyof V[K]>;
+    [K in keyof V]?: StringToBoolean<keyof V[K]> | StringToBoolean<keyof V[K]>[];
   } & ClassProp<SlotsClassValue<S> | ClassValue>
 >;
 
-export declare type TVDefaultVariants<V extends TVVariants<S>, S extends string[]> = {
+export type TVDefaultVariants<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]>;
 };
 
-export declare type TVProps<V extends TVVariants<S>, S extends string[]> = {
+export type TVProps<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]>;
 } & ClassProp;
 
-export declare type TVReturnType<V extends TVVariants<S>, S extends string> = (
-  props?: TVProps<V, S[]>,
-) => S extends TVDefaultSlot
+export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = (
+  props?: TVProps<V, S>,
+) => S extends undefined
   ? string
   : {
-      [K in SlotsWithBase<S[]>[number]]: (props?: ClassProp) => string;
+      [K in B extends undefined ? keyof S : keyof S | TVBaseName]: (
+        slotProps?: ClassProp,
+      ) => string;
     };
 
-export declare function tv<
-  V extends TVVariants<S[]>,
-  DV extends TVDefaultVariants<V, S[]>,
-  CV extends TVCompoundVariants<V, S[]>,
+export function tv<
+  DV extends TVDefaultVariants<V, S>,
+  CV extends TVCompoundVariants<V, S>,
   C extends TVConfig,
-  S extends string = TVDefaultSlot,
+  V extends TVVariants<S>,
+  B extends ClassValue = undefined,
+  S extends TVSlots = undefined,
 >(
   options: {
-    base?: ClassValue;
-    slots?: S[];
+    base?: B;
+    slots?: S;
     variants?: V;
     compoundVariants?: CV;
     defaultVariants?: DV;
   },
   config?: C,
-): TVReturnType<V, S>;
+): TVReturnType<V, S, B>;
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
   OmitUndefined<Parameters<Component>[0]>,

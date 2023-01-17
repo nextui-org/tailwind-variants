@@ -1,6 +1,6 @@
 {
   "name": "tailwind-variants",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "🦄 Tailwindcss first-class variant API",
   "author": "Junior Garcia <jrgarciadev@gmail.com>",
   "license": "MIT",
@@ -61,6 +61,7 @@
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
     "prettier-eslint-cli": "^5.0.1",
+    "jest": "28.1.1",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
     "tsup": "6.4.0",

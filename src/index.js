@@ -1,21 +1,25 @@
-import {cx, cleanArray, falsyToString, removeDuplicates} from "./utils.js";
+import {cx, cleanArray, isNotEmptyObject, falsyToString} from "./utils.js";
 
 export const tv =
   (
-    styles,
+    options,
     config = {
       twMerge: true,
       twMergeConfig: {},
     },
   ) =>
   (props) => {
-    if (styles?.variants == null) {
-      return cx(styles?.base, props?.class, props?.className)(config);
+    const {slots: slotProps = {}, variants, defaultVariants} = options;
+
+    if (variants == null && !isNotEmptyObject(slotProps)) {
+      return cx(options?.base, props?.class, props?.className)(config);
     }
 
-    const {slots: slotsProp = [], variants, defaultVariants} = styles;
-
-    const slots = Array.isArray(slotsProp) ? removeDuplicates(["base", ...slotsProp]) : [];
+    // add "base" to the slots object
+    const slots = {
+      base: options?.base,
+      ...slotProps,
+    };
 
     const getVariantValue = (variant) => {
       const variantProp = props?.[variant];
@@ -28,18 +32,27 @@ export const tv =
       return variants[variant][variantKey];
     };
 
-    const getVariantClassNames = Object.keys(variants).map(getVariantValue);
+    const getVariantClassNames = variants ? Object.keys(variants).map(getVariantValue) : null;
 
-    const getVariantClassNamesBySlot = (slot) =>
-      Object.keys(variants).map((variant) => {
+    const getVariantClassNamesBySlotKey = (slotKey) => {
+      if (!variants || typeof variants !== "object") {
+        return null;
+      }
+
+      return Object.keys(variants).map((variant) => {
         const variantValue = getVariantValue(variant);
+
+        if (slotKey === "base" && typeof variantValue === "string") {
+          return variantValue;
+        }
 
         if (!variantValue || typeof variantValue !== "object") {
           return null;
         }
 
-        return variantValue[slot];
+        return variantValue[slotKey];
       });
+    };
 
     const propsWithoutUndefined =
       props &&
@@ -53,7 +66,7 @@ export const tv =
         return acc;
       }, {});
 
-    const getCompoundVariantClassNames = styles?.compoundVariants?.reduce(
+    const getCompoundVariantClassNames = options?.compoundVariants?.reduce(
       (acc, {class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
         Object.entries(compoundVariantOptions).every(([key, value]) =>
           Array.isArray(value)
@@ -95,23 +108,26 @@ export const tv =
       }, {});
     };
 
-    // slots variants - slots.length > 1 because base is always included
-    if (slots.length > 1) {
-      const baseClassNames = getVariantClassNamesBySlot("base");
+    // slots variants
+    if (isNotEmptyObject(slotProps)) {
       const compoundClassNames = getCompoundVariantClassNamesBySlot() ?? [];
 
-      const slotsFns = slots.reduce((acc, slot) => {
-        acc[slot] = (slotProps) =>
-          cx(
-            slot === "base" ? [styles?.base, baseClassNames] : [],
-            getVariantClassNamesBySlot(slot),
-            compoundClassNames?.[slot],
-            slotProps?.class,
-            slotProps?.className,
-          )(config);
+      const slotsFns =
+        typeof slots === "object" && isNotEmptyObject(slots)
+          ? Object.keys(slots).reduce((acc, slotKey) => {
+              acc[slotKey] = (slotProps) =>
+                cx(
+                  slotKey === "base" ? options?.base : [],
+                  slots[slotKey], // className from "slots" prop
+                  getVariantClassNamesBySlotKey(slotKey),
+                  compoundClassNames?.[slotKey],
+                  slotProps?.class,
+                  slotProps?.className,
+                )(config);
 
-        return acc;
-      }, {});
+              return acc;
+            }, {})
+          : {};
 
       return {
         ...slotsFns,
@@ -120,7 +136,7 @@ export const tv =
 
     // normal variants
     return cx(
-      styles?.base,
+      options?.base,
       getVariantClassNames,
       getCompoundVariantClassNames,
       props?.class,
