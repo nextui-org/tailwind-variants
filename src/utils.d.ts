@@ -2,8 +2,6 @@ import {CxOptions, CxReturn} from "class-variance-authority";
 
 import {TVConfig} from "./config";
 
-export declare const cleanArray: (array: string[]) => string[] | undefined;
-
 export declare const falsyToString: <T extends unknown>(value: T) => string | T;
 
 export declare const isNotEmptyObject: (obj: object) => boolean;

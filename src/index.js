@@ -1,4 +1,4 @@
-import {cx, cleanArray, isNotEmptyObject, falsyToString} from "./utils.js";
+import {cx, isNotEmptyObject, falsyToString} from "./utils.js";
 
 export const tv =
   (
@@ -87,7 +87,7 @@ export const tv =
     );
 
     const getCompoundVariantClassNamesBySlot = () => {
-      const compoundClassNames = cleanArray(getCompoundVariantClassNames);
+      const compoundClassNames = getCompoundVariantClassNames;
 
       if (!Array.isArray(compoundClassNames)) {
         return compoundClassNames;

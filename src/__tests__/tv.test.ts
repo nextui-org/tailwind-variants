@@ -18,6 +18,63 @@ describe("Tailwind Variants (TV)", () => {
     expect(result).toBe(expectedResult);
   });
 
+  test("should work with variants", () => {
+    const h1 = tv({
+      base: "text-3xl font-bold",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: "blue",
+    });
+
+    const expectedResult = ["text-5xl", "font-bold", "text-blue-500"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should work with compoundVariants", () => {
+    const h1 = tv({
+      base: "text-3xl font-bold",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-500",
+        },
+      ],
+    });
+
+    const result = h1({
+      isBig: true,
+      color: "red",
+    });
+
+    const expectedResult = ["text-5xl", "font-bold", "text-red-500", "bg-red-500"];
+
+    expectTv(result, expectedResult);
+  });
+
   test("should work with custom class & className", () => {
     const h1 = tv({
       base: "text-3xl font-bold",
@@ -413,5 +470,80 @@ describe("Tailwind Variants (TV)", () => {
       }),
       ["flex", "flex-col", "color--secondary-wrapper", "class--wrapper"],
     );
+  });
+
+  test("should work with slots and compoundVariants", () => {
+    const menu = tv({
+      base: "text-3xl font-bold underline",
+      slots: {
+        title: "text-2xl",
+        item: "text-xl",
+        list: "list-none",
+        wrapper: "flex flex-col",
+      },
+      variants: {
+        color: {
+          primary: "color--primary",
+          secondary: {
+            base: "color--secondary-base",
+            title: "color--secondary-title",
+            item: "color--secondary-item",
+            list: "color--secondary-list",
+            wrapper: "color--secondary-wrapper",
+          },
+        },
+        size: {
+          xs: "size--xs",
+
+          sm: "size--sm",
+          md: {
+            title: "size--md-title",
+          },
+        },
+        isDisabled: {
+          true: {
+            title: "disabled--title",
+          },
+          false: {
+            item: "enabled--item",
+          },
+        },
+      },
+      defaultVariants: {
+        color: "primary",
+        size: "sm",
+        isDisabled: false,
+      },
+      compoundVariants: [
+        {
+          color: "secondary",
+          size: "md",
+          class: {
+            base: "compound--base",
+            title: "compound--title",
+            item: "compound--item",
+            list: "compound--list",
+            wrapper: "compound--wrapper",
+          },
+        },
+      ],
+    });
+
+    const {base, title, item, list, wrapper} = menu({
+      color: "secondary",
+      size: "md",
+    });
+
+    expectTv(base(), [
+      "text-3xl",
+      "font-bold",
+      "underline",
+      "color--secondary-base",
+      "compound--base",
+    ]);
+    expectTv(title(), ["size--md-title", "color--secondary-title", "compound--title"]);
+    expectTv(item(), ["text-xl", "color--secondary-item", "enabled--item", "compound--item"]);
+    expectTv(list(), ["list-none", "color--secondary-list", "compound--list"]);
+    expectTv(wrapper(), ["flex", "flex-col", "color--secondary-wrapper", "compound--wrapper"]);
   });
 });

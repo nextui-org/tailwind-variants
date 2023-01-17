@@ -5,20 +5,28 @@ type TVBaseName = "base";
 
 type TVSlots = Record<string, ClassValue> | undefined;
 
-type SlotsClassValue<S extends TVSlots> = {
-  [K in keyof S]?: ClassValue;
+type TVSlotsWithBase<S extends TVSlots, B extends ClassValue> = B extends undefined
+  ? keyof S
+  : keyof S | TVBaseName;
+
+type SlotsClassValue<S extends TVSlots, B extends ClassValue> = {
+  [K in TVSlotsWithBase<S, B>]?: ClassValue;
 };
 
-export type TVVariants<S extends TVSlots> = {
+export type TVVariants<S extends TVSlots, B extends ClassValue> = {
   [key: string]: {
-    [key: string]: S extends TVSlots ? SlotsClassValue<S> | ClassValue : ClassValue;
+    [key: string]: S extends TVSlots ? SlotsClassValue<S, B> | ClassValue : ClassValue;
   };
 };
 
-export type TVCompoundVariants<V extends TVVariants<S>, S extends TVSlots> = Array<
+export type TVCompoundVariants<
+  V extends TVVariants<S>,
+  S extends TVSlots,
+  B extends ClassValue,
+> = Array<
   {
     [K in keyof V]?: StringToBoolean<keyof V[K]> | StringToBoolean<keyof V[K]>[];
-  } & ClassProp<SlotsClassValue<S> | ClassValue>
+  } & ClassProp<SlotsClassValue<S, B> | ClassValue>
 >;
 
 export type TVDefaultVariants<V extends TVVariants<S>, S extends TVSlots> = {
@@ -34,14 +42,12 @@ export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends C
 ) => S extends undefined
   ? string
   : {
-      [K in B extends undefined ? keyof S : keyof S | TVBaseName]: (
-        slotProps?: ClassProp,
-      ) => string;
+      [K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string;
     };
 
 export function tv<
   DV extends TVDefaultVariants<V, S>,
-  CV extends TVCompoundVariants<V, S>,
+  CV extends TVCompoundVariants<V, S, B>,
   C extends TVConfig,
   V extends TVVariants<S>,
   B extends ClassValue = undefined,
