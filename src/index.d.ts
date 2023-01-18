@@ -45,17 +45,24 @@ export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends C
       [K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string;
     };
 
+export type TVDark<S extends TVSlots, B extends ClassValue> =
+  | {
+      [K in TVSlotsWithBase<S, B>]?: ClassValue;
+    }
+  | ClassValue;
+
 export function tv<
+  V extends TVVariants<S>,
   DV extends TVDefaultVariants<V, S>,
   CV extends TVCompoundVariants<V, S, B>,
   C extends TVConfig,
-  V extends TVVariants<S>,
   B extends ClassValue = undefined,
   S extends TVSlots = undefined,
 >(
   options: {
     base?: B;
     slots?: S;
+    dark?: TVDark<S, B>;
     variants?: V;
     compoundVariants?: CV;
     defaultVariants?: DV;
