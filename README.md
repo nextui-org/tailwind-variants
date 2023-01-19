@@ -1,3 +1,23 @@
+<p align="center">
+  <a href="https://tailwind-variants.org">
+    <img width="20%" src=".github/assets/isotipo.png" alt="tailwind-variants" />
+    <h1 align="center">tailwind-variants</h1>
+  </a>
+</p>
+<p align="center">
+  The <em>power</em> of Tailwind combined with a <em>first-class</em> variant API.<br><br>
+  <a href="https://www.npmjs.com/package/tailwind-variants">
+    <img src="https://img.shields.io/npm/dm/tailwind-variants.svg?style=flat-round" alt="npm downloads">
+  </a>
+  <a href="https://www.npmjs.com/package/tailwind-variants">
+    <img alt="NPM Version" src="https://badgen.net/npm/v/tailwind-variants" />
+  </a>
+  <a href="https://github.com/nextui-org/tailwind-variants/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/tailwind-variants?style=flat" alt="License">
+  </a>
+</p>
+
+
 # Tailwind Variants
 
 🚧 Under construction - please check back later
