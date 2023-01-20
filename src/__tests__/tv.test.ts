@@ -295,51 +295,6 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(list(), []);
   });
 
-  test("should wotk with dark classes -- without slots", () => {
-    const el = tv({
-      base: "text-3xl font-bold text-gray-900",
-      dark: ["text-white", "bg-gray-900"],
-    });
-
-    expectTv(el(), [
-      "text-3xl",
-      "font-bold",
-      "text-gray-900",
-      "dark:text-white",
-      "dark:bg-gray-900",
-    ]);
-  });
-
-  test("should wotk with dark classes -- with slots", () => {
-    const el = tv({
-      base: "text-3xl font-bold text-gray-900",
-      slots: {
-        title: "text-4xl font-bold text-gray-900",
-      },
-      dark: {
-        base: ["text-white", "bg-gray-900"],
-        title: "text-5xl font-bold text-white",
-      },
-    });
-
-    const {base, title} = el();
-
-    expectTv(base(), [
-      "text-3xl",
-      "font-bold",
-      "text-gray-900",
-      "dark:text-white",
-      "dark:bg-gray-900",
-    ]);
-    expectTv(title(), [
-      "text-4xl",
-      "font-bold",
-      "text-gray-900",
-      "dark:text-5xl",
-      "dark:text-white",
-    ]);
-  });
-
   test("should work with slots -- default variants -- custom class & className", () => {
     const menu = tv({
       base: "text-3xl font-bold underline",

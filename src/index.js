@@ -119,24 +119,6 @@ export const tv =
       }, {});
     };
 
-    const getDarkClassNames = (darkClasses = options?.dark) => {
-      if (typeof darkClasses === "string") {
-        return darkClasses?.split(" ")?.map((c) => `dark:${c}`);
-      }
-
-      if (Array.isArray(darkClasses)) {
-        return darkClasses?.map((c) => `dark:${c}`);
-      }
-
-      return null;
-    };
-
-    const getDarkClassNamesBySlotKey = (slotKey) => {
-      if (typeof options?.dark === "object") {
-        return options?.dark?.[slotKey] ? getDarkClassNames(options?.dark?.[slotKey]) : null;
-      }
-    };
-
     // slots variants
     if (isNotEmptyObject(slotProps)) {
       const compoundClassNames = getCompoundVariantClassNamesBySlot() ?? [];
@@ -148,7 +130,6 @@ export const tv =
                 cx(
                   slotKey === "base" ? options?.base : [],
                   slots[slotKey], // className from "slots" prop
-                  getDarkClassNamesBySlotKey(slotKey),
                   getVariantClassNamesBySlotKey(slotKey),
                   compoundClassNames?.[slotKey],
                   slotProps?.class,
@@ -167,7 +148,6 @@ export const tv =
     // normal variants
     return cx(
       options?.base,
-      getDarkClassNames(),
       getVariantClassNames,
       getCompoundVariantClassNames,
       props?.class,
