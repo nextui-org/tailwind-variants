@@ -3,6 +3,8 @@ import {ClassValue, ClassProp, OmitUndefined, StringToBoolean} from "./utils";
 
 type TVBaseName = "base";
 
+type TVScreens = "initial" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+
 type TVSlots = Record<string, ClassValue> | undefined;
 
 type TVSlotsWithBase<S extends TVSlots, B extends ClassValue> = B extends undefined
@@ -33,6 +35,12 @@ export type TVDefaultVariants<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]>;
 };
 
+export type TVScreenVariants<V extends TVVariants<S>> = {
+  [K in TVScreens]?: {
+    [K in keyof V]?: StringToBoolean<keyof V[K]>;
+  };
+};
+
 export type TVProps<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]>;
 } & ClassProp;
@@ -47,8 +55,9 @@ export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends C
 
 export function tv<
   V extends TVVariants<S>,
-  DV extends TVDefaultVariants<V, S>,
   CV extends TVCompoundVariants<V, S, B>,
+  DV extends TVDefaultVariants<V, S>,
+  SV extends TVScreenVariants<V>,
   C extends TVConfig,
   B extends ClassValue = undefined,
   S extends TVSlots = undefined,
@@ -58,6 +67,7 @@ export function tv<
     slots?: S;
     variants?: V;
     compoundVariants?: CV;
+    screenVariants?: SV;
     defaultVariants?: DV;
   },
   config?: C,

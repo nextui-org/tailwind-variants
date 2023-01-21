@@ -566,4 +566,147 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(list(), ["list-none", "color--secondary-list", "compound--list"]);
     expectTv(wrapper(), ["flex", "flex-col", "color--secondary-wrapper", "compound--wrapper"]);
   });
+
+  test("should work with screenVariants/initial screen", () => {
+    const button = tv({
+      base: "text-xs font-bold",
+      variants: {
+        color: {
+          primary: "text-blue-500",
+          secondary: "text-purple-500",
+          success: "text-green-500",
+          danger: "text-red-500",
+        },
+        size: {
+          sm: "text-sm",
+          md: "text-md",
+          lg: "text-lg",
+        },
+        variant: {
+          outline: "border border-blue-500",
+          solid: "bg-blue-500",
+          ghost: "bg-transparent hover:bg-blue-500",
+        },
+      },
+      screenVariants: {
+        initial: {
+          color: "primary",
+          size: "md",
+        },
+      },
+    });
+
+    const result = button();
+
+    const expectedResult = ["font-bold", "text-blue-500", "text-md"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("the screenVariants/initial should override the defaultVariants", () => {
+    const button = tv({
+      base: "text-xs font-bold",
+      variants: {
+        color: {
+          primary: "text-blue-500",
+          secondary: "text-purple-500",
+          success: "text-green-500",
+          danger: "text-red-500",
+        },
+        size: {
+          sm: "text-sm",
+          md: "text-md",
+          lg: "text-lg",
+        },
+        variant: {
+          outline: "border border-blue-500",
+          solid: "bg-blue-500",
+          ghost: "bg-transparent hover:bg-blue-500",
+        },
+      },
+      screenVariants: {
+        initial: {
+          color: "primary",
+          size: "md",
+        },
+      },
+      defaultVariants: {
+        color: "secondary",
+        size: "sm",
+      },
+    });
+
+    const result = button();
+
+    const expectedResult = ["font-bold", "text-blue-500", "text-md"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should work with multiple screenVariants single value", () => {
+    const button = tv({
+      base: "base--styles",
+      variants: {
+        color: {
+          primary: "color--primary",
+          secondary: "color--secondary",
+          success: "color--success",
+          danger: "color--danger",
+        },
+        size: {
+          mini: "size--mini",
+          small: "size--small",
+          medium: "size--medium",
+          large: "size--large",
+        },
+        variant: {
+          outline: "variant--outline",
+          solid: "variant--solid",
+          ghost: "variant--ghost",
+        },
+      },
+      screenVariants: {
+        initial: {
+          color: "primary",
+          size: "medium",
+          variant: "solid",
+        },
+        xs: {
+          color: "success",
+          size: "mini",
+          variant: "outline",
+        },
+        sm: {
+          color: "secondary",
+          size: "small",
+          variant: "outline",
+        },
+        md: {
+          color: "danger",
+          size: "medium",
+          variant: "solid",
+        },
+      },
+    });
+
+    const result = button();
+
+    const expectedResult = [
+      "base--styles",
+      "color--primary",
+      "xs:color--success",
+      "sm:color--secondary",
+      "md:color--danger",
+      "size--medium",
+      "xs:size--mini",
+      "sm:size--small",
+      "md:size--medium",
+      "variant--solid",
+      "xs:variant--outline",
+      "sm:variant--outline",
+      "md:variant--solid",
+    ];
+
+    expectTv(result, expectedResult);
+  });
 });

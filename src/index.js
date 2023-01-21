@@ -12,8 +12,11 @@ export const tv =
     const {
       slots: slotProps = {},
       variants = {},
-      defaultVariants = {},
       compoundVariants = [],
+      defaultVariants = {},
+      screenVariants = {
+        initial: {},
+      },
     } = options;
 
     if (variants == null && !isNotEmptyObject(slotProps)) {
@@ -34,13 +37,31 @@ export const tv =
 
     const getVariantValue = (variant) => {
       const variantProp = props?.[variant];
-      const defaultVariantProp = defaultVariants?.[variant];
+      const variantObj = variants?.[variant];
+      const defaultVariantProp = screenVariants?.initial?.[variant] || defaultVariants?.[variant];
+
+      const screenValues = Object.keys(screenVariants).reduce((acc, screen) => {
+        if (screen === "initial") return acc;
+        const screenVariantKey = screenVariants[screen]?.[variant];
+
+        if (screenVariantKey && variantObj?.[screenVariantKey]) {
+          acc.push(`${screen}:${variantObj[screenVariantKey]}`);
+        }
+
+        return acc;
+      }, []);
+
+      if (typeof variantObj !== "object" || !isNotEmptyObject(variantObj)) {
+        return null;
+      }
 
       if (variantProp === null) return null;
 
       const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
 
-      return variants[variant][variantKey];
+      return screenValues.length > 0
+        ? [variantObj[variantKey], ...screenValues]
+        : variantObj[variantKey];
     };
 
     const getVariantClassNames = variants ? Object.keys(variants).map(getVariantValue) : null;
@@ -50,52 +71,30 @@ export const tv =
         return null;
       }
 
-      return Object.keys(variants).map((variant) => {
-        const variantValue = getVariantValue(variant);
+      return Object.keys(variants)
+        .map((variant) => {
+          const variantValue = getVariantValue(variant);
 
-        if (slotKey === "base" && typeof variantValue === "string") {
-          return variantValue;
-        }
-
-        if (!variantValue || typeof variantValue !== "object") {
-          return null;
-        }
-
-        return variantValue[slotKey];
-      });
+          return slotKey === "base" && typeof variantValue === "string"
+            ? variantValue
+            : variantValue && variantValue[slotKey];
+        })
+        .filter(Boolean);
     };
 
     const propsWithoutUndefined =
-      props &&
-      Object.entries(props).reduce((acc, [key, value]) => {
-        if (value === undefined) {
-          return acc;
-        }
+      props && Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined));
 
-        acc[key] = value;
+    const getCompoundVariantClassNames = compoundVariants
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ?.filter(({class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
+        Object.entries(compoundVariantOptions).every(([key, value]) => {
+          const props = {...defaultVariants, ...screenVariants.initial, ...propsWithoutUndefined};
 
-        return acc;
-      }, {});
-
-    const getCompoundVariantClassNames = compoundVariants?.reduce(
-      (acc, {class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
-        Object.entries(compoundVariantOptions).every(([key, value]) =>
-          Array.isArray(value)
-            ? value.includes(
-                {
-                  ...defaultVariants,
-                  ...propsWithoutUndefined,
-                }[key],
-              )
-            : {
-                ...defaultVariants,
-                ...propsWithoutUndefined,
-              }[key] === value,
-        )
-          ? [...acc, tvClass, tvClassName]
-          : acc,
-      [],
-    );
+          return Array.isArray(value) ? value.includes(props[key]) : props[key] === value;
+        }),
+      )
+      .flatMap(({class: tvClass, className: tvClassName}) => [tvClass, tvClassName]);
 
     const getCompoundVariantClassNamesBySlot = () => {
       const compoundClassNames = getCompoundVariantClassNames;
@@ -154,3 +153,61 @@ export const tv =
       props?.className,
     )(config);
   };
+
+// const menu = tv({
+//   base: "text-3xl font-bold underline",
+//   slots: {
+//     title: "text-2xl",
+//     item: "text-xl",
+//     list: "list-none",
+//     wrapper: "flex flex-col",
+//   },
+//   variants: {
+//     color: {
+//       primary: "color--primary",
+//       secondary: {
+//         base: "color--secondary-base",
+//         title: "color--secondary-title",
+//         item: "color--secondary-item",
+//         list: "color--secondary-list",
+//         wrapper: "color--secondary-wrapper",
+//       },
+//     },
+//     size: {
+//       xs: "size--xs",
+//       sm: "size--sm",
+//       md: {
+//         title: "size--md-title",
+//       },
+//     },
+//     isDisabled: {
+//       true: {
+//         title: "disabled--title",
+//       },
+//       false: {
+//         item: "enabled--item",
+//       },
+//     },
+//   },
+//   defaultVariants: {
+//     color: "primary",
+//     size: "sm",
+//     isDisabled: false,
+//   },
+// });
+
+// console.time("menu");
+// with custom props
+// const {base, title, item, list, wrapper} = menu({
+//   color: "secondary",
+//   size: "md",
+// });
+
+// console.log(base(), title(), item(), list(), wrapper());
+// console.log("------------------");
+// console.timeEnd("menu");
+
+/**
+ * Result1: text-3xl font-bold underline color--secondary-base text-2xl color--secondary-title size--md-title
+ * text-xl color--secondary-item enabled--item list-none color--secondary-list flex flex-col color--secondary-wrapper
+ */
