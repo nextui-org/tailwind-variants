@@ -643,7 +643,7 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(result, expectedResult);
   });
 
-  test("should work with multiple screenVariants single value", () => {
+  test("should work with multiple screenVariants single values", () => {
     const button = tv({
       base: "base--styles",
       variants: {
@@ -708,5 +708,295 @@ describe("Tailwind Variants (TV)", () => {
     ];
 
     expectTv(result, expectedResult);
+  });
+
+  test("should work with multiple screenVariants multiple values (strings)", () => {
+    const button = tv({
+      base: "base--styles",
+      variants: {
+        color: {
+          primary: "color--primary-1 color--primary-2 color--primary-3",
+          secondary: "color--secondary-1 color--secondary-2 color--secondary-3",
+          success: "color--success-1 color--success-2 color--success-3",
+          danger: "color--danger color--danger-2 color--danger-3",
+        },
+        size: {
+          mini: "size--mini-1 size--mini-2 size--mini-3",
+          small: "size--small-1 size--small-2 size--small-3",
+          medium: "size--medium-1 size--medium-2 size--medium-3",
+          large: "size--large-1 size--large-2 size--large-3",
+        },
+        variant: {
+          outline: "variant--outline-1 variant--outline-2 variant--outline-3",
+          solid: "variant--solid-1 variant--solid-2 variant--solid-3",
+          ghost: "variant--ghost-1 variant--ghost-2 variant--ghost-3",
+        },
+      },
+      screenVariants: {
+        initial: {
+          color: "primary",
+          size: "medium",
+          variant: "solid",
+        },
+        xs: {
+          color: "success",
+          size: "mini",
+          variant: "outline",
+        },
+        sm: {
+          color: "secondary",
+          size: "small",
+          variant: "outline",
+        },
+        md: {
+          color: "danger",
+          size: "medium",
+          variant: "solid",
+        },
+      },
+    });
+
+    const result = button();
+
+    const expectedResult = [
+      "base--styles",
+      "color--primary-1",
+      "color--primary-2",
+      "color--primary-3",
+      "xs:color--success-1",
+      "xs:color--success-2",
+      "xs:color--success-3",
+      "sm:color--secondary-1",
+      "sm:color--secondary-2",
+      "sm:color--secondary-3",
+      "md:color--danger",
+      "md:color--danger-2",
+      "md:color--danger-3",
+      "size--medium-1",
+      "size--medium-2",
+      "size--medium-3",
+      "xs:size--mini-1",
+      "xs:size--mini-2",
+      "xs:size--mini-3",
+      "sm:size--small-1",
+      "sm:size--small-2",
+      "sm:size--small-3",
+      "md:size--medium-1",
+      "md:size--medium-2",
+      "md:size--medium-3",
+      "variant--solid-1",
+      "variant--solid-2",
+      "variant--solid-3",
+      "xs:variant--outline-1",
+      "xs:variant--outline-2",
+      "xs:variant--outline-3",
+      "sm:variant--outline-1",
+      "sm:variant--outline-2",
+      "sm:variant--outline-3",
+      "md:variant--solid-1",
+      "md:variant--solid-2",
+      "md:variant--solid-3",
+    ];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should work with multiple screenVariants multiple values (array)", () => {
+    const button = tv({
+      base: "base--styles",
+      variants: {
+        color: {
+          primary: ["color--primary-1", "color--primary-2", "color--primary-3"],
+          secondary: ["color--secondary-1", "color--secondary-2", "color--secondary-3"],
+          success: ["color--success-1", "color--success-2", "color--success-3"],
+          danger: ["color--danger", "color--danger-2", "color--danger-3"],
+        },
+        size: {
+          mini: ["size--mini-1", "size--mini-2", "size--mini-3"],
+          small: ["size--small-1", "size--small-2", "size--small-3"],
+          medium: ["size--medium-1", "size--medium-2", "size--medium-3"],
+          large: ["size--large-1", "size--large-2", "size--large-3"],
+        },
+        variant: {
+          outline: ["variant--outline-1", "variant--outline-2", "variant--outline-3"],
+          solid: ["variant--solid-1", "variant--solid-2", "variant--solid-3"],
+          ghost: ["variant--ghost-1", "variant--ghost-2", "variant--ghost-3"],
+        },
+      },
+      screenVariants: {
+        initial: {
+          color: "primary",
+          size: "medium",
+          variant: "solid",
+        },
+        xs: {
+          color: "success",
+          size: "mini",
+          variant: "outline",
+        },
+        sm: {
+          color: "secondary",
+          size: "small",
+          variant: "outline",
+        },
+        md: {
+          color: "danger",
+          size: "medium",
+          variant: "solid",
+        },
+      },
+    });
+
+    const result = button();
+
+    const expectedResult = [
+      "base--styles",
+      "color--primary-1",
+      "color--primary-2",
+      "color--primary-3",
+      "xs:color--success-1",
+      "xs:color--success-2",
+      "xs:color--success-3",
+      "sm:color--secondary-1",
+      "sm:color--secondary-2",
+      "sm:color--secondary-3",
+      "md:color--danger",
+      "md:color--danger-2",
+      "md:color--danger-3",
+      "size--medium-1",
+      "size--medium-2",
+      "size--medium-3",
+      "xs:size--mini-1",
+      "xs:size--mini-2",
+      "xs:size--mini-3",
+      "sm:size--small-1",
+      "sm:size--small-2",
+      "sm:size--small-3",
+      "md:size--medium-1",
+      "md:size--medium-2",
+      "md:size--medium-3",
+      "variant--solid-1",
+      "variant--solid-2",
+      "variant--solid-3",
+      "xs:variant--outline-1",
+      "xs:variant--outline-2",
+      "xs:variant--outline-3",
+      "sm:variant--outline-1",
+      "sm:variant--outline-2",
+      "sm:variant--outline-3",
+      "md:variant--solid-1",
+      "md:variant--solid-2",
+      "md:variant--solid-3",
+    ];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should work with multiple screenVariants single values and slots", () => {
+    const menu = tv({
+      base: "base--styles",
+      slots: {
+        title: "slots--title",
+        item: "slots--item",
+        list: "slots--list",
+        wrapper: "slots--wrapper",
+      },
+      variants: {
+        color: {
+          primary: {
+            title: "title--color--primary",
+            item: "item--color--primary",
+            list: "list--color--primary",
+            wrapper: "wrapper--color--primary",
+          },
+          secondary: {
+            title: "title--color--secondary",
+            item: "item--color--secondary",
+            list: "list--color--secondary",
+            wrapper: "wrapper--color--secondary",
+          },
+        },
+        size: {
+          small: {
+            title: "title--size--small",
+            item: "item--size--small",
+            list: "list--size--small",
+            wrapper: "wrapper--size--small",
+          },
+          medium: {
+            title: "title--size--medium",
+            item: "item--size--medium",
+            list: "list--size--medium",
+            wrapper: "wrapper--size--medium",
+          },
+        },
+      },
+      screenVariants: {
+        initial: {
+          color: "primary",
+          size: "medium",
+        },
+        xs: {
+          color: "secondary",
+          size: "small",
+        },
+        sm: {
+          color: "primary",
+          size: "medium",
+        },
+        md: {
+          color: "secondary",
+          size: "medium",
+        },
+      },
+    });
+
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--styles"]);
+    expectTv(title(), [
+      "slots--title",
+      "xs:title--color--secondary",
+      "sm:title--color--primary",
+      "md:title--color--secondary",
+      "title--color--primary",
+      "xs:title--size--small",
+      "sm:title--size--medium",
+      "md:title--size--medium",
+      "title--size--medium",
+    ]);
+    expectTv(item(), [
+      "slots--item",
+      "xs:item--color--secondary",
+      "sm:item--color--primary",
+      "md:item--color--secondary",
+      "item--color--primary",
+      "xs:item--size--small",
+      "sm:item--size--medium",
+      "md:item--size--medium",
+      "item--size--medium",
+    ]);
+    expectTv(list(), [
+      "slots--list",
+      "xs:list--color--secondary",
+      "sm:list--color--primary",
+      "md:list--color--secondary",
+      "list--color--primary",
+      "xs:list--size--small",
+      "sm:list--size--medium",
+      "md:list--size--medium",
+      "list--size--medium",
+    ]);
+    expectTv(wrapper(), [
+      "slots--wrapper",
+      "xs:wrapper--color--secondary",
+      "sm:wrapper--color--primary",
+      "md:wrapper--color--secondary",
+      "wrapper--color--primary",
+      "xs:wrapper--size--small",
+      "sm:wrapper--size--medium",
+      "md:wrapper--size--medium",
+      "wrapper--size--medium",
+    ]);
   });
 });

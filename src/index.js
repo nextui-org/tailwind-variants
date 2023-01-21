@@ -1,4 +1,4 @@
-import {cx, isNotEmptyObject, falsyToString} from "./utils.js";
+import {cx, isNotEmptyObject, falsyToString, joinObjects} from "./utils.js";
 
 export const tv =
   (
@@ -35,20 +35,42 @@ export const tv =
       ...slotProps,
     };
 
-    const getVariantValue = (variant) => {
+    const getScreenVariantValues = (screen, screenVariantValue, slotKey, acc = []) => {
+      let result = acc;
+
+      if (typeof screenVariantValue === "string") {
+        result.push(screenVariantValue.split(" ").map((v) => `${screen}:${v}`));
+      } else if (Array.isArray(screenVariantValue)) {
+        result.push(screenVariantValue.flatMap((v) => `${screen}:${v}`));
+      } else if (typeof screenVariantValue === "object" && typeof slotKey === "string") {
+        const value = screenVariantValue?.[slotKey];
+
+        if (value && typeof value === "string") {
+          result[slotKey] = result[slotKey]
+            ? [...result[slotKey], ...value.split(" ").map((v) => `${screen}:${v}`)]
+            : value.split(" ").map((v) => `${screen}:${v}`);
+        } else if (Array.isArray(value) && value.length > 0) {
+          result[slotKey] = value.flatMap((v) => `${screen}:${v}`);
+        }
+      }
+
+      return result;
+    };
+
+    const getVariantValue = (variant, slotKey = null) => {
       const variantProp = props?.[variant];
       const variantObj = variants?.[variant];
       const defaultVariantProp = screenVariants?.initial?.[variant] || defaultVariants?.[variant];
 
       const screenValues = Object.keys(screenVariants).reduce((acc, screen) => {
         if (screen === "initial") return acc;
+
         const screenVariantKey = screenVariants[screen]?.[variant];
+        const screenVariantValue = variantObj?.[screenVariantKey];
 
-        if (screenVariantKey && variantObj?.[screenVariantKey]) {
-          acc.push(`${screen}:${variantObj[screenVariantKey]}`);
-        }
+        const result = getScreenVariantValues(screen, screenVariantValue, slotKey, acc);
 
-        return acc;
+        return result;
       }, []);
 
       if (typeof variantObj !== "object" || !isNotEmptyObject(variantObj)) {
@@ -58,6 +80,14 @@ export const tv =
       if (variantProp === null) return null;
 
       const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
+
+      if (
+        typeof screenValues === "object" &&
+        typeof slotKey === "string" &&
+        screenValues[slotKey]
+      ) {
+        return joinObjects(screenValues, variantObj[variantKey]);
+      }
 
       return screenValues.length > 0
         ? [variantObj[variantKey], ...screenValues]
@@ -73,7 +103,7 @@ export const tv =
 
       return Object.keys(variants)
         .map((variant) => {
-          const variantValue = getVariantValue(variant);
+          const variantValue = getVariantValue(variant, slotKey);
 
           return slotKey === "base" && typeof variantValue === "string"
             ? variantValue
@@ -127,8 +157,7 @@ export const tv =
           ? Object.keys(slots).reduce((acc, slotKey) => {
               acc[slotKey] = (slotProps) =>
                 cx(
-                  slotKey === "base" ? options?.base : [],
-                  slots[slotKey], // className from "slots" prop
+                  slots[slotKey],
                   getVariantClassNamesBySlotKey(slotKey),
                   compoundClassNames?.[slotKey],
                   slotProps?.class,
@@ -153,61 +182,3 @@ export const tv =
       props?.className,
     )(config);
   };
-
-// const menu = tv({
-//   base: "text-3xl font-bold underline",
-//   slots: {
-//     title: "text-2xl",
-//     item: "text-xl",
-//     list: "list-none",
-//     wrapper: "flex flex-col",
-//   },
-//   variants: {
-//     color: {
-//       primary: "color--primary",
-//       secondary: {
-//         base: "color--secondary-base",
-//         title: "color--secondary-title",
-//         item: "color--secondary-item",
-//         list: "color--secondary-list",
-//         wrapper: "color--secondary-wrapper",
-//       },
-//     },
-//     size: {
-//       xs: "size--xs",
-//       sm: "size--sm",
-//       md: {
-//         title: "size--md-title",
-//       },
-//     },
-//     isDisabled: {
-//       true: {
-//         title: "disabled--title",
-//       },
-//       false: {
-//         item: "enabled--item",
-//       },
-//     },
-//   },
-//   defaultVariants: {
-//     color: "primary",
-//     size: "sm",
-//     isDisabled: false,
-//   },
-// });
-
-// console.time("menu");
-// with custom props
-// const {base, title, item, list, wrapper} = menu({
-//   color: "secondary",
-//   size: "md",
-// });
-
-// console.log(base(), title(), item(), list(), wrapper());
-// console.log("------------------");
-// console.timeEnd("menu");
-
-/**
- * Result1: text-3xl font-bold underline color--secondary-base text-2xl color--secondary-title size--md-title
- * text-xl color--secondary-item enabled--item list-none color--secondary-list flex flex-col color--secondary-wrapper
- */

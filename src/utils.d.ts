@@ -8,7 +8,7 @@ export declare const isNotEmptyObject: (obj: object) => boolean;
 
 export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConfig) => CxReturn;
 
-export declare const removeDuplicates: <T extends unknown>(array: T[]) => T[];
+export declare const joinObjects: (obj1: object, obj2: object) => object;
 
 export declare type ClassPropKey = "class" | "className";
 export declare type ClassValue = string | string[] | null | undefined;

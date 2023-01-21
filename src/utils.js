@@ -19,3 +19,21 @@ export const cx =
 
     return twMerge(cxBase(classes));
   };
+
+export const joinObjects = (obj1, obj2) => {
+  const result = {};
+
+  if (typeof obj1 !== "object" || typeof obj2 !== "object") {
+    return result;
+  }
+
+  Object.keys(obj1).forEach((key) => {
+    if (obj2[key]) {
+      result[key] = cxBase([obj1[key], obj2[key]]);
+    } else {
+      result[key] = obj1[key];
+    }
+  });
+
+  return result;
+};
