@@ -129,7 +129,7 @@ export const tv =
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ?.filter(({class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
         Object.entries(compoundVariantOptions).every(([key, value]) => {
-          const initialProp = typeof props[key] === "object" ? props[key].initial : {};
+          const initialProp = typeof props?.[key] === "object" ? props[key]?.initial : {};
           const compoundProps = {...defaultVariants, ...initialProp, ...propsWithoutUndefined};
 
           return Array.isArray(value)

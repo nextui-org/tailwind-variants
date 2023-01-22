@@ -1,6 +1,6 @@
 {
   "name": "tailwind-variants",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "🦄 Tailwindcss first-class variant API",
   "author": "Junior Garcia <jrgarciadev@gmail.com>",
   "license": "MIT",
