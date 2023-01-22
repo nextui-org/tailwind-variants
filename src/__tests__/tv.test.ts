@@ -588,17 +588,23 @@ describe("Tailwind Variants (TV)", () => {
           ghost: "bg-transparent hover:bg-blue-500",
         },
       },
-      screenVariants: {
-        initial: {
-          color: "primary",
-          size: "md",
-        },
+    });
+
+    const result = button({
+      color: {
+        initial: "primary",
+        xs: "danger",
+        sm: "success",
       },
     });
 
-    const result = button();
-
-    const expectedResult = ["font-bold", "text-blue-500", "text-md"];
+    const expectedResult = [
+      "text-xs",
+      "font-bold",
+      "text-blue-500",
+      "xs:text-red-500",
+      "sm:text-green-500",
+    ];
 
     expectTv(result, expectedResult);
   });
@@ -624,21 +630,22 @@ describe("Tailwind Variants (TV)", () => {
           ghost: "bg-transparent hover:bg-blue-500",
         },
       },
-      screenVariants: {
-        initial: {
-          color: "primary",
-          size: "md",
-        },
-      },
       defaultVariants: {
-        color: "secondary",
+        color: "primary",
         size: "sm",
       },
     });
 
-    const result = button();
+    const result = button({
+      color: {
+        initial: "secondary",
+      },
+      size: {
+        initial: "md",
+      },
+    });
 
-    const expectedResult = ["font-bold", "text-blue-500", "text-md"];
+    const expectedResult = ["font-bold", "text-purple-500", "text-md"];
 
     expectTv(result, expectedResult);
   });
@@ -665,31 +672,28 @@ describe("Tailwind Variants (TV)", () => {
           ghost: "variant--ghost",
         },
       },
-      screenVariants: {
-        initial: {
-          color: "primary",
-          size: "medium",
-          variant: "solid",
-        },
-        xs: {
-          color: "success",
-          size: "mini",
-          variant: "outline",
-        },
-        sm: {
-          color: "secondary",
-          size: "small",
-          variant: "outline",
-        },
-        md: {
-          color: "danger",
-          size: "medium",
-          variant: "solid",
-        },
-      },
     });
 
-    const result = button();
+    const result = button({
+      color: {
+        initial: "primary",
+        xs: "success",
+        sm: "secondary",
+        md: "danger",
+      },
+      size: {
+        initial: "medium",
+        xs: "mini",
+        sm: "small",
+        md: "medium",
+      },
+      variant: {
+        initial: "solid",
+        xs: "outline",
+        sm: "outline",
+        md: "solid",
+      },
+    });
 
     const expectedResult = [
       "base--styles",
@@ -732,31 +736,28 @@ describe("Tailwind Variants (TV)", () => {
           ghost: "variant--ghost-1 variant--ghost-2 variant--ghost-3",
         },
       },
-      screenVariants: {
-        initial: {
-          color: "primary",
-          size: "medium",
-          variant: "solid",
-        },
-        xs: {
-          color: "success",
-          size: "mini",
-          variant: "outline",
-        },
-        sm: {
-          color: "secondary",
-          size: "small",
-          variant: "outline",
-        },
-        md: {
-          color: "danger",
-          size: "medium",
-          variant: "solid",
-        },
-      },
     });
 
-    const result = button();
+    const result = button({
+      color: {
+        initial: "primary",
+        xs: "success",
+        sm: "secondary",
+        md: "danger",
+      },
+      size: {
+        initial: "medium",
+        xs: "mini",
+        sm: "small",
+        md: "medium",
+      },
+      variant: {
+        initial: "solid",
+        xs: "outline",
+        sm: "outline",
+        md: "solid",
+      },
+    });
 
     const expectedResult = [
       "base--styles",
@@ -823,31 +824,28 @@ describe("Tailwind Variants (TV)", () => {
           ghost: ["variant--ghost-1", "variant--ghost-2", "variant--ghost-3"],
         },
       },
-      screenVariants: {
-        initial: {
-          color: "primary",
-          size: "medium",
-          variant: "solid",
-        },
-        xs: {
-          color: "success",
-          size: "mini",
-          variant: "outline",
-        },
-        sm: {
-          color: "secondary",
-          size: "small",
-          variant: "outline",
-        },
-        md: {
-          color: "danger",
-          size: "medium",
-          variant: "solid",
-        },
-      },
     });
 
-    const result = button();
+    const result = button({
+      color: {
+        initial: "primary",
+        xs: "success",
+        sm: "secondary",
+        md: "danger",
+      },
+      size: {
+        initial: "medium",
+        xs: "mini",
+        sm: "small",
+        md: "medium",
+      },
+      variant: {
+        initial: "solid",
+        xs: "outline",
+        sm: "outline",
+        md: "solid",
+      },
+    });
 
     const expectedResult = [
       "base--styles",
@@ -931,27 +929,22 @@ describe("Tailwind Variants (TV)", () => {
           },
         },
       },
-      screenVariants: {
-        initial: {
-          color: "primary",
-          size: "medium",
-        },
-        xs: {
-          color: "secondary",
-          size: "small",
-        },
-        sm: {
-          color: "primary",
-          size: "medium",
-        },
-        md: {
-          color: "secondary",
-          size: "medium",
-        },
-      },
     });
 
-    const {base, title, item, list, wrapper} = menu();
+    const {base, title, item, list, wrapper} = menu({
+      color: {
+        initial: "primary",
+        xs: "secondary",
+        sm: "primary",
+        md: "secondary",
+      },
+      size: {
+        initial: "medium",
+        xs: "small",
+        sm: "medium",
+        md: "medium",
+      },
+    });
 
     expectTv(base(), ["base--styles"]);
     expectTv(title(), [

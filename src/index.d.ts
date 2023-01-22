@@ -35,14 +35,12 @@ export type TVDefaultVariants<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]>;
 };
 
-export type TVScreenVariants<V extends TVVariants<S>> = {
-  [K in TVScreens]?: {
-    [K in keyof V]?: StringToBoolean<keyof V[K]>;
-  };
+export type TVScreenPropsValue<V extends TVVariants<S>, K extends keyof V> = {
+  [K2 in TVScreens]?: StringToBoolean<keyof V[K]>;
 };
 
 export type TVProps<V extends TVVariants<S>, S extends TVSlots> = {
-  [K in keyof V]?: StringToBoolean<keyof V[K]>;
+  [K in keyof V]?: StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, K>;
 } & ClassProp;
 
 export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = (
@@ -57,7 +55,6 @@ export function tv<
   V extends TVVariants<S>,
   CV extends TVCompoundVariants<V, S, B>,
   DV extends TVDefaultVariants<V, S>,
-  SV extends TVScreenVariants<V>,
   C extends TVConfig,
   B extends ClassValue = undefined,
   S extends TVSlots = undefined,
@@ -67,7 +64,6 @@ export function tv<
     slots?: S;
     variants?: V;
     compoundVariants?: CV;
-    screenVariants?: SV;
     defaultVariants?: DV;
   },
   config?: C,

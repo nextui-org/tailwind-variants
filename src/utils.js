@@ -37,3 +37,11 @@ export const joinObjects = (obj1, obj2) => {
 
   return result;
 };
+
+export const removeExtraSpaces = (str) => {
+  if (!str || typeof str !== "string") {
+    return str;
+  }
+
+  return str.replace(/\s+/g, " ").trim();
+};

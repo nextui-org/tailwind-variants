@@ -1,4 +1,4 @@
-import {cx, isNotEmptyObject, falsyToString, joinObjects} from "./utils.js";
+import {cx, isNotEmptyObject, falsyToString, joinObjects, removeExtraSpaces} from "./utils.js";
 
 export const tv =
   (
@@ -14,9 +14,6 @@ export const tv =
       variants = {},
       compoundVariants = [],
       defaultVariants = {},
-      screenVariants = {
-        initial: {},
-      },
     } = options;
 
     if (variants == null && !isNotEmptyObject(slotProps)) {
@@ -35,20 +32,26 @@ export const tv =
       ...slotProps,
     };
 
-    const getScreenVariantValues = (screen, screenVariantValue, slotKey, acc = []) => {
+    const getScreenVariantValues = (screen, screenVariantValue, acc = [], slotKey) => {
       let result = acc;
 
       if (typeof screenVariantValue === "string") {
-        result.push(screenVariantValue.split(" ").map((v) => `${screen}:${v}`));
+        result.push(
+          removeExtraSpaces(screenVariantValue)
+            .split(" ")
+            .map((v) => `${screen}:${v}`),
+        );
       } else if (Array.isArray(screenVariantValue)) {
         result.push(screenVariantValue.flatMap((v) => `${screen}:${v}`));
       } else if (typeof screenVariantValue === "object" && typeof slotKey === "string") {
         const value = screenVariantValue?.[slotKey];
 
         if (value && typeof value === "string") {
+          const fixedValue = removeExtraSpaces(value);
+
           result[slotKey] = result[slotKey]
-            ? [...result[slotKey], ...value.split(" ").map((v) => `${screen}:${v}`)]
-            : value.split(" ").map((v) => `${screen}:${v}`);
+            ? [...result[slotKey], ...fixedValue.split(" ").map((v) => `${screen}:${v}`)]
+            : fixedValue.split(" ").map((v) => `${screen}:${v}`);
         } else if (Array.isArray(value) && value.length > 0) {
           result[slotKey] = value.flatMap((v) => `${screen}:${v}`);
         }
@@ -58,40 +61,47 @@ export const tv =
     };
 
     const getVariantValue = (variant, slotKey = null) => {
-      const variantProp = props?.[variant];
       const variantObj = variants?.[variant];
-      const defaultVariantProp = screenVariants?.initial?.[variant] || defaultVariants?.[variant];
-
-      const screenValues = Object.keys(screenVariants).reduce((acc, screen) => {
-        if (screen === "initial") return acc;
-
-        const screenVariantKey = screenVariants[screen]?.[variant];
-        const screenVariantValue = variantObj?.[screenVariantKey];
-
-        const result = getScreenVariantValues(screen, screenVariantValue, slotKey, acc);
-
-        return result;
-      }, []);
 
       if (typeof variantObj !== "object" || !isNotEmptyObject(variantObj)) {
         return null;
       }
 
+      const variantProp = props?.[variant];
+      let defaultVariantProp = defaultVariants?.[variant];
+      let screenValues = [];
+
       if (variantProp === null) return null;
 
-      const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
+      const variantKey = falsyToString(variantProp);
+
+      // responsive variants
+      if (typeof variantKey === "object") {
+        screenValues = Object.keys(variantKey).reduce((acc, screen) => {
+          const screenVariantKey = variantKey[screen];
+          const screenVariantValue = variantObj?.[screenVariantKey];
+
+          if (screen === "initial") {
+            defaultVariantProp = screenVariantKey;
+
+            return acc;
+          }
+
+          return getScreenVariantValues(screen, screenVariantValue, acc, slotKey);
+        }, []);
+      }
+
+      const value = variantObj[variantKey] || variantObj[falsyToString(defaultVariantProp)];
 
       if (
         typeof screenValues === "object" &&
         typeof slotKey === "string" &&
         screenValues[slotKey]
       ) {
-        return joinObjects(screenValues, variantObj[variantKey]);
+        return joinObjects(screenValues, value);
       }
 
-      return screenValues.length > 0
-        ? [variantObj[variantKey], ...screenValues]
-        : variantObj[variantKey];
+      return screenValues.length > 0 ? [value, ...screenValues] : value;
     };
 
     const getVariantClassNames = variants ? Object.keys(variants).map(getVariantValue) : null;
@@ -119,9 +129,12 @@ export const tv =
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ?.filter(({class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
         Object.entries(compoundVariantOptions).every(([key, value]) => {
-          const props = {...defaultVariants, ...screenVariants.initial, ...propsWithoutUndefined};
+          const initialProp = typeof props[key] === "object" ? props[key].initial : {};
+          const compoundProps = {...defaultVariants, ...initialProp, ...propsWithoutUndefined};
 
-          return Array.isArray(value) ? value.includes(props[key]) : props[key] === value;
+          return Array.isArray(value)
+            ? value.includes(compoundProps[key])
+            : compoundProps[key] === value;
         }),
       )
       .flatMap(({class: tvClass, className: tvClassName}) => [tvClass, tvClassName]);

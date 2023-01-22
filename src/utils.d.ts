@@ -10,6 +10,8 @@ export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConf
 
 export declare const joinObjects: (obj1: object, obj2: object) => object;
 
+export declare const removeExtraSpaces: (str: string) => string;
+
 export declare type ClassPropKey = "class" | "className";
 export declare type ClassValue = string | string[] | null | undefined;
 
