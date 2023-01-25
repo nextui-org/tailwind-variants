@@ -41,33 +41,35 @@ export type TVScreenPropsValue<V extends TVVariants<S>, K extends keyof V> = {
 
 export type TVProps<V extends TVVariants<S>, S extends TVSlots> = {
   [K in keyof V]?: StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, K>;
-} & ClassProp;
+} & ClassProp<ClassValue>;
 
-export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = (
-  props?: TVProps<V, S>,
-) => S extends undefined
-  ? string
-  : {
-      [K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string;
-    };
+export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = {
+  (props?: TVProps<V, S>): S extends undefined
+    ? string
+    : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string};
+};
 
-export function tv<
-  V extends TVVariants<S>,
-  CV extends TVCompoundVariants<V, S, B>,
-  DV extends TVDefaultVariants<V, S>,
-  C extends TVConfig,
-  B extends ClassValue = undefined,
-  S extends TVSlots = undefined,
->(
-  options: {
-    base?: B;
-    slots?: S;
-    variants?: V;
-    compoundVariants?: CV;
-    defaultVariants?: DV;
-  },
-  config?: C,
-): TVReturnType<V, S, B>;
+export type TV = {
+  <
+    V extends TVVariants<S> = {},
+    CV extends TVCompoundVariants<V, S, B> = [],
+    DV extends TVDefaultVariants<V, S> = {},
+    C extends TVConfig,
+    B extends ClassValue = undefined,
+    S extends TVSlots = undefined,
+  >(
+    options: {
+      base?: B;
+      slots?: S;
+      variants?: V;
+      compoundVariants?: CV;
+      defaultVariants?: DV;
+    },
+    config?: C,
+  ): TVReturnType<V, S, B>;
+};
+
+export declare const tv: TV;
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
   OmitUndefined<Parameters<Component>[0]>,
