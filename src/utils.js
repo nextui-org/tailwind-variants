@@ -1,5 +1,6 @@
-import {cx as cxBase} from "class-variance-authority";
 import {twMerge as twMergeBase, extendTailwindMerge} from "tailwind-merge";
+
+export const cxBase = (...classes) => classes.flat(Infinity).filter(Boolean).join(" ");
 
 export const falsyToString = (value) =>
   typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
