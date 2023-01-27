@@ -6,6 +6,10 @@ const expectTv = (result: string, expectedResult: string[]) => {
   expect(resultArray(result)).toEqual(expect.arrayContaining(expectedResult));
 };
 
+const expectKeys = (result: string[], expectedResult: string[]) => {
+  expect(result).toEqual(expect.arrayContaining(expectedResult));
+};
+
 describe("Tailwind Variants (TV)", () => {
   test("should work without variants", () => {
     const h1 = tv({
@@ -41,6 +45,26 @@ describe("Tailwind Variants (TV)", () => {
     const expectedResult = ["text-5xl", "font-bold", "text-blue-500"];
 
     expectTv(result, expectedResult);
+  });
+
+  test("should work with variantkeys", () => {
+    const h1 = tv({
+      base: "text-3xl font-bold",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const expectedResult = ["isBig", "color"];
+
+    expectKeys(h1.variantkeys, expectedResult);
   });
 
   test("should work with compoundVariants", () => {

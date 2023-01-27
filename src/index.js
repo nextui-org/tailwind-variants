@@ -1,21 +1,20 @@
 import {cx, isNotEmptyObject, falsyToString, joinObjects, removeExtraSpaces} from "./utils.js";
 
-export const tv =
-  (
-    options,
-    config = {
-      twMerge: true,
-      twMergeConfig: {},
-    },
-  ) =>
-  (props) => {
-    const {
-      slots: slotProps = {},
-      variants = {},
-      compoundVariants = [],
-      defaultVariants = {},
-    } = options;
+export const tv = (
+  options,
+  config = {
+    twMerge: true,
+    twMergeConfig: {},
+  },
+) => {
+  const {
+    slots: slotProps = {},
+    variants = {},
+    compoundVariants = [],
+    defaultVariants = {},
+  } = options;
 
+  const component = (props) => {
     if (variants == null && !isNotEmptyObject(slotProps)) {
       return cx(options?.base, props?.class, props?.className)(config);
     }
@@ -195,3 +194,14 @@ export const tv =
       props?.className,
     )(config);
   };
+
+  const getVariantKeys = () => {
+    if (!variants || typeof variants !== "object") return;
+
+    return Object.keys(variants);
+  };
+
+  component.variantkeys = getVariantKeys();
+
+  return component;
+};
