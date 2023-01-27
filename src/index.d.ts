@@ -39,21 +39,27 @@ export type TVScreenPropsValue<V extends TVVariants<S>, K extends keyof V> = {
   [K2 in TVScreens]?: StringToBoolean<keyof V[K]>;
 };
 
-export type TVProps<V extends TVVariants<S>, S extends TVSlots> = {
-  [K in keyof V]?: StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, K>;
-} & ClassProp<ClassValue>;
+export type TVProps<V extends TVVariants<S>, S extends TVSlots> = V extends undefined
+  ? ClassProp<ClassValue>
+  : {
+      [K in keyof V]?: StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, K>;
+    } & ClassProp<ClassValue>;
+
+export type TVVariantKeys<V extends TVVariants<S>, S extends TVSlots> = V extends Object
+  ? Array<keyof V>
+  : undefined;
 
 export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = {
   (props?: TVProps<V, S>): S extends undefined
     ? string
     : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string};
-};
+} & Record<"variantkeys", TVVariantKeys<V, S>>;
 
 export type TV = {
   <
-    V extends TVVariants<S> = {},
-    CV extends TVCompoundVariants<V, S, B> = [],
-    DV extends TVDefaultVariants<V, S> = {},
+    V extends TVVariants<S> = undefined,
+    CV extends TVCompoundVariants<V, S, B> = undefined,
+    DV extends TVDefaultVariants<V, S> = undefined,
     C extends TVConfig,
     B extends ClassValue = undefined,
     S extends TVSlots = undefined,
