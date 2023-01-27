@@ -1,18 +1,34 @@
 name: commitlint
+
 on: [pull_request]
 
 jobs:
   commitlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Codebase
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
         with:
+          run_install: false
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: "pnpm"
+          check-latest: true
           node-version-file: ".nvmrc"
-          cache: "npm"
-      - run: npm ci
-      - uses: wagoid/commitlint-github-action@v5
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run Commitlint
+        id: run_commitlint
+        uses: wagoid/commitlint-github-action@v5
+        with:
+          configFile: .commitlintrc.cjs
         env:
           NODE_PATH: ${{ github.workspace }}/node_modules
+      - name: Show Outputs
+        if: ${{ always() }}
+        run: echo ${{ toJSON(steps.run_commitlint.outputs.results) }}
