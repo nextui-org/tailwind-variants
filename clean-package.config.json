@@ -9,7 +9,13 @@
         "require": "./dist/index.cjs",
         "import": "./dist/index.js",
         "types": "./types/index.d.ts"
-      }
+      },
+      "./dist/*": "./dist/*",
+      "./transformer": {
+        "types": "./dist/transformer.d.ts",
+        "default": "./dist/transformer.js"
+      },
+      "./package.json": "./package.json"
     }
   }
 }
