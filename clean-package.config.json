@@ -12,6 +12,7 @@
       },
       "./dist/*": "./dist/*",
       "./transformer": {
+        "require": "./dist/transformer.cjs",
         "types": "./dist/transformer.d.ts",
         "default": "./dist/transformer.js"
       },
