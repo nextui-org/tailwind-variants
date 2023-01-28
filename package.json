@@ -1,6 +1,6 @@
 {
   "name": "tailwind-variants",
-  "version": "0.0.18",
+  "version": "0.0.20",
   "description": "🦄 Tailwindcss first-class variant API",
   "author": "Junior Garcia <jrgarciadev@gmail.com>",
   "license": "MIT",
@@ -19,7 +19,9 @@
   "typings": "./dist/index.d.ts",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "transformer.js",
+    "transformer.d.ts"
   ],
   "scripts": {
     "build": "tsup && node copy-types.cjs",
