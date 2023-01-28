@@ -1,6 +1,6 @@
 {
   "name": "tailwind-variants",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "🦄 Tailwindcss first-class variant API",
   "author": "Junior Garcia <jrgarciadev@gmail.com>",
   "license": "MIT",
@@ -22,7 +22,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.js && node copy-types.cjs",
+    "build": "tsup && node copy-types.cjs",
     "dev": "pnpm build:fast -- --watch",
     "clean": "rimraf dist .turbo",
     "typecheck": "tsc --noEmit",
@@ -80,6 +80,7 @@
     "clean": true,
     "minify": true,
     "treeshake": true,
+    "entry": ["src/*.js"],
     "target": "es2019",
     "format": [
       "cjs",
