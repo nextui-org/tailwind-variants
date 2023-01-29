@@ -8,6 +8,8 @@ export const falsyToString = (value) =>
 export const isEmptyObject = (obj) =>
   !obj || typeof obj !== "object" || Object.keys(obj).length === 0;
 
+export const flatMergeArrays = (...arrays) => [...arrays].flat().filter(Boolean);
+
 export const cx =
   (...classes) =>
   (config = {}) => {
@@ -46,8 +48,4 @@ export const removeExtraSpaces = (str) => {
   }
 
   return str.replace(/\s+/g, " ").trim();
-};
-
-export const flatMergeArrays = (...arrays) => {
-  return [...arrays].flat().filter(Boolean);
 };
