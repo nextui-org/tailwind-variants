@@ -1070,7 +1070,46 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(result, expectedResult);
   });
 
-  test("should include the extended classes with defaultVariants", () => {
+  test("should include the extended classes with defaultVariants - parent", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        // @ts-ignore TODO: fix this
+        isBig: true,
+        // @ts-ignore TODO: fix this
+        color: "red",
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with defaultVariants - children", () => {
     const p = tv({
       base: "text-base text-green-500",
       variants: {
@@ -1105,6 +1144,141 @@ describe("Tailwind Variants (TV)", () => {
     const result = h1();
 
     const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should override the extended defaultVariants - children", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "blue",
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      defaultVariants: {
+        // @ts-ignore TODO: fix this
+        isBig: false,
+        // @ts-ignore TODO: fix this
+        color: "red",
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "text-2xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with compoundVariants - parent", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-500",
+        },
+      ],
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "bg-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with compoundVariants - children", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      defaultVariants: {
+        color: "green",
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          // @ts-ignore TODO: fix this
+          color: "green",
+          class: "bg-green-500",
+        },
+      ],
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "bg-green-500", "text-green-500", "text-5xl"];
 
     expectTv(result, expectedResult);
   });

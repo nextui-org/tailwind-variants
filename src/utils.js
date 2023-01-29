@@ -47,3 +47,7 @@ export const removeExtraSpaces = (str) => {
 
   return str.replace(/\s+/g, " ").trim();
 };
+
+export const flatMergeArrays = (...arrays) => {
+  return [...arrays].flat().filter(Boolean);
+};
