@@ -27,10 +27,7 @@
   ],
   "scripts": {
     "build": "tsup && node copy-types.cjs",
-    "dev": "pnpm build:fast -- --watch",
-    "clean": "rimraf dist .turbo",
     "typecheck": "tsc --noEmit",
-    "dry-run": "node ./scripts/dry-run.js",
     "prepack": "clean-package",
     "postpack": "clean-package restore",
     "lint": "eslint -c .eslintrc.json ./src/**/*.{ts,tsx}",
@@ -61,10 +58,10 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
+    "jest": "28.1.1",
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
     "prettier-eslint-cli": "^5.0.1",
-    "jest": "28.1.1",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
     "tsup": "6.4.0",
@@ -84,7 +81,9 @@
     "clean": true,
     "minify": true,
     "treeshake": true,
-    "entry": ["src/*.js"],
+    "entry": [
+      "src/*.js"
+    ],
     "target": "es2019",
     "format": [
       "cjs",
