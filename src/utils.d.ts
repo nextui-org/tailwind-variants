@@ -22,7 +22,7 @@ export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConf
 
 export declare const falsyToString: <T extends unknown>(value: T) => string | T;
 
-export declare const isNotEmptyObject: (obj: object) => boolean;
+export declare const isEmptyObject: (obj: object) => boolean;
 
 export declare const joinObjects: (obj1: object, obj2: object) => object;
 

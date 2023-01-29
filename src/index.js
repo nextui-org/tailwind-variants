@@ -1,4 +1,4 @@
-import {cx, isNotEmptyObject, falsyToString, joinObjects, removeExtraSpaces} from "./utils.js";
+import {cx, isEmptyObject, falsyToString, joinObjects, removeExtraSpaces} from "./utils.js";
 
 export const tv = (
   options,
@@ -15,8 +15,8 @@ export const tv = (
   } = options;
 
   const component = (props) => {
-    if (variants == null && !isNotEmptyObject(slotProps)) {
-      return cx(options?.base, props?.class, props?.className)(config);
+    if (isEmptyObject(variants) && isEmptyObject(slotProps)) {
+      return cx(options?.extend?.base, options?.base, props?.class, props?.className)(config);
     }
 
     if (compoundVariants && !Array.isArray(compoundVariants)) {
@@ -59,10 +59,10 @@ export const tv = (
       return result;
     };
 
-    const getVariantValue = (variant, slotKey = null) => {
-      const variantObj = variants?.[variant];
+    const getVariantValue = (variant, vrs = variants, slotKey = null) => {
+      const variantObj = vrs?.[variant];
 
-      if (typeof variantObj !== "object" || !isNotEmptyObject(variantObj)) {
+      if (typeof variantObj !== "object" || isEmptyObject(variantObj)) {
         return null;
       }
 
@@ -103,7 +103,18 @@ export const tv = (
       return screenValues.length > 0 ? [value, ...screenValues] : value;
     };
 
-    const getVariantClassNames = variants ? Object.keys(variants).map(getVariantValue) : null;
+    const getVariantClassNames = () => {
+      const variantValues = variants
+        ? Object.keys(variants).map((vk) => getVariantValue(vk, variants))
+        : null;
+      const extendedVariantValues = options?.extend?.variants
+        ? Object.keys(options.extend.variants).map((vk) =>
+            getVariantValue(vk, options.extend.variants),
+          )
+        : null;
+
+      return [variantValues, extendedVariantValues].flat().filter(Boolean);
+    };
 
     const getVariantClassNamesBySlotKey = (slotKey) => {
       if (!variants || typeof variants !== "object") {
@@ -112,7 +123,7 @@ export const tv = (
 
       return Object.keys(variants)
         .map((variant) => {
-          const variantValue = getVariantValue(variant, slotKey);
+          const variantValue = getVariantValue(variant, variants, slotKey);
 
           return slotKey === "base" && typeof variantValue === "string"
             ? variantValue
@@ -161,11 +172,11 @@ export const tv = (
     };
 
     // slots variants
-    if (isNotEmptyObject(slotProps)) {
+    if (!isEmptyObject(slotProps)) {
       const compoundClassNames = getCompoundVariantClassNamesBySlot() ?? [];
 
       const slotsFns =
-        typeof slots === "object" && isNotEmptyObject(slots)
+        typeof slots === "object" && !isEmptyObject(slots)
           ? Object.keys(slots).reduce((acc, slotKey) => {
               acc[slotKey] = (slotProps) =>
                 cx(
@@ -188,7 +199,7 @@ export const tv = (
     // normal variants
     return cx(
       options?.base,
-      getVariantClassNames,
+      getVariantClassNames(),
       getCompoundVariantClassNames,
       props?.class,
       props?.className,
@@ -202,6 +213,47 @@ export const tv = (
   };
 
   component.variantkeys = getVariantKeys();
+  component.base = options?.base;
+  component.variants = variants;
 
   return component;
 };
+
+const p = tv({
+  base: "text-base text-green-500",
+  variants: {
+    isBig: {
+      true: "text-5xl",
+      false: "text-2xl",
+    },
+    color: {
+      red: "text-red-500 bg-red-500",
+      blue: "text-blue-500 bg-blue-500",
+    },
+  },
+});
+
+const h1 = tv({
+  extend: p,
+  base: "text-3xl font-bold",
+  variants: {
+    color: {
+      purple: "text-purple-500 bg-purple-500",
+      green: "text-green-500 bg-green-500",
+    },
+  },
+});
+
+const result = h1({
+  isBig: true,
+  color: {
+    // @ts-ignore TODO: fix this
+    xs: "blue",
+    // @ts-ignore TODO: fix this
+    sm: "red",
+    md: "purple",
+    lg: "green",
+  },
+});
+
+console.log(result);

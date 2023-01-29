@@ -5,7 +5,8 @@ export const cxBase = (...classes) => classes.flat(Infinity).filter(Boolean).joi
 export const falsyToString = (value) =>
   typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
 
-export const isNotEmptyObject = (obj) => obj && Object.keys(obj).length > 0;
+export const isEmptyObject = (obj) =>
+  !obj || typeof obj !== "object" || Object.keys(obj).length === 0;
 
 export const cx =
   (...classes) =>
@@ -14,7 +15,7 @@ export const cx =
       return cxBase(classes);
     }
 
-    const twMerge = isNotEmptyObject(config.twMergeConfig)
+    const twMerge = !isEmptyObject(config.twMergeConfig)
       ? extendTailwindMerge(config.twMergeConfig)
       : twMergeBase;
 

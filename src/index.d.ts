@@ -49,11 +49,16 @@ export type TVVariantKeys<V extends TVVariants<S>, S extends TVSlots> = V extend
   ? Array<keyof V>
   : undefined;
 
+export type TVReturnProps<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = {
+  base: B;
+  variantkeys: TVVariantKeys<V, S>;
+};
+
 export type TVReturnType<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = {
   (props?: TVProps<V, S>): S extends undefined
     ? string
     : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string};
-} & Record<"variantkeys", TVVariantKeys<V, S>>;
+} & TVReturnProps<V, S, B>;
 
 export type TV = {
   <
@@ -65,6 +70,8 @@ export type TV = {
     S extends TVSlots = undefined,
   >(
     options: {
+      // TODO: this should be typed and the variants should be inherited
+      extend?: any;
       base?: B;
       slots?: S;
       variants?: V;

@@ -1016,4 +1016,200 @@ describe("Tailwind Variants (TV)", () => {
       "wrapper--size--medium",
     ]);
   });
+
+  test("should include the extended classes", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+    });
+
+    const result = h1();
+    const expectedResult = ["text-3xl", "font-bold", "text-green-500"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with variants", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      // @ts-expect-error TODO: fix this
+      color: "blue",
+    });
+
+    const expectedResult = ["font-bold", "text-blue-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with defaultVariants", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      defaultVariants: {
+        // @ts-ignore TODO: fix this
+        isBig: true,
+        // @ts-ignore TODO: fix this
+        color: "red",
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with screenVariants single values", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: {
+        // @ts-ignore TODO: fix this
+        xs: "blue",
+        // @ts-ignore TODO: fix this
+        sm: "red",
+        md: "purple",
+        lg: "green",
+      },
+    });
+
+    const expectedResult = [
+      "font-bold",
+      "md:text-purple-500",
+      "lg:text-green-500",
+      "text-5xl",
+      "xs:text-blue-500",
+      "sm:text-red-500",
+    ];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with screenVariants multiple values", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500 bg-red-500",
+          blue: "text-blue-500 bg-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500 bg-purple-500",
+          green: "text-green-500 bg-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: {
+        // @ts-ignore TODO: fix this
+        xs: "blue",
+        // @ts-ignore TODO: fix this
+        sm: "red",
+        md: "purple",
+        lg: "green",
+      },
+    });
+
+    const expectedResult = [
+      "font-bold",
+      "md:text-purple-500",
+      "md:bg-purple-500",
+      "lg:text-green-500",
+      "lg:bg-green-500",
+      "text-5xl",
+      "xs:text-blue-500",
+      "xs:bg-blue-500",
+      "sm:text-red-500",
+      "sm:bg-red-500",
+    ];
+
+    expectTv(result, expectedResult);
+  });
 });
