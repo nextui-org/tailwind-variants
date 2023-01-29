@@ -1,5 +1,8 @@
 export type TVTransformer = {
-  (content: string): string;
+  tsx(content: string): string;
+  ts(content: string): string;
+  jsx(content: string): string;
+  js(content: string): string;
 };
 
 export declare const transformer: TVTransformer;

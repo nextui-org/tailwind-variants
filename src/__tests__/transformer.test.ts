@@ -6,7 +6,7 @@ describe("Responsive Variants", () => {
     const tvComponent = 'const button = tv({ variants: { color: { primary: "bg-blue-600" } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = transformer(sourceCode);
+    const result = transformer.js(sourceCode);
 
     const transformedContent = [
       {

@@ -83,7 +83,7 @@ const transformContent = (tv) => {
   return responsive;
 };
 
-export const transformer = (content) => {
+const tvTransformer = (content) => {
   try {
     // TODO: support package alias
     const isIncluded = content.includes("tailwind-variants");
@@ -106,4 +106,11 @@ export const transformer = (content) => {
   } catch (error) {
     return content;
   }
+};
+
+export const transformer = {
+  tsx: (content) => tvTransformer(content),
+  ts: (content) => tvTransformer(content),
+  jsx: (content) => tvTransformer(content),
+  js: (content) => tvTransformer(content),
 };
