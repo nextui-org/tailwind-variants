@@ -62,11 +62,15 @@
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
     "prettier-eslint-cli": "^5.0.1",
+    "tailwindcss": "^3.2.4",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
     "tsup": "6.4.0",
     "typescript": "4.6.2",
     "webpack": "^5.53.0"
+  },
+  "peerDependencies": {
+    "tailwindcss": "*"
   },
   "keywords": [
     "tailwindcss",
