@@ -1,13 +1,25 @@
-import {transformer} from "../transformer";
+import type {WithTV, TVTransformer} from "../transformer";
+
+import {tvTransformer, withTV} from "../transformer";
+
+const mock: {
+  withTV: WithTV;
+  transformer: TVTransformer;
+} = {
+  withTV: withTV,
+  transformer: (content) => `tv transformer: ${tvTransformer(content)}`,
+};
 
 describe("Responsive Variants", () => {
+  afterEach(() => jest.restoreAllMocks());
+
   test("should return a transformed content (string)", () => {
     const tvImport = 'import {tv} from "tailwind-variants";';
     const tvComponent =
       'const button = tv({ variants: { color: { primary: "text-blue-50 bg-blue-600 rounded" } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = transformer.js(sourceCode);
+    const result = tvTransformer(sourceCode);
 
     const transformedContent = [
       {
@@ -38,7 +50,7 @@ describe("Responsive Variants", () => {
       'const button = tv({ variants: { color: { primary: ["text-blue-50", "bg-blue-600", "rounded"] } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = transformer.js(sourceCode);
+    const result = tvTransformer(sourceCode);
 
     const transformedContent = [
       {
@@ -69,7 +81,7 @@ describe("Responsive Variants", () => {
       'const button = tv({ variants: { color: { primary: [["text-blue-50", "bg-blue-600"], "rounded"] } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = transformer.js(sourceCode);
+    const result = tvTransformer(sourceCode);
 
     const transformedContent = [
       {
@@ -100,7 +112,7 @@ describe("Responsive Variants", () => {
       'const button = tv({ slots: { base: "flex" }, variants: { color: { primary: { base: ["bg-blue-50 text-blue-900", ["dark:bg-blue-900", "dark:text-blue-50"]] } } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = transformer.js(sourceCode);
+    const result = tvTransformer(sourceCode);
 
     const transformedContent = [
       {
@@ -125,5 +137,70 @@ describe("Responsive Variants", () => {
     );
 
     expect(result).toBe(expectedResult);
+  });
+
+  test("should return tailwind config with built-in transformer (withTV content array)", () => {
+    const expectedResult = {
+      content: {
+        files: ["./src/**/*.{ts,tsx}"],
+        transform: {
+          ts: mock.transformer,
+          tsx: mock.transformer,
+        },
+      },
+    };
+
+    jest.spyOn(mock, "withTV").mockReturnValue(expectedResult);
+
+    const mockResult = mock.withTV({
+      content: ["./src/**/*.{ts,tsx}"],
+    });
+
+    expect(mock.withTV).toHaveBeenCalledTimes(1);
+    expect(mockResult).toMatchObject(expectedResult);
+  });
+
+  test("should return tailwind config with built-in transformer (withTV content object)", () => {
+    const expectedResult = {
+      content: {
+        files: ["./src/**/*.{vue,svelte}"],
+        transform: {
+          vue: mock.transformer,
+          svelte: mock.transformer,
+        },
+      },
+    };
+
+    jest.spyOn(mock, "withTV").mockReturnValue(expectedResult);
+
+    const mockResult = mock.withTV({
+      content: {
+        files: ["./src/**/*.{vue,svelte}"],
+      },
+    });
+
+    expect(mock.withTV).toHaveBeenCalledTimes(1);
+    expect(mockResult).toMatchObject(expectedResult);
+  });
+
+  test("should ignore the html file extension (withTV)", () => {
+    const expectedResult = {
+      content: {
+        files: ["./src/**/*.{js,jsx}"],
+        transform: {
+          ts: mock.transformer,
+          tsx: mock.transformer,
+        },
+      },
+    };
+
+    jest.spyOn(mock, "withTV").mockReturnValue(expectedResult);
+
+    const mockResult = mock.withTV({
+      content: ["./index.html", "./src/**/*.{js,jsx}"],
+    });
+
+    expect(mock.withTV).toHaveBeenCalledTimes(1);
+    expect(mockResult).toMatchObject(expectedResult);
   });
 });
