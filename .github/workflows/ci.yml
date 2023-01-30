@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  npm:
+  pnpm:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
