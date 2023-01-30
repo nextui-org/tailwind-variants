@@ -1061,11 +1061,10 @@ describe("Tailwind Variants (TV)", () => {
 
     const result = h1({
       isBig: true,
-      // @ts-expect-error TODO: fix this
-      color: "blue",
+      color: "red",
     });
 
-    const expectedResult = ["font-bold", "text-blue-500", "text-5xl"];
+    const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
 
     expectTv(result, expectedResult);
   });
@@ -1084,9 +1083,7 @@ describe("Tailwind Variants (TV)", () => {
         },
       },
       defaultVariants: {
-        // @ts-ignore TODO: fix this
         isBig: true,
-        // @ts-ignore TODO: fix this
         color: "red",
       },
     });
@@ -1134,9 +1131,7 @@ describe("Tailwind Variants (TV)", () => {
         },
       },
       defaultVariants: {
-        // @ts-ignore TODO: fix this
         isBig: true,
-        // @ts-ignore TODO: fix this
         color: "red",
       },
     });
@@ -1177,9 +1172,7 @@ describe("Tailwind Variants (TV)", () => {
         },
       },
       defaultVariants: {
-        // @ts-ignore TODO: fix this
         isBig: false,
-        // @ts-ignore TODO: fix this
         color: "red",
       },
     });
@@ -1269,7 +1262,6 @@ describe("Tailwind Variants (TV)", () => {
       compoundVariants: [
         {
           isBig: true,
-          // @ts-ignore TODO: fix this
           color: "green",
           class: "bg-green-500",
         },
@@ -1279,6 +1271,57 @@ describe("Tailwind Variants (TV)", () => {
     const result = h1();
 
     const expectedResult = ["font-bold", "bg-green-500", "text-green-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should override the extended classes with compoundVariants - children", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-500",
+        },
+      ],
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-600",
+        },
+      ],
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "bg-red-600", "text-red-500", "text-5xl"];
 
     expectTv(result, expectedResult);
   });
@@ -1312,9 +1355,7 @@ describe("Tailwind Variants (TV)", () => {
     const result = h1({
       isBig: true,
       color: {
-        // @ts-ignore TODO: fix this
         xs: "blue",
-        // @ts-ignore TODO: fix this
         sm: "red",
         md: "purple",
         lg: "green",
@@ -1362,9 +1403,7 @@ describe("Tailwind Variants (TV)", () => {
     const result = h1({
       isBig: true,
       color: {
-        // @ts-ignore TODO: fix this
         xs: "blue",
-        // @ts-ignore TODO: fix this
         sm: "red",
         md: "purple",
         lg: "green",
