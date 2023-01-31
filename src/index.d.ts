@@ -68,6 +68,7 @@ export type TVVariantKeys<V extends TVVariants<S>, S extends TVSlots> = V extend
 
 export type TVReturnProps<V extends TVVariants<S>, S extends TVSlots, B extends ClassValue> = {
   base: B;
+  slots: S;
   variants: V;
   defaultVariants: TVDefaultVariants<V, S>;
   compoundVariants: TVCompoundVariants<V, S, B>;
@@ -78,11 +79,14 @@ export type TVReturnType<
   V extends TVVariants<S>,
   EV extends TVVariants,
   S extends TVSlots,
+  ES extends TVSlots,
   B extends ClassValue,
 > = {
-  (props?: TVProps<V, EV, S>): S extends undefined
-    ? string
-    : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string};
+  (props?: TVProps<V, EV, S>): ES extends undefined
+    ? S extends undefined
+      ? string
+      : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string}
+    : {[K in TVSlotsWithBase<ES & S, B>]: (slotProps?: ClassProp) => string};
 } & TVReturnProps<V, S, B>;
 
 export type TV = {
@@ -95,6 +99,7 @@ export type TV = {
     S extends TVSlots = undefined,
     E extends ReturnType<TV> = undefined,
     EV extends TVVariants = E["variants"] extends TVVariants ? E["variants"] : undefined,
+    ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
   >(
     options: {
       extend?: E;
@@ -105,7 +110,7 @@ export type TV = {
       defaultVariants?: DV;
     },
     config?: C,
-  ): TVReturnType<V, EV, S, B>;
+  ): TVReturnType<V, EV, S, ES, B>;
 };
 
 export declare const tv: TV;

@@ -1035,7 +1035,7 @@ describe("Tailwind Variants (TV)", () => {
 
   test("should include the extended classes with variants", () => {
     const p = tv({
-      base: "text-base text-green-500",
+      base: "p--base text-base text-green-500",
       variants: {
         isBig: {
           true: "text-5xl",
@@ -1064,7 +1064,43 @@ describe("Tailwind Variants (TV)", () => {
       color: "red",
     });
 
-    const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
+    const expectedResult = ["font-bold", "text-red-500", "text-5xl", "p--base"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should override the extended classes with variants", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500 bg-red-100",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          red: "text-red-200",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: "red",
+    });
+
+    const expectedResult = ["font-bold", "text-red-200", "bg-red-100", "text-5xl"];
 
     expectTv(result, expectedResult);
   });
@@ -1424,5 +1460,63 @@ describe("Tailwind Variants (TV)", () => {
     ];
 
     expectTv(result, expectedResult);
+  });
+
+  test("should include the extended slots w/o children slots", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase"]);
+    expectTv(item(), ["item--menuBase"]);
+    expectTv(list(), ["list--menuBase"]);
+    expectTv(wrapper(), ["wrapper--menuBase"]);
+  });
+
+  test("should include the extended slots w/ children slots", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu"]);
+    expectTv(item(), ["item--menuBase", "item--menu"]);
+    expectTv(list(), ["list--menuBase", "list--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
   });
 });

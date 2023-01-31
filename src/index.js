@@ -1,5 +1,6 @@
 import {
   cx,
+  cxBase,
   isEmptyObject,
   falsyToString,
   joinObjects,
@@ -21,9 +22,31 @@ export const tv = (
     defaultVariants = {},
   } = options;
 
+  const base = cxBase(options?.extend?.base, options?.base);
+
+  const componentSlots = !isEmptyObject(slotProps)
+    ? {
+        // add "base" to the slots object
+        base: options?.base,
+        ...slotProps,
+      }
+    : {};
+
+  // merge slots with the "extended" slots
+  const slots = isEmptyObject(options?.extend?.slots)
+    ? componentSlots
+    : joinObjects(
+        options?.extend?.slots,
+        isEmptyObject(componentSlots) ? {base: options?.base} : componentSlots,
+      );
+
   const component = (props) => {
-    if (isEmptyObject(variants) && isEmptyObject(slotProps)) {
-      return cx(options?.extend?.base, options?.base, props?.class, props?.className)(config);
+    if (
+      isEmptyObject(variants) &&
+      isEmptyObject(slotProps) &&
+      isEmptyObject(options?.extend?.slots)
+    ) {
+      return cx(base, props?.class, props?.className)(config);
     }
 
     if (compoundVariants && !Array.isArray(compoundVariants)) {
@@ -31,12 +54,6 @@ export const tv = (
         `The "compoundVariants" prop must be an array. Received: ${typeof compoundVariants}`,
       );
     }
-
-    // add "base" to the slots object
-    const slots = {
-      base: options?.base,
-      ...slotProps,
-    };
 
     const getScreenVariantValues = (screen, screenVariantValue, acc = [], slotKey) => {
       let result = acc;
@@ -194,7 +211,7 @@ export const tv = (
     };
 
     // slots variants
-    if (!isEmptyObject(slotProps)) {
+    if (!isEmptyObject(slotProps) || !isEmptyObject(options?.extend?.slots)) {
       const compoundClassNames = getCompoundVariantClassNamesBySlot() ?? [];
 
       const slotsFns =
@@ -220,7 +237,7 @@ export const tv = (
 
     // normal variants
     return cx(
-      options?.base,
+      base,
       getVariantClassNames(),
       getCompoundVariantClassNames(),
       props?.class,
@@ -236,9 +253,30 @@ export const tv = (
 
   component.variantkeys = getVariantKeys();
   component.base = options?.base;
+  component.slots = slots;
   component.variants = variants;
   component.defaultVariants = defaultVariants;
   component.compoundVariants = compoundVariants;
 
   return component;
 };
+
+// const menuBase = tv({
+//   base: "base--menuBase",
+//   slots: {
+//     title: "title--menuBase",
+//     item: "item--menuBase",
+//     list: "list--menuBase",
+//     wrapper: "wrapper--menuBase",
+//   },
+// });
+
+// const menu = tv({
+//   extend: menuBase,
+//   base: "base--menu",
+// });
+
+// // with default values
+// const {base} = menu();
+
+// console.log(base());
