@@ -260,23 +260,3 @@ export const tv = (
 
   return component;
 };
-
-// const menuBase = tv({
-//   base: "base--menuBase",
-//   slots: {
-//     title: "title--menuBase",
-//     item: "item--menuBase",
-//     list: "list--menuBase",
-//     wrapper: "wrapper--menuBase",
-//   },
-// });
-
-// const menu = tv({
-//   extend: menuBase,
-//   base: "base--menu",
-// });
-
-// // with default values
-// const {base} = menu();
-
-// console.log(base());
