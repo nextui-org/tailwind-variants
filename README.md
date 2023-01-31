@@ -18,9 +18,85 @@
 </p>
 
 
-# Tailwind Variants
+## Features
 
-🚧 Under construction - please check back later
+- Zero runtime 
+- First-class variant API
+- Responsive variants
+- Slots support
+- Composition support
+- Fully typed
+- Framework agnostic
+- Automatic conflict resolution
+
+## Documentation
+
+For full documentation, visit [tailwind-variants.org](https://tailwind-variants.org)
+
+## Quick Start
+
+1. Installation: 
+To use Tailwind Variants in your project, you can install it as a dependency:
+
+```bash
+yarn add tailwind-variants
+# or
+npm i tailwind-variants
+```
+
+2. Usage:
+
+```js
+import { tv } from 'tailwind-variants';
+ 
+const button = tv({
+  base: "font-medium bg-blue-500 text-white rounded-full active:opacity-80",
+  variants: {
+    color: {
+      primary: "bg-blue-500 text-white",
+      secondary: "bg-purple-500 text-white",
+    },
+    size: {
+      sm: "text-sm",
+      md: "text-base",
+      lg: "px-4 py-3 text-lg",
+    },
+  },
+  compoundVariants: [
+    {
+      size: ["sm", "md"],
+      class: "px-3 py-1",
+    },
+  ],
+  defaultVariants: {
+    size: "md",
+    color: "primary",
+  }
+});
+ 
+return (
+  <button className={button({ size: 'sm', color: 'secondary' })}>Click me</button>
+)
+```
+
+3. Responsive variants configuration (optional): If you want to use responsive variants
+you need to add the Tailwind Variants `wrapper` to your TailwindCSS config file `tailwind.config.js`.
+
+```js
+// tailwind.config.js
+ 
+const { withTV } = require('tailwind-variants/transformer')
+ 
+/** @type {import('tailwindcss').Config} */
+module.exports = withTV({
+  content:  ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+})
+```
+
 
 ## Acknowledgements
 
@@ -30,13 +106,15 @@
 - [**Stitches**](https://stitches.dev/) ([Modulz](https://modulz.app))  
   The pioneers of the `variants` API movement. Inmense thanks to [Modulz](https://modulz.app) for their work on Stitches and the community around it. 🙏
 
-## Installation
 
-```sh
-yarn add tailwind-variants
-#or
-npm i tailwind-variants
-```
+## Community
+
+We're excited to see the community adopt NextUI, raise issues, and provide feedback. Whether it's a feature request, bug report, or a project to showcase, please get involved!
+
+- [Discord](https://discord.gg/9b6yyZKmH4)
+- [Twitter](https://twitter.com/getnextui)
+- [GitHub Discussions](https://github.com/nextui-org/tailwind-variants/discussions)
+
 ## Contributing
 
 Contributions are always welcome!
