@@ -11,6 +11,45 @@ const expectKeys = (result: string[], expectedResult: string[]) => {
 };
 
 describe("Tailwind Variants (TV)", () => {
+  test("should work with nested arrays", () => {
+    const menu = tv({
+      base: ["base--styles-1", ["base--styles-2", ["base--styles-3"]]],
+      slots: {
+        item: ["slots--item-1", ["slots--item-2", ["slots--item-3"]]],
+      },
+      variants: {
+        color: {
+          primary: {
+            item: [
+              "item--color--primary-1",
+              ["item--color--primary-2", ["item--color--primary-3"]],
+            ],
+          },
+        },
+      },
+    });
+
+    const popover = tv({
+      variants: {
+        isOpen: {
+          true: ["isOpen--true-1", ["isOpen--true-2", ["isOpen--true-3"]]],
+          false: ["isOpen--false-1", ["isOpen--false-2", ["isOpen--false-3"]]],
+        },
+      },
+    });
+
+    const {base, item} = menu({color: "primary"});
+
+    expectTv(base(), ["base--styles-1", "base--styles-2", "base--styles-3"]);
+    expectTv(item(), [
+      "item--color--primary-1",
+      "item--color--primary-2",
+      "item--color--primary-3",
+    ]);
+    expectTv(popover({isOpen: true}), ["isOpen--true-1", "isOpen--true-2", "isOpen--true-3"]);
+    expectTv(popover({isOpen: false}), ["isOpen--false-1", "isOpen--false-2", "isOpen--false-3"]);
+  });
+
   test("should work without variants", () => {
     const h1 = tv({
       base: "text-3xl font-bold",
