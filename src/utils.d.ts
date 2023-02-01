@@ -1,6 +1,6 @@
 import {TVConfig} from "./config";
 
-export declare type ClassValue = string | string[] | null | undefined;
+export declare type ClassValue = string | string[] | null | undefined | ClassValue[];
 
 export declare type ClassProp<V extends unknown = ClassValue> =
   | {
