@@ -1108,6 +1108,63 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(result, expectedResult);
   });
 
+  test("should include nested the extended classes", () => {
+    const base = tv({
+      base: "text-base",
+      variants: {
+        color: {
+          red: "color--red",
+        },
+      },
+    });
+
+    const p = tv({
+      extend: base,
+      base: "text-green-500",
+      variants: {
+        color: {
+          blue: "color--blue",
+          yellow: "color--yellow",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          green: "color--green",
+        },
+      },
+    });
+
+    const result = h1({
+      // @ts-ignore TODO: should have the grand parent variants
+      color: "red",
+    });
+
+    const expectedResult = ["text-3xl", "font-bold", "text-green-500", "color--red"];
+
+    expectTv(result, expectedResult);
+
+    const result2 = h1({
+      color: "blue",
+    });
+
+    const expectedResult2 = ["text-3xl", "font-bold", "text-green-500", "color--blue"];
+
+    expectTv(result2, expectedResult2);
+
+    const result3 = h1({
+      color: "green",
+    });
+
+    const expectedResult3 = ["text-3xl", "font-bold", "text-green-500", "color--green"];
+
+    expectTv(result3, expectedResult3);
+  });
+
   test("should override the extended classes with variants", () => {
     const p = tv({
       base: "text-base text-green-500",
