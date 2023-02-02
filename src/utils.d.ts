@@ -26,6 +26,8 @@ export declare const isEmptyObject: (obj: object) => boolean;
 
 export declare const joinObjects: (obj1: object, obj2: object) => object;
 
+export declare const mergeObjects: (obj1: object, obj2: object) => object;
+
 export declare const removeExtraSpaces: (str: string) => string;
 
 export declare const flatMergeArrays: <T>(...arrays: T[]) => T;

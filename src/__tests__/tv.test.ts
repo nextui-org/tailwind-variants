@@ -1527,6 +1527,82 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(wrapper(), ["wrapper--menuBase"]);
   });
 
+  test("should include the extended slots w/ variants -- parent", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        isBig: {
+          true: {
+            title: "title--isBig--menu",
+            item: "item--isBig--menu",
+            list: "list--isBig--menu",
+            wrapper: "wrapper--isBig--menu",
+          },
+          false: "isBig--menu",
+        },
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+    });
+
+    const {base, title, item, list, wrapper} = menu({
+      isBig: true,
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--isBig--menu"]);
+    expectTv(item(), ["item--menuBase", "item--isBig--menu"]);
+    expectTv(list(), ["list--menuBase", "list--isBig--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--isBig--menu"]);
+  });
+
+  test("should include the extended slots w/ variants -- children", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      variants: {
+        isBig: {
+          true: {
+            title: "title--isBig--menu",
+            item: "item--isBig--menu",
+            list: "list--isBig--menu",
+            wrapper: "wrapper--isBig--menu",
+          },
+          false: "isBig--menu",
+        },
+      },
+    });
+
+    const {base, title, item, list, wrapper} = menu({
+      isBig: true,
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--isBig--menu"]);
+    expectTv(item(), ["item--menuBase", "item--isBig--menu"]);
+    expectTv(list(), ["list--menuBase", "list--isBig--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--isBig--menu"]);
+  });
+
   test("should include the extended slots w/ children slots", () => {
     const menuBase = tv({
       base: "base--menuBase",
@@ -1557,5 +1633,291 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(item(), ["item--menuBase", "item--menu"]);
     expectTv(list(), ["list--menuBase", "list--menu"]);
     expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+  });
+
+  test("should include the extended variants w/slots and defaultVariants -- parent", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
+          },
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu", "isBig--title--menuBase"]);
+    expectTv(item(), ["item--menuBase", "item--menu", "isBig--item--menuBase"]);
+    expectTv(list(), ["list--menuBase", "list--menu", "isBig--list--menuBase"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu", "isBig--wrapper--menuBase"]);
+  });
+
+  test("should include the extended variants w/slots and defaultVariants -- children", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
+          },
+        },
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+      defaultVariants: {
+        isBig: true,
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu", "isBig--title--menuBase"]);
+    expectTv(item(), ["item--menuBase", "item--menu", "isBig--item--menuBase"]);
+    expectTv(list(), ["list--menuBase", "list--menu", "isBig--list--menuBase"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu", "isBig--wrapper--menuBase"]);
+  });
+
+  test("should include the extended variants w/slots and compoundVariants -- parent", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        color: {
+          red: {
+            title: "color--red--title--menuBase",
+            item: "color--red--item--menuBase",
+            list: "color--red--list--menuBase",
+            wrapper: "color--red--wrapper--menuBase",
+          },
+          blue: {
+            title: "color--blue--title--menuBase",
+            item: "color--blue--item--menuBase",
+            list: "color--blue--list--menuBase",
+            wrapper: "color--blue--wrapper--menuBase",
+          },
+        },
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
+          },
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "blue",
+      },
+      compoundVariants: [
+        {
+          color: "red",
+          isBig: true,
+          class: {
+            title: "color--red--isBig--title--menuBase",
+            item: "color--red--isBig--item--menuBase",
+            list: "color--red--isBig--list--menuBase",
+            wrapper: "color--red--isBig--wrapper--menuBase",
+          },
+        },
+      ],
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu({
+      color: "red",
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), [
+      "title--menuBase",
+      "title--menu",
+      "isBig--title--menuBase",
+      "color--red--title--menuBase",
+      "color--red--isBig--title--menuBase",
+    ]);
+    expectTv(item(), [
+      "item--menuBase",
+      "item--menu",
+      "isBig--item--menuBase",
+      "color--red--item--menuBase",
+      "color--red--isBig--item--menuBase",
+    ]);
+    expectTv(list(), [
+      "list--menuBase",
+      "list--menu",
+      "isBig--list--menuBase",
+      "color--red--list--menuBase",
+      "color--red--isBig--list--menuBase",
+    ]);
+    expectTv(wrapper(), [
+      "wrapper--menuBase",
+      "wrapper--menu",
+      "isBig--wrapper--menuBase",
+      "color--red--wrapper--menuBase",
+      "color--red--isBig--wrapper--menuBase",
+    ]);
+  });
+
+  test("should include the extended variants w/slots and compoundVariants -- children", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        color: {
+          red: {
+            title: "color--red--title--menuBase",
+            item: "color--red--item--menuBase",
+            list: "color--red--list--menuBase",
+            wrapper: "color--red--wrapper--menuBase",
+          },
+          blue: {
+            title: "color--blue--title--menuBase",
+            item: "color--blue--item--menuBase",
+            list: "color--blue--list--menuBase",
+            wrapper: "color--blue--wrapper--menuBase",
+          },
+        },
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
+          },
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "blue",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+      compoundVariants: [
+        {
+          color: "red",
+          isBig: true,
+          class: {
+            title: "color--red--isBig--title--menuBase",
+            item: "color--red--isBig--item--menuBase",
+            list: "color--red--isBig--list--menuBase",
+            wrapper: "color--red--isBig--wrapper--menuBase",
+          },
+        },
+      ],
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu({
+      color: "red",
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), [
+      "title--menuBase",
+      "title--menu",
+      "isBig--title--menuBase",
+      "color--red--title--menuBase",
+      "color--red--isBig--title--menuBase",
+    ]);
+    expectTv(item(), [
+      "item--menuBase",
+      "item--menu",
+      "isBig--item--menuBase",
+      "color--red--item--menuBase",
+      "color--red--isBig--item--menuBase",
+    ]);
+    expectTv(list(), [
+      "list--menuBase",
+      "list--menu",
+      "isBig--list--menuBase",
+      "color--red--list--menuBase",
+      "color--red--isBig--list--menuBase",
+    ]);
+    expectTv(wrapper(), [
+      "wrapper--menuBase",
+      "wrapper--menu",
+      "isBig--wrapper--menuBase",
+      "color--red--wrapper--menuBase",
+      "color--red--isBig--wrapper--menuBase",
+    ]);
   });
 });

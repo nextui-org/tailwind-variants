@@ -3,6 +3,7 @@ import {
   cxBase,
   isEmptyObject,
   falsyToString,
+  mergeObjects,
   joinObjects,
   removeExtraSpaces,
   flatMergeArrays,
@@ -17,12 +18,14 @@ export const tv = (
 ) => {
   const {
     slots: slotProps = {},
-    variants = {},
+    variants: variantsProps = {},
     compoundVariants = [],
-    defaultVariants = {},
+    defaultVariants: defaultVariantsProps = {},
   } = options;
 
   const base = cxBase(options?.extend?.base, options?.base);
+  const variants = mergeObjects(variantsProps, options?.extend?.variants);
+  const defaultVariants = Object.assign({}, options?.extend?.defaultVariants, defaultVariantsProps);
 
   const componentSlots = !isEmptyObject(slotProps)
     ? {
@@ -91,8 +94,7 @@ export const tv = (
       }
 
       const variantProp = props?.[variant];
-      let defaultVariantProp =
-        defaultVariants?.[variant] ?? options?.extend?.defaultVariants?.[variant];
+      let defaultVariantProp = defaultVariants?.[variant];
       let screenValues = [];
 
       if (variantProp === null) return null;
@@ -166,9 +168,7 @@ export const tv = (
         ?.filter(({class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
           Object.entries(compoundVariantOptions).every(([key, value]) => {
             const initialProp = typeof props?.[key] === "object" ? props[key]?.initial : {};
-            const extendedDefaultVariants = options?.extend?.defaultVariants ?? {};
             const compoundProps = {
-              ...extendedDefaultVariants,
               ...defaultVariants,
               ...initialProp,
               ...propsWithoutUndefined,
@@ -252,7 +252,7 @@ export const tv = (
   };
 
   component.variantkeys = getVariantKeys();
-  component.base = options?.base;
+  component.base = base;
   component.slots = slots;
   component.variants = variants;
   component.defaultVariants = defaultVariants;
