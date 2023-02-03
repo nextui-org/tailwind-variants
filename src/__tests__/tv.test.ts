@@ -11,6 +11,45 @@ const expectKeys = (result: string[], expectedResult: string[]) => {
 };
 
 describe("Tailwind Variants (TV)", () => {
+  test("should work with nested arrays", () => {
+    const menu = tv({
+      base: ["base--styles-1", ["base--styles-2", ["base--styles-3"]]],
+      slots: {
+        item: ["slots--item-1", ["slots--item-2", ["slots--item-3"]]],
+      },
+      variants: {
+        color: {
+          primary: {
+            item: [
+              "item--color--primary-1",
+              ["item--color--primary-2", ["item--color--primary-3"]],
+            ],
+          },
+        },
+      },
+    });
+
+    const popover = tv({
+      variants: {
+        isOpen: {
+          true: ["isOpen--true-1", ["isOpen--true-2", ["isOpen--true-3"]]],
+          false: ["isOpen--false-1", ["isOpen--false-2", ["isOpen--false-3"]]],
+        },
+      },
+    });
+
+    const {base, item} = menu({color: "primary"});
+
+    expectTv(base(), ["base--styles-1", "base--styles-2", "base--styles-3"]);
+    expectTv(item(), [
+      "item--color--primary-1",
+      "item--color--primary-2",
+      "item--color--primary-3",
+    ]);
+    expectTv(popover({isOpen: true}), ["isOpen--true-1", "isOpen--true-2", "isOpen--true-3"]);
+    expectTv(popover({isOpen: false}), ["isOpen--false-1", "isOpen--false-2", "isOpen--false-3"]);
+  });
+
   test("should work without variants", () => {
     const h1 = tv({
       base: "text-3xl font-bold",
@@ -1017,42 +1056,925 @@ describe("Tailwind Variants (TV)", () => {
     ]);
   });
 
-  test("should work with nested arrays", () => {
-    const menu = tv({
-      base: ["base--styles-1", ["base--styles-2", ["base--styles-3"]]],
-      slots: {
-        item: ["slots--item-1", ["slots--item-2", ["slots--item-3"]]],
+  test("should include the extended classes", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+    });
+
+    const result = h1();
+    const expectedResult = ["text-3xl", "font-bold", "text-green-500"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with variants", () => {
+    const p = tv({
+      base: "p--base text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
       },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
       variants: {
         color: {
-          primary: {
-            item: [
-              "item--color--primary-1",
-              ["item--color--primary-2", ["item--color--primary-3"]],
-            ],
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: "red",
+    });
+
+    const expectedResult = ["font-bold", "text-red-500", "text-5xl", "p--base"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include nested the extended classes", () => {
+    const base = tv({
+      base: "text-base",
+      variants: {
+        color: {
+          red: "color--red",
+        },
+      },
+    });
+
+    const p = tv({
+      extend: base,
+      base: "text-green-500",
+      variants: {
+        color: {
+          blue: "color--blue",
+          yellow: "color--yellow",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          green: "color--green",
+        },
+      },
+    });
+
+    const result = h1({
+      // @ts-ignore TODO: should have the grand parent variants
+      color: "red",
+    });
+
+    const expectedResult = ["text-3xl", "font-bold", "text-green-500", "color--red"];
+
+    expectTv(result, expectedResult);
+
+    const result2 = h1({
+      color: "blue",
+    });
+
+    const expectedResult2 = ["text-3xl", "font-bold", "text-green-500", "color--blue"];
+
+    expectTv(result2, expectedResult2);
+
+    const result3 = h1({
+      color: "green",
+    });
+
+    const expectedResult3 = ["text-3xl", "font-bold", "text-green-500", "color--green"];
+
+    expectTv(result3, expectedResult3);
+  });
+
+  test("should override the extended classes with variants", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500 bg-red-100",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          red: "text-red-200",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: "red",
+    });
+
+    const expectedResult = ["font-bold", "text-red-200", "bg-red-100", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with defaultVariants - parent", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with defaultVariants - children", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should override the extended defaultVariants - children", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "blue",
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      defaultVariants: {
+        isBig: false,
+        color: "red",
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "text-2xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with compoundVariants - parent", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-500",
+        },
+      ],
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "text-red-500", "bg-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with compoundVariants - children", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      defaultVariants: {
+        color: "green",
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "green",
+          class: "bg-green-500",
+        },
+      ],
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "bg-green-500", "text-green-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should override the extended classes with compoundVariants - children", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-500",
+        },
+      ],
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-600",
+        },
+      ],
+    });
+
+    const result = h1();
+
+    const expectedResult = ["font-bold", "bg-red-600", "text-red-500", "text-5xl"];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with screenVariants single values", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500",
+          green: "text-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: {
+        xs: "blue",
+        sm: "red",
+        md: "purple",
+        lg: "green",
+      },
+    });
+
+    const expectedResult = [
+      "font-bold",
+      "md:text-purple-500",
+      "lg:text-green-500",
+      "text-5xl",
+      "xs:text-blue-500",
+      "sm:text-red-500",
+    ];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended classes with screenVariants multiple values", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: "text-2xl",
+        },
+        color: {
+          red: "text-red-500 bg-red-500",
+          blue: "text-blue-500 bg-blue-500",
+        },
+      },
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        color: {
+          purple: "text-purple-500 bg-purple-500",
+          green: "text-green-500 bg-green-500",
+        },
+      },
+    });
+
+    const result = h1({
+      isBig: true,
+      color: {
+        xs: "blue",
+        sm: "red",
+        md: "purple",
+        lg: "green",
+      },
+    });
+
+    const expectedResult = [
+      "font-bold",
+      "md:text-purple-500",
+      "md:bg-purple-500",
+      "lg:text-green-500",
+      "lg:bg-green-500",
+      "text-5xl",
+      "xs:text-blue-500",
+      "xs:bg-blue-500",
+      "sm:text-red-500",
+      "sm:bg-red-500",
+    ];
+
+    expectTv(result, expectedResult);
+  });
+
+  test("should include the extended slots w/o children slots", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase"]);
+    expectTv(item(), ["item--menuBase"]);
+    expectTv(list(), ["list--menuBase"]);
+    expectTv(wrapper(), ["wrapper--menuBase"]);
+  });
+
+  test("should include the extended slots w/ variants -- parent", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        isBig: {
+          true: {
+            title: "title--isBig--menu",
+            item: "item--isBig--menu",
+            list: "list--isBig--menu",
+            wrapper: "wrapper--isBig--menu",
+          },
+          false: "isBig--menu",
+        },
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+    });
+
+    const {base, title, item, list, wrapper} = menu({
+      isBig: true,
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--isBig--menu"]);
+    expectTv(item(), ["item--menuBase", "item--isBig--menu"]);
+    expectTv(list(), ["list--menuBase", "list--isBig--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--isBig--menu"]);
+  });
+
+  test("should include the extended slots w/ variants -- children", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      variants: {
+        isBig: {
+          true: {
+            title: "title--isBig--menu",
+            item: "item--isBig--menu",
+            list: "list--isBig--menu",
+            wrapper: "wrapper--isBig--menu",
+          },
+          false: "isBig--menu",
+        },
+      },
+    });
+
+    const {base, title, item, list, wrapper} = menu({
+      isBig: true,
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--isBig--menu"]);
+    expectTv(item(), ["item--menuBase", "item--isBig--menu"]);
+    expectTv(list(), ["list--menuBase", "list--isBig--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--isBig--menu"]);
+  });
+
+  test("should include the extended slots w/ children slots", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu"]);
+    expectTv(item(), ["item--menuBase", "item--menu"]);
+    expectTv(list(), ["list--menuBase", "list--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+  });
+
+  test("should include the extended variants w/slots and defaultVariants -- parent", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
+          },
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu", "isBig--title--menuBase"]);
+    expectTv(item(), ["item--menuBase", "item--menu", "isBig--item--menuBase"]);
+    expectTv(list(), ["list--menuBase", "list--menu", "isBig--list--menuBase"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu", "isBig--wrapper--menuBase"]);
+  });
+
+  test("should include the extended variants w/slots and defaultVariants -- children", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
           },
         },
       },
     });
 
-    const popover = tv({
-      variants: {
-        isOpen: {
-          true: ["isOpen--true-1", ["isOpen--true-2", ["isOpen--true-3"]]],
-          false: ["isOpen--false-1", ["isOpen--false-2", ["isOpen--false-3"]]],
-        },
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+      defaultVariants: {
+        isBig: true,
       },
     });
 
-    const {base, item} = menu({color: "primary"});
+    // with default values
+    const {base, title, item, list, wrapper} = menu();
 
-    expectTv(base(), ["base--styles-1", "base--styles-2", "base--styles-3"]);
-    expectTv(item(), [
-      "item--color--primary-1",
-      "item--color--primary-2",
-      "item--color--primary-3",
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu", "isBig--title--menuBase"]);
+    expectTv(item(), ["item--menuBase", "item--menu", "isBig--item--menuBase"]);
+    expectTv(list(), ["list--menuBase", "list--menu", "isBig--list--menuBase"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu", "isBig--wrapper--menuBase"]);
+  });
+
+  test("should include the extended variants w/slots and compoundVariants -- parent", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        color: {
+          red: {
+            title: "color--red--title--menuBase",
+            item: "color--red--item--menuBase",
+            list: "color--red--list--menuBase",
+            wrapper: "color--red--wrapper--menuBase",
+          },
+          blue: {
+            title: "color--blue--title--menuBase",
+            item: "color--blue--item--menuBase",
+            list: "color--blue--list--menuBase",
+            wrapper: "color--blue--wrapper--menuBase",
+          },
+        },
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
+          },
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "blue",
+      },
+      compoundVariants: [
+        {
+          color: "red",
+          isBig: true,
+          class: {
+            title: "color--red--isBig--title--menuBase",
+            item: "color--red--isBig--item--menuBase",
+            list: "color--red--isBig--list--menuBase",
+            wrapper: "color--red--isBig--wrapper--menuBase",
+          },
+        },
+      ],
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu({
+      color: "red",
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), [
+      "title--menuBase",
+      "title--menu",
+      "isBig--title--menuBase",
+      "color--red--title--menuBase",
+      "color--red--isBig--title--menuBase",
     ]);
-    expectTv(popover({isOpen: true}), ["isOpen--true-1", "isOpen--true-2", "isOpen--true-3"]);
-    expectTv(popover({isOpen: false}), ["isOpen--false-1", "isOpen--false-2", "isOpen--false-3"]);
+    expectTv(item(), [
+      "item--menuBase",
+      "item--menu",
+      "isBig--item--menuBase",
+      "color--red--item--menuBase",
+      "color--red--isBig--item--menuBase",
+    ]);
+    expectTv(list(), [
+      "list--menuBase",
+      "list--menu",
+      "isBig--list--menuBase",
+      "color--red--list--menuBase",
+      "color--red--isBig--list--menuBase",
+    ]);
+    expectTv(wrapper(), [
+      "wrapper--menuBase",
+      "wrapper--menu",
+      "isBig--wrapper--menuBase",
+      "color--red--wrapper--menuBase",
+      "color--red--isBig--wrapper--menuBase",
+    ]);
+  });
+
+  test("should include the extended variants w/slots and compoundVariants -- children", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+      variants: {
+        color: {
+          red: {
+            title: "color--red--title--menuBase",
+            item: "color--red--item--menuBase",
+            list: "color--red--list--menuBase",
+            wrapper: "color--red--wrapper--menuBase",
+          },
+          blue: {
+            title: "color--blue--title--menuBase",
+            item: "color--blue--item--menuBase",
+            list: "color--blue--list--menuBase",
+            wrapper: "color--blue--wrapper--menuBase",
+          },
+        },
+        isBig: {
+          true: {
+            title: "isBig--title--menuBase",
+            item: "isBig--item--menuBase",
+            list: "isBig--list--menuBase",
+            wrapper: "isBig--wrapper--menuBase",
+          },
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "blue",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+      },
+      compoundVariants: [
+        {
+          color: "red",
+          isBig: true,
+          class: {
+            title: "color--red--isBig--title--menuBase",
+            item: "color--red--isBig--item--menuBase",
+            list: "color--red--isBig--list--menuBase",
+            wrapper: "color--red--isBig--wrapper--menuBase",
+          },
+        },
+      ],
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper} = menu({
+      color: "red",
+    });
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), [
+      "title--menuBase",
+      "title--menu",
+      "isBig--title--menuBase",
+      "color--red--title--menuBase",
+      "color--red--isBig--title--menuBase",
+    ]);
+    expectTv(item(), [
+      "item--menuBase",
+      "item--menu",
+      "isBig--item--menuBase",
+      "color--red--item--menuBase",
+      "color--red--isBig--item--menuBase",
+    ]);
+    expectTv(list(), [
+      "list--menuBase",
+      "list--menu",
+      "isBig--list--menuBase",
+      "color--red--list--menuBase",
+      "color--red--isBig--list--menuBase",
+    ]);
+    expectTv(wrapper(), [
+      "wrapper--menuBase",
+      "wrapper--menu",
+      "isBig--wrapper--menuBase",
+      "color--red--wrapper--menuBase",
+      "color--red--isBig--wrapper--menuBase",
+    ]);
   });
 });

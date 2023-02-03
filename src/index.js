@@ -1,4 +1,13 @@
-import {cx, isNotEmptyObject, falsyToString, joinObjects, removeExtraSpaces} from "./utils.js";
+import {
+  cx,
+  cxBase,
+  isEmptyObject,
+  falsyToString,
+  mergeObjects,
+  joinObjects,
+  removeExtraSpaces,
+  flatMergeArrays,
+} from "./utils.js";
 
 export const tv = (
   options,
@@ -9,14 +18,38 @@ export const tv = (
 ) => {
   const {
     slots: slotProps = {},
-    variants = {},
+    variants: variantsProps = {},
     compoundVariants = [],
-    defaultVariants = {},
+    defaultVariants: defaultVariantsProps = {},
   } = options;
 
+  const base = cxBase(options?.extend?.base, options?.base);
+  const variants = mergeObjects(variantsProps, options?.extend?.variants);
+  const defaultVariants = Object.assign({}, options?.extend?.defaultVariants, defaultVariantsProps);
+
+  const componentSlots = !isEmptyObject(slotProps)
+    ? {
+        // add "base" to the slots object
+        base: options?.base,
+        ...slotProps,
+      }
+    : {};
+
+  // merge slots with the "extended" slots
+  const slots = isEmptyObject(options?.extend?.slots)
+    ? componentSlots
+    : joinObjects(
+        options?.extend?.slots,
+        isEmptyObject(componentSlots) ? {base: options?.base} : componentSlots,
+      );
+
   const component = (props) => {
-    if (variants == null && !isNotEmptyObject(slotProps)) {
-      return cx(options?.base, props?.class, props?.className)(config);
+    if (
+      isEmptyObject(variants) &&
+      isEmptyObject(slotProps) &&
+      isEmptyObject(options?.extend?.slots)
+    ) {
+      return cx(base, props?.class, props?.className)(config);
     }
 
     if (compoundVariants && !Array.isArray(compoundVariants)) {
@@ -24,12 +57,6 @@ export const tv = (
         `The "compoundVariants" prop must be an array. Received: ${typeof compoundVariants}`,
       );
     }
-
-    // add "base" to the slots object
-    const slots = {
-      base: options?.base,
-      ...slotProps,
-    };
 
     const getScreenVariantValues = (screen, screenVariantValue, acc = [], slotKey) => {
       let result = acc;
@@ -59,10 +86,10 @@ export const tv = (
       return result;
     };
 
-    const getVariantValue = (variant, slotKey = null) => {
-      const variantObj = variants?.[variant];
+    const getVariantValue = (variant, vrs = variants, slotKey = null) => {
+      const variantObj = vrs?.[variant];
 
-      if (typeof variantObj !== "object" || !isNotEmptyObject(variantObj)) {
+      if (typeof variantObj !== "object" || isEmptyObject(variantObj)) {
         return null;
       }
 
@@ -103,7 +130,18 @@ export const tv = (
       return screenValues.length > 0 ? [value, ...screenValues] : value;
     };
 
-    const getVariantClassNames = variants ? Object.keys(variants).map(getVariantValue) : null;
+    const getVariantClassNames = () => {
+      const variantValues = variants
+        ? Object.keys(variants).map((vk) => getVariantValue(vk, variants))
+        : null;
+      const extendedVariantValues = options?.extend?.variants
+        ? Object.keys(options.extend.variants).map((vk) =>
+            getVariantValue(vk, options.extend.variants),
+          )
+        : null;
+
+      return flatMergeArrays(extendedVariantValues, variantValues);
+    };
 
     const getVariantClassNamesBySlotKey = (slotKey) => {
       if (!variants || typeof variants !== "object") {
@@ -112,7 +150,7 @@ export const tv = (
 
       return Object.keys(variants)
         .map((variant) => {
-          const variantValue = getVariantValue(variant, slotKey);
+          const variantValue = getVariantValue(variant, variants, slotKey);
 
           return slotKey === "base" && typeof variantValue === "string"
             ? variantValue
@@ -124,22 +162,34 @@ export const tv = (
     const propsWithoutUndefined =
       props && Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined));
 
-    const getCompoundVariantClassNames = compoundVariants
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ?.filter(({class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
-        Object.entries(compoundVariantOptions).every(([key, value]) => {
-          const initialProp = typeof props?.[key] === "object" ? props[key]?.initial : {};
-          const compoundProps = {...defaultVariants, ...initialProp, ...propsWithoutUndefined};
+    const getCompoundVariantsValue = (cv = []) =>
+      cv
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ?.filter(({class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
+          Object.entries(compoundVariantOptions).every(([key, value]) => {
+            const initialProp = typeof props?.[key] === "object" ? props[key]?.initial : {};
+            const compoundProps = {
+              ...defaultVariants,
+              ...initialProp,
+              ...propsWithoutUndefined,
+            };
 
-          return Array.isArray(value)
-            ? value.includes(compoundProps[key])
-            : compoundProps[key] === value;
-        }),
-      )
-      .flatMap(({class: tvClass, className: tvClassName}) => [tvClass, tvClassName]);
+            return Array.isArray(value)
+              ? value.includes(compoundProps[key])
+              : compoundProps[key] === value;
+          }),
+        )
+        .flatMap(({class: tvClass, className: tvClassName}) => [tvClass, tvClassName]);
+
+    const getCompoundVariantClassNames = () => {
+      const cvValues = getCompoundVariantsValue(compoundVariants);
+      const ecvValues = getCompoundVariantsValue(options?.extend?.compoundVariants);
+
+      return flatMergeArrays(ecvValues, cvValues);
+    };
 
     const getCompoundVariantClassNamesBySlot = () => {
-      const compoundClassNames = getCompoundVariantClassNames;
+      const compoundClassNames = getCompoundVariantClassNames(compoundVariants);
 
       if (!Array.isArray(compoundClassNames)) {
         return compoundClassNames;
@@ -161,11 +211,11 @@ export const tv = (
     };
 
     // slots variants
-    if (isNotEmptyObject(slotProps)) {
+    if (!isEmptyObject(slotProps) || !isEmptyObject(options?.extend?.slots)) {
       const compoundClassNames = getCompoundVariantClassNamesBySlot() ?? [];
 
       const slotsFns =
-        typeof slots === "object" && isNotEmptyObject(slots)
+        typeof slots === "object" && !isEmptyObject(slots)
           ? Object.keys(slots).reduce((acc, slotKey) => {
               acc[slotKey] = (slotProps) =>
                 cx(
@@ -187,9 +237,9 @@ export const tv = (
 
     // normal variants
     return cx(
-      options?.base,
-      getVariantClassNames,
-      getCompoundVariantClassNames,
+      base,
+      getVariantClassNames(),
+      getCompoundVariantClassNames(),
       props?.class,
       props?.className,
     )(config);
@@ -202,6 +252,11 @@ export const tv = (
   };
 
   component.variantkeys = getVariantKeys();
+  component.base = base;
+  component.slots = slots;
+  component.variants = variants;
+  component.defaultVariants = defaultVariants;
+  component.compoundVariants = compoundVariants;
 
   return component;
 };
