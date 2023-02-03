@@ -1,3 +1,8 @@
+import resolveConfig from "tailwindcss/resolveConfig";
+
+import {generateTypes} from "./generator";
+import {isArray, isString, isObject, isFunction, isEmpty} from "./utils";
+
 // Ignore the `initial`
 // TODO: respect tailwind config
 const screens = ["xs", "sm", "md", "lg", "xl", "2xl"];
@@ -8,23 +13,6 @@ const regExp = {
   comment: /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm,
   blankLine: /^\s*$(?:\r\n?|\n)/gm,
   ext: /\.\w+/g,
-};
-
-const isArray = (param) => Array.isArray(param);
-
-const isString = (param) => typeof param === "string";
-
-const isObject = (param) => typeof param === "object";
-
-const isFunction = (param) => typeof param === "function";
-
-const isEmpty = (param) => {
-  if (!param) return true;
-  if (isArray(param) && param.length === 0) return true;
-  if (isString(param) && param.length === 0) return true;
-  if (isObject(param) && Object.keys(param).length === 0) return true;
-
-  return false;
 };
 
 const pipeline = (...funcs) => {
@@ -177,7 +165,10 @@ const getExtensions = (files) => {
 };
 
 export const withTV = (tailwindConfig) => {
-  let config = Object.assign({}, tailwindConfig);
+  let config = resolveConfig(tailwindConfig);
+
+  // dynamic types
+  generateTypes(config.theme);
 
   // invalid content
   if (isEmpty(config?.content) || isString(config.content)) return config;

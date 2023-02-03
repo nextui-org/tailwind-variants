@@ -31,3 +31,13 @@ export declare const mergeObjects: (obj1: object, obj2: object) => object;
 export declare const removeExtraSpaces: (str: string) => string;
 
 export declare const flatMergeArrays: <T>(...arrays: T[]) => T;
+
+export declare const isArray: (param: any) => boolean;
+
+export declare const isString: (param: any) => boolean;
+
+export declare const isObject: (param: any) => boolean;
+
+export declare const isFunction: (param: any) => boolean;
+
+export declare const isEmpty: (param: any) => boolean;
