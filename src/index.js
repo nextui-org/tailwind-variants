@@ -130,18 +130,8 @@ export const tv = (
       return screenValues.length > 0 ? [value, ...screenValues] : value;
     };
 
-    const getVariantClassNames = () => {
-      const variantValues = variants
-        ? Object.keys(variants).map((vk) => getVariantValue(vk, variants))
-        : null;
-      const extendedVariantValues = options?.extend?.variants
-        ? Object.keys(options.extend.variants).map((vk) =>
-            getVariantValue(vk, options.extend.variants),
-          )
-        : null;
-
-      return flatMergeArrays(extendedVariantValues, variantValues);
-    };
+    const getVariantClassNames = () =>
+      variants ? Object.keys(variants).map((vk) => getVariantValue(vk, variants)) : null;
 
     const getVariantClassNamesBySlotKey = (slotKey) => {
       if (!variants || typeof variants !== "object") {
