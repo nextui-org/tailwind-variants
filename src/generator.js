@@ -1,14 +1,22 @@
 import fs from "fs";
 import path from "path";
 
-export const generateTypes = (theme) => {
-  if (!theme?.screens) return;
+const writeFileSync = (content) => {
+  fs.writeFileSync(path.join(__dirname, "generated.d.ts"), content);
+};
 
-  const dynamicTypeDeclarationPath = path.join(__dirname, "dynamic.d.ts");
-
-  const content = `export type TVDynamicScreens = ${Object.keys(theme.screens)
+const generateScreensType = (screens) => {
+  return `export type TVGeneratedScreens = ${Object.keys(screens)
     .map((screen) => `"${screen}"`)
-    .join(" | ")};`;
+    .join(" | ")};\n`;
+};
 
-  fs.writeFileSync(dynamicTypeDeclarationPath, content);
+export const generateTypes = (theme) => {
+  queueMicrotask(() => {
+    if (theme?.screens) {
+      const screens = generateScreensType(theme.screens);
+
+      writeFileSync(screens);
+    }
+  });
 };

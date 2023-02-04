@@ -72,20 +72,3 @@ export const removeExtraSpaces = (str) => {
 
   return str.replace(/\s+/g, " ").trim();
 };
-
-export const isArray = (param) => Array.isArray(param);
-
-export const isString = (param) => typeof param === "string";
-
-export const isObject = (param) => typeof param === "object";
-
-export const isFunction = (param) => typeof param === "function";
-
-export const isEmpty = (param) => {
-  if (!param) return true;
-  if (isArray(param) && param.length === 0) return true;
-  if (isString(param) && param.length === 0) return true;
-  if (isObject(param) && Object.keys(param).length === 0) return true;
-
-  return false;
-};

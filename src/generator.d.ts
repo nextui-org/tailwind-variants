@@ -1,7 +1,7 @@
-import {TailwindConfig} from "./transformer";
+import {Config} from "tailwindcss/types/config";
 
 export type GenerateTypes = {
-  (theme: TailwindConfig["theme"]): void;
+  (theme: Config["theme"]): void;
 };
 
 export declare const generateTypes: GenerateTypes;

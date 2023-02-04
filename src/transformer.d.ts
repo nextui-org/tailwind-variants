@@ -1,9 +1,7 @@
 import type {Config} from "tailwindcss/types/config";
 
-export type TailwindConfig = Config;
-
 export type WithTV = {
-  <TC extends TailwindConfig>(tvConfig: TailwindConfig): TC;
+  <C extends Config = {}>(tvConfig: Config): C;
 };
 
 export declare const withTV: WithTV;
