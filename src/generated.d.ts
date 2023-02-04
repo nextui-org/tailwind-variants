@@ -1,3 +1,3 @@
-import {DefaultTheme} from "tailwindcss/types/generated/default-theme";
+import type {DefaultScreens} from "./transformer";
 
-export type TVGeneratedScreens = keyof DefaultTheme["screens"];
+export type TVGeneratedScreens = DefaultScreens;

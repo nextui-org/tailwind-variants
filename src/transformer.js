@@ -204,7 +204,7 @@ export const withTV = (tailwindConfig) => {
 
   // with tailwind configured screens
   const transformer = (content) => {
-    return tvTransformer(content, Object.keys(config.theme?.screens));
+    return tvTransformer(content, Object.keys(config.theme?.screens ?? {}));
   };
 
   // custom transform

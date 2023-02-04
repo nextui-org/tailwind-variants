@@ -2,12 +2,23 @@ import type {WithTV, TVTransformer} from "../transformer";
 
 import {tvTransformer, withTV} from "../transformer";
 
-const mock: {
+type Mock = {
   withTV: WithTV;
   transformer: TVTransformer;
-} = {
+};
+
+const defaultScreens = ["xs", "sm", "md", "lg", "xl", "2xl"];
+
+const mock: Mock = {
   withTV: withTV,
-  transformer: (content) => `tv transformer: ${tvTransformer(content)}`,
+  transformer: (content) => `tv transformer: ${tvTransformer(content, defaultScreens)}`,
+};
+
+const expectedContent = (sourceCode: string, transformed: object[]) => {
+  const prefix = "\n/* Tailwind Variants Transformed Content Start\n\n";
+  const suffix = "\n\nTailwind Variants Transformed Content End */\n";
+
+  return sourceCode.concat(prefix + JSON.stringify(transformed, undefined, 2) + suffix);
 };
 
 describe("Responsive Variants", () => {
@@ -19,7 +30,7 @@ describe("Responsive Variants", () => {
       'const button = tv({ variants: { color: { primary: "text-blue-50 bg-blue-600 rounded" } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = tvTransformer(sourceCode);
+    const result = tvTransformer(sourceCode, defaultScreens);
 
     const transformedContent = [
       {
@@ -37,11 +48,7 @@ describe("Responsive Variants", () => {
       },
     ];
 
-    const expectedResult = sourceCode.concat(
-      `\n/*\n\n${JSON.stringify(transformedContent, undefined, 2)}\n\n*/\n`,
-    );
-
-    expect(result).toBe(expectedResult);
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
   test("should return a transformed content (array)", () => {
@@ -50,7 +57,7 @@ describe("Responsive Variants", () => {
       'const button = tv({ variants: { color: { primary: ["text-blue-50", "bg-blue-600", "rounded"] } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = tvTransformer(sourceCode);
+    const result = tvTransformer(sourceCode, defaultScreens);
 
     const transformedContent = [
       {
@@ -68,11 +75,7 @@ describe("Responsive Variants", () => {
       },
     ];
 
-    const expectedResult = sourceCode.concat(
-      `\n/*\n\n${JSON.stringify(transformedContent, undefined, 2)}\n\n*/\n`,
-    );
-
-    expect(result).toBe(expectedResult);
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
   test("should return a transformed content (nested array)", () => {
@@ -81,7 +84,7 @@ describe("Responsive Variants", () => {
       'const button = tv({ variants: { color: { primary: [["text-blue-50", "bg-blue-600"], "rounded"] } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = tvTransformer(sourceCode);
+    const result = tvTransformer(sourceCode, defaultScreens);
 
     const transformedContent = [
       {
@@ -99,11 +102,7 @@ describe("Responsive Variants", () => {
       },
     ];
 
-    const expectedResult = sourceCode.concat(
-      `\n/*\n\n${JSON.stringify(transformedContent, undefined, 2)}\n\n*/\n`,
-    );
-
-    expect(result).toBe(expectedResult);
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
   test("should return a transformed content (responsive slot variant)", () => {
@@ -112,7 +111,7 @@ describe("Responsive Variants", () => {
       'const button = tv({ slots: { base: "flex" }, variants: { color: { primary: { base: ["bg-blue-50 text-blue-900", ["dark:bg-blue-900", "dark:text-blue-50"]] } } } });';
     const sourceCode = tvImport.concat(tvComponent);
 
-    const result = tvTransformer(sourceCode);
+    const result = tvTransformer(sourceCode, defaultScreens);
 
     const transformedContent = [
       {
@@ -132,11 +131,7 @@ describe("Responsive Variants", () => {
       },
     ];
 
-    const expectedResult = sourceCode.concat(
-      `\n/*\n\n${JSON.stringify(transformedContent, undefined, 2)}\n\n*/\n`,
-    );
-
-    expect(result).toBe(expectedResult);
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
   test("should return tailwind config with built-in transformer (withTV content array)", () => {
