@@ -7,7 +7,7 @@ type Mock = {
   transformer: TVTransformer;
 };
 
-const defaultScreens = ["xs", "sm", "md", "lg", "xl", "2xl"];
+const defaultScreens = ["sm", "md", "lg", "xl", "2xl"];
 
 const mock: Mock = {
   withTV: withTV,
@@ -37,7 +37,6 @@ describe("Responsive Variants", () => {
         color: {
           primary: {
             original: "text-blue-50 bg-blue-600 rounded",
-            xs: "xs:text-blue-50 xs:bg-blue-600 xs:rounded",
             sm: "sm:text-blue-50 sm:bg-blue-600 sm:rounded",
             md: "md:text-blue-50 md:bg-blue-600 md:rounded",
             lg: "lg:text-blue-50 lg:bg-blue-600 lg:rounded",
@@ -64,7 +63,6 @@ describe("Responsive Variants", () => {
         color: {
           primary: {
             original: ["text-blue-50", "bg-blue-600", "rounded"],
-            xs: "xs:text-blue-50 xs:bg-blue-600 xs:rounded",
             sm: "sm:text-blue-50 sm:bg-blue-600 sm:rounded",
             md: "md:text-blue-50 md:bg-blue-600 md:rounded",
             lg: "lg:text-blue-50 lg:bg-blue-600 lg:rounded",
@@ -91,7 +89,6 @@ describe("Responsive Variants", () => {
         color: {
           primary: {
             original: [["text-blue-50", "bg-blue-600"], "rounded"],
-            xs: "xs:text-blue-50 xs:bg-blue-600 xs:rounded",
             sm: "sm:text-blue-50 sm:bg-blue-600 sm:rounded",
             md: "md:text-blue-50 md:bg-blue-600 md:rounded",
             lg: "lg:text-blue-50 lg:bg-blue-600 lg:rounded",
@@ -119,7 +116,6 @@ describe("Responsive Variants", () => {
           primary: {
             base: {
               original: ["bg-blue-50 text-blue-900", ["dark:bg-blue-900", "dark:text-blue-50"]],
-              xs: "xs:bg-blue-50 xs:text-blue-900 xs:dark:bg-blue-900 xs:dark:text-blue-50",
               sm: "sm:bg-blue-50 sm:text-blue-900 sm:dark:bg-blue-900 sm:dark:text-blue-50",
               md: "md:bg-blue-50 md:text-blue-900 md:dark:bg-blue-900 md:dark:text-blue-50",
               lg: "lg:bg-blue-50 lg:text-blue-900 lg:dark:bg-blue-900 lg:dark:text-blue-50",
