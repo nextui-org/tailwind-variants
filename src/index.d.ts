@@ -90,7 +90,7 @@ export type TVReturnProps<V extends TVVariants<S>, S extends TVSlots, B extends 
   variants: V;
   defaultVariants: TVDefaultVariants<V, S>;
   compoundVariants: TVCompoundVariants<V, S, B>;
-  variantkeys: TVVariantKeys<V, S>;
+  variantKeys: TVVariantKeys<V, S>;
 };
 
 export type TVReturnType<

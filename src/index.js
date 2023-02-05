@@ -241,7 +241,7 @@ export const tv = (
     return Object.keys(variants);
   };
 
-  component.variantkeys = getVariantKeys();
+  component.variantKeys = getVariantKeys();
   component.base = base;
   component.slots = slots;
   component.variants = variants;

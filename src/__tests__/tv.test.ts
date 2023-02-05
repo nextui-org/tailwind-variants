@@ -86,7 +86,7 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(result, expectedResult);
   });
 
-  test("should work with variantkeys", () => {
+  test("should work with variantKeys", () => {
     const h1 = tv({
       base: "text-3xl font-bold",
       variants: {
@@ -103,7 +103,7 @@ describe("Tailwind Variants (TV)", () => {
 
     const expectedResult = ["isBig", "color"];
 
-    expectKeys(h1.variantkeys, expectedResult);
+    expectKeys(h1.variantKeys, expectedResult);
   });
 
   test("should work with compoundVariants", () => {
