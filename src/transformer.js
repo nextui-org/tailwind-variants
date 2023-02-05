@@ -1,13 +1,13 @@
-// Ignore the `initial`
-// TODO: respect tailwind config
-const screens = ["xs", "sm", "md", "lg", "xl", "2xl"];
+import resolveConfig from "tailwindcss/resolveConfig";
+
+import {generateTypes} from "./generator";
 
 const regExp = {
   tv: /tv\({[\s\S]*?}\)/g,
   tvContent: /\({[\s\S]*?}\)/g,
   comment: /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm,
   blankLine: /^\s*$(?:\r\n?|\n)/gm,
-  ext: /\.\w+/g,
+  extension: /\.\w+/g,
 };
 
 const isArray = (param) => Array.isArray(param);
@@ -27,6 +27,15 @@ const isEmpty = (param) => {
   return false;
 };
 
+const printError = (message, error) => {
+  const newIssueLink = "https://github.com/nextui-org/tailwind-variants/issues/new/choose";
+
+  /* eslint-disable no-console */
+  console.log("\x1b[31m%s\x1b[0m", `${message}: ${error.message}`);
+  console.log(`If you think this is an issue, please submit it at ${newIssueLink}`);
+  /* eslint-enable no-console */
+};
+
 const pipeline = (...funcs) => {
   return (input) => funcs.reduce((acc, func) => func(acc), input);
 };
@@ -44,7 +53,10 @@ const getTVObjects = (content) => {
   if (isEmpty(tvs)) return;
 
   return tvs.map((tv) => {
-    // TODO: avoid potential security issues
+    /**
+     * avoid direct eval
+     * @see https://esbuild.github.io/content-types/#direct-eval
+     */
     return new Function(`return ${tv.match(regExp.tvContent).toString()}`)();
   });
 };
@@ -57,7 +69,7 @@ const flatClassNames = (classNames) => {
     .split(" ");
 };
 
-const getSlots = (classNames) => {
+const getSlots = (classNames, screens) => {
   // responsive slot
   let rs = {};
 
@@ -85,15 +97,15 @@ const getSlots = (classNames) => {
   return rs;
 };
 
-const getVariants = (classNames) => {
+const getVariants = (classNames, screens) => {
   if (isString(classNames)) return classNames.split(" ");
   if (isArray(classNames)) return flatClassNames(classNames);
-  if (isObject(classNames)) return getSlots(classNames);
+  if (isObject(classNames)) return getSlots(classNames, screens);
 
   return classNames;
 };
 
-const transformContent = (tv) => {
+const transformContent = (tv, screens) => {
   const {variants = {}} = tv;
 
   if (isEmpty(variants)) return;
@@ -110,7 +122,7 @@ const transformContent = (tv) => {
 
       if (isEmpty(variantClassNames)) continue;
 
-      const formattedClassNames = getVariants(variantClassNames);
+      const formattedClassNames = getVariants(variantClassNames, screens);
 
       if (isEmpty(formattedClassNames)) continue;
 
@@ -136,7 +148,7 @@ const transformContent = (tv) => {
   return responsive;
 };
 
-export const tvTransformer = (content) => {
+export const tvTransformer = (content, screens) => {
   try {
     // TODO: support package alias
     if (!content.includes("tailwind-variants")) return content;
@@ -146,13 +158,18 @@ export const tvTransformer = (content) => {
     if (isEmpty(tvs)) return content;
 
     const transformed = JSON.stringify(
-      tvs.map((tv) => transformContent(tv)),
+      tvs.map((tv) => transformContent(tv, screens)),
       undefined,
       2,
     );
 
-    return content.concat(`\n/*\n\n${transformed}\n\n*/\n`);
+    const prefix = "\n/* Tailwind Variants Transformed Content Start\n\n";
+    const suffix = "\n\nTailwind Variants Transformed Content End */\n";
+
+    return content.concat(prefix + transformed + suffix);
   } catch (error) {
+    printError("Tailwind Variants Transform Failed", error);
+
     return content;
   }
 };
@@ -162,7 +179,7 @@ const getExtensions = (files) => {
     .map((file) => {
       if (isObject(file) && file.extension) return file.extension;
 
-      let fileExt = file.match(regExp.ext);
+      let fileExt = file.match(regExp.extension);
 
       if (!fileExt) {
         fileExt = file.split("{");
@@ -177,62 +194,54 @@ const getExtensions = (files) => {
 };
 
 export const withTV = (tailwindConfig) => {
-  let config = Object.assign({}, tailwindConfig);
+  let config = resolveConfig(tailwindConfig);
 
-  // invalid content
-  if (isEmpty(config?.content) || isString(config.content)) return config;
+  // generate types
+  generateTypes(config.theme);
 
-  if (isArray(config.content)) {
-    const extensions = getExtensions(config.content);
-    const transformEntries = extensions.map((ext) => [ext, tvTransformer]);
+  // invalid content files
+  if (isEmpty(config.content?.files) || !isArray(config.content.files)) return config;
 
-    config.content = {};
-    config.content.files = tailwindConfig.content;
+  // with tailwind configured screens
+  const transformer = (content) => {
+    return tvTransformer(content, Object.keys(config.theme?.screens ?? {}));
+  };
+
+  // custom transform
+  const customTransform = config.content.transform;
+
+  // extend transform
+  if (isEmpty(customTransform)) {
+    const extensions = getExtensions(config.content.files);
+    const transformEntries = extensions.map((ext) => [ext, transformer]);
+
     config.content.transform = Object.fromEntries(transformEntries);
 
     return config;
   }
 
-  if (isObject(config.content)) {
-    // invalid content files
-    if (isEmpty(config.content?.files) || isString(config.content.files)) return config;
+  // extend transform function
+  if (isFunction(customTransform)) {
+    const extensions = getExtensions(config.content.files);
+    const transformEntries = extensions.map((ext) => [ext, pipeline(transformer, customTransform)]);
 
-    if (isEmpty(config.content?.transform)) {
-      const extensions = getExtensions(config.content.files);
-      const transformEntries = extensions.map((ext) => [ext, tvTransformer]);
+    config.content.transform = Object.fromEntries(transformEntries);
 
-      config.content.transform = Object.fromEntries(transformEntries);
+    return config;
+  }
 
-      return config;
-    }
+  // extend transform object
+  if (isObject(customTransform)) {
+    const extensions = getExtensions(config.content.files);
+    const transformEntries = extensions.map((ext) => {
+      const validTransform = isFunction(customTransform[ext]);
 
-    // extend transform function
-    if (isFunction(config.content.transform)) {
-      const {transform: inputTransform} = tailwindConfig.content;
-      const extensions = getExtensions(config.content.files);
-      const transformEntries = extensions.map((ext) => [
-        ext,
-        pipeline(tvTransformer, inputTransform),
-      ]);
+      return validTransform
+        ? [ext, pipeline(transformer, customTransform[ext])]
+        : [ext, transformer];
+    });
 
-      config.content.transform = Object.fromEntries(transformEntries);
-
-      return config;
-    }
-
-    // extend transform object
-    if (isObject(config.content.transform)) {
-      const {transform: inputTransform} = tailwindConfig.content;
-      const extensions = getExtensions(config.content.files);
-      const transformEntries = extensions.map((ext) => [
-        ext,
-        pipeline(tvTransformer, inputTransform[ext] && inputTransform[ext]),
-      ]);
-
-      config.content.transform = Object.fromEntries(transformEntries);
-
-      return config;
-    }
+    config.content.transform = Object.fromEntries(transformEntries);
 
     return config;
   }

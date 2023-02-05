@@ -1,9 +1,10 @@
 import {TVConfig} from "./config";
+import {TVGeneratedScreens} from "./generated";
 import {ClassValue, ClassProp, OmitUndefined, StringToBoolean} from "./utils";
 
 type TVBaseName = "base";
 
-type TVScreens = "initial" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+type TVScreens = "initial" | TVGeneratedScreens;
 
 type TVSlots = Record<string, ClassValue> | undefined;
 

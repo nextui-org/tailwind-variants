@@ -6,6 +6,7 @@ specifiers:
   '@swc-node/jest': ^1.5.2
   '@swc/cli': 0.1.57
   '@swc/core': 1.2.198
+  '@swc/helpers': ^0.4.14
   '@types/jest': 28.1.1
   '@types/node': ^18.11.18
   '@typescript-eslint/eslint-plugin': ^5.42.0
@@ -42,6 +43,7 @@ devDependencies:
   '@swc-node/jest': 1.5.6_she2mj3zgp55zm7trvia7wyjiq
   '@swc/cli': 0.1.57_@swc+core@1.2.198
   '@swc/core': 1.2.198
+  '@swc/helpers': 0.4.14
   '@types/jest': 28.1.1
   '@types/node': 18.11.18
   '@typescript-eslint/eslint-plugin': 5.48.1_ujhe3r4olrxhtrcg6l2dagdz4q
@@ -1288,6 +1290,12 @@ packages:
       '@swc/core-win32-arm64-msvc': 1.2.199
       '@swc/core-win32-ia32-msvc': 1.2.199
       '@swc/core-win32-x64-msvc': 1.2.199
+    dev: true
+
+  /@swc/helpers/0.4.14:
+    resolution: {integrity: sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==}
+    dependencies:
+      tslib: 2.4.1
     dev: true
 
   /@tsconfig/node10/1.0.9:
