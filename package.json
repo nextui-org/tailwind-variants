@@ -1,6 +1,6 @@
 {
   "name": "tailwind-variants",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "🦄 Tailwindcss first-class variant API",
   "author": "Junior Garcia <jrgarciadev@gmail.com>",
   "license": "MIT",
@@ -22,6 +22,8 @@
     "dist",
     "transformer.js",
     "transformer.d.ts",
+    "utils.js",
+    "utils.d.ts",
     "README.md",
     "LICENSE"
   ],
