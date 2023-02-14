@@ -101,7 +101,7 @@ module.exports = withTV({
 ## Acknowledgements
 
 - [**cva**](https://github.com/joe-bell/cva) ([Joe Bell](https://github.com/joe-bell)) 
-  This project as started as an extension of Joe's work on `cva` – a great tool for generating variants for a single element with Tailwind CSS. Big shoutout to [Joe Bell](https://github.com/joe-bell) and [contributors](https://github.com/joe-bell/cva/graphs/contributors) you guys rock! 🤘 - we recommend to use `cva` if don't need if don't need any of the **Tailwind Variants** features listed [here](https://www.tailwind-variants.org/docs/comparison).
+  This project as started as an extension of Joe's work on `cva` – a great tool for generating variants for a single element with Tailwind CSS. Big shoutout to [Joe Bell](https://github.com/joe-bell) and [contributors](https://github.com/joe-bell/cva/graphs/contributors) you guys rock! 🤘 - we recommend to use `cva` if don't need any of the **Tailwind Variants** features listed [here](https://www.tailwind-variants.org/docs/comparison).
 
 - [**Stitches**](https://stitches.dev/) ([Modulz](https://modulz.app))  
   The pioneers of the `variants` API movement. Inmense thanks to [Modulz](https://modulz.app) for their work on Stitches and the community around it. 🙏
