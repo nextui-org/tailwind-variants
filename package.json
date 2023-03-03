@@ -22,8 +22,6 @@
     "dist",
     "transformer.js",
     "transformer.d.ts",
-    "utils.js",
-    "utils.d.ts",
     "README.md",
     "LICENSE"
   ],

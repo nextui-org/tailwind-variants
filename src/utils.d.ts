@@ -1,8 +1,8 @@
 import {TVConfig} from "./config";
 
-export declare type ClassValue = string | string[] | null | undefined | ClassValue[];
+export type ClassValue = string | string[] | null | undefined | ClassValue[];
 
-export declare type ClassProp<V extends unknown = ClassValue> =
+export type ClassProp<V extends unknown = ClassValue> =
   | {
       class: V;
       className?: never;
@@ -10,9 +10,9 @@ export declare type ClassProp<V extends unknown = ClassValue> =
   | {class?: never; className: V}
   | {class?: never; className?: never};
 
-export declare type OmitUndefined<T> = T extends undefined ? never : T;
+export type OmitUndefined<T> = T extends undefined ? never : T;
 
-export declare type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
+export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
 export type CxOptions = ClassValue[];
 
