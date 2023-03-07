@@ -1,12 +1,51 @@
 import {TVConfig} from "./config";
 import {TVGeneratedScreens} from "./generated";
-import {ClassValue, ClassProp, OmitUndefined, StringToBoolean} from "./utils";
+
+/**
+ * ----------------------------------------
+ * Base Types
+ * ----------------------------------------
+ */
+
+export type ClassValue = string | string[] | null | undefined | ClassValue[];
+
+export type ClassProp<V extends unknown = ClassValue> =
+  | {
+      class: V;
+      className?: never;
+    }
+  | {class?: never; className: V}
+  | {class?: never; className?: never};
 
 type TVBaseName = "base";
 
 type TVScreens = "initial" | TVGeneratedScreens;
 
 type TVSlots = Record<string, ClassValue> | undefined;
+
+/**
+ * ----------------------------------------------------------------------
+ * Utils
+ * ----------------------------------------------------------------------
+ */
+
+export type OmitUndefined<T> = T extends undefined ? never : T;
+
+export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
+
+export type CxOptions = ClassValue[];
+
+export type CxReturn = string;
+
+export declare const cxBase: <T extends CxOptions>(...classes: T) => CxReturn;
+
+export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConfig) => CxReturn;
+
+/**
+ * ----------------------------------------------------------------------
+ * TV Types
+ * ----------------------------------------------------------------------
+ */
 
 type TVSlotsWithBase<S extends TVSlots, B extends ClassValue> = B extends undefined
   ? keyof S
@@ -131,7 +170,10 @@ export type TV = {
   ): TVReturnType<V, EV, S, ES, B>;
 };
 
+// main function
 export declare const tv: TV;
+
+export declare const defaultConfig: TVConfig;
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
   OmitUndefined<Parameters<Component>[0]>,

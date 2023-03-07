@@ -1,21 +1,53 @@
+import {twMerge as twMergeBase, extendTailwindMerge} from "tailwind-merge";
+
 import {
-  cx,
-  cxBase,
   isEmptyObject,
   falsyToString,
   mergeObjects,
-  joinObjects,
   removeExtraSpaces,
   flatMergeArrays,
 } from "./utils.js";
 
-export const tv = (
-  options,
-  config = {
-    twMerge: true,
-    twMergeConfig: {},
-  },
-) => {
+export const cxBase = (...classes) => classes.flat(Infinity).filter(Boolean).join(" ");
+
+export const cx =
+  (...classes) =>
+  (config = {}) => {
+    if (!config.twMerge) {
+      return cxBase(classes);
+    }
+
+    const twMerge = !isEmptyObject(config.twMergeConfig)
+      ? extendTailwindMerge(config.twMergeConfig)
+      : twMergeBase;
+
+    return twMerge(cxBase(classes));
+  };
+
+const joinObjects = (obj1, obj2) => {
+  const result = {};
+
+  if (typeof obj1 !== "object" || typeof obj2 !== "object") {
+    return result;
+  }
+
+  Object.keys(obj1).forEach((key) => {
+    if (obj2[key]) {
+      result[key] = cxBase([obj1[key], obj2[key]]);
+    } else {
+      result[key] = obj1[key];
+    }
+  });
+
+  return result;
+};
+
+export const defaultConfig = {
+  twMerge: true,
+  twMergeConfig: {},
+};
+
+export const tv = (options, config = defaultConfig) => {
   const {
     slots: slotProps = {},
     variants: variantsProps = {},

@@ -10,7 +10,7 @@ const expectKeys = (result: string[], expectedResult: string[]) => {
   expect(result).toEqual(expect.arrayContaining(expectedResult));
 };
 
-describe("Tailwind Variants (TV)", () => {
+describe("Tailwind Variants (TV) - Default", () => {
   test("should work with nested arrays", () => {
     const menu = tv({
       base: ["base--styles-1", ["base--styles-2", ["base--styles-3"]]],
@@ -163,13 +163,14 @@ describe("Tailwind Variants (TV)", () => {
       base: "text-3xl font-bold",
     });
 
-    const expectedResult = ["text-3xl", "font-bold"];
+    const expectedResult = ["text-xl", "font-bold"];
 
     const result1 = h1({
-      className: "my-class",
+      className: "text-xl",
     });
+
     const result2 = h1({
-      class: "my-class",
+      class: "text-xl",
     });
 
     expectTv(result1, expectedResult);
@@ -287,7 +288,9 @@ describe("Tailwind Variants (TV)", () => {
 
     expect(h1({color: "green", isUnderline: false})).toBe(expectedResult);
   });
+});
 
+describe("Tailwind Variants (TV) - Slots", () => {
   test("should work with slots -- default variants", () => {
     const menu = tv({
       base: "text-3xl font-bold underline",
@@ -360,8 +363,8 @@ describe("Tailwind Variants (TV)", () => {
 
   test("should work with slots -- default variants -- custom class & className", () => {
     const menu = tv({
-      base: "text-3xl font-bold underline",
       slots: {
+        base: "text-3xl font-bold underline",
         title: "text-2xl",
         item: "text-xl",
         list: "list-none",
@@ -369,27 +372,33 @@ describe("Tailwind Variants (TV)", () => {
       },
       variants: {
         color: {
-          primary: "color--primary",
+          primary: {
+            base: "bg-blue-500",
+          },
           secondary: {
-            title: "color--primary-title",
-            item: "color--primary-item",
-            list: "color--primary-list",
-            wrapper: "color--primary-wrapper",
+            title: "text-white",
+            item: "bg-purple-100",
+            list: "bg-purple-200",
+            wrapper: "bg-transparent",
           },
         },
         size: {
-          xs: "size--xs",
-          sm: "size--sm",
+          xs: {
+            base: "text-xs",
+          },
+          sm: {
+            base: "text-sm",
+          },
           md: {
-            title: "size--md-title",
+            title: "text-md",
           },
         },
         isDisabled: {
           true: {
-            title: "disabled--title",
+            title: "opacity-50",
           },
           false: {
-            item: "enabled--item",
+            item: "opacity-100",
           },
         },
       },
@@ -403,18 +412,18 @@ describe("Tailwind Variants (TV)", () => {
     // with default values
     const {base, title, item, list, wrapper} = menu();
 
-    expectTv(base({class: "class--base"}), [
-      "text-3xl",
-      "font-bold",
-      "underline",
-      "color--primary",
-      "size--sm",
-      "class--base",
-    ]);
-    expectTv(title({className: "classname--title"}), ["text-2xl", "classname--title"]);
-    expectTv(item({class: "class--item"}), ["text-xl", "enabled--item", "class--item"]);
-    expectTv(list({className: "classname--list"}), ["list-none", "classname--list"]);
-    expectTv(wrapper({class: "class--wrapper"}), ["flex", "flex-col", "class--wrapper"]);
+    // base
+    expectTv(base({class: "text-lg"}), ["font-bold", "underline", "bg-blue-500", "text-lg"]);
+    expectTv(base({className: "text-lg"}), ["font-bold", "underline", "bg-blue-500", "text-lg"]);
+    // title
+    expectTv(title({class: "text-2xl"}), ["text-2xl"]);
+    expectTv(title({className: "text-2xl"}), ["text-2xl"]);
+    // item
+    expectTv(item({class: "text-sm"}), ["text-sm", "opacity-100"]);
+    expectTv(list({className: "bg-blue-50"}), ["list-none", "bg-blue-50"]);
+    // list
+    expectTv(wrapper({class: "flex-row"}), ["flex", "flex-row"]);
+    expectTv(wrapper({className: "flex-row"}), ["flex", "flex-row"]);
   });
 
   test("should work with slots -- custom variants", () => {
@@ -475,8 +484,8 @@ describe("Tailwind Variants (TV)", () => {
 
   test("should work with slots -- custom variants -- custom class & className", () => {
     const menu = tv({
-      base: "text-3xl font-bold underline",
       slots: {
+        base: "text-3xl font-bold underline",
         title: "text-2xl",
         item: "text-xl",
         list: "list-none",
@@ -484,28 +493,34 @@ describe("Tailwind Variants (TV)", () => {
       },
       variants: {
         color: {
-          primary: "color--primary",
+          primary: {
+            base: "bg-blue-500",
+          },
           secondary: {
-            base: "color--secondary-base",
-            title: "color--secondary-title",
-            item: "color--secondary-item",
-            list: "color--secondary-list",
-            wrapper: "color--secondary-wrapper",
+            title: "text-white",
+            item: "bg-purple-100",
+            list: "bg-purple-200",
+            wrapper: "bg-transparent",
           },
         },
         size: {
-          xs: "size--xs",
-          sm: "size--sm",
+          xs: {
+            base: "text-xs",
+          },
+          sm: {
+            base: "text-sm",
+          },
           md: {
-            title: "size--md-title",
+            base: "text-md",
+            title: "text-md",
           },
         },
         isDisabled: {
           true: {
-            title: "disabled--title",
+            title: "opacity-50",
           },
           false: {
-            item: "enabled--item",
+            item: "opacity-100",
           },
         },
       },
@@ -522,36 +537,60 @@ describe("Tailwind Variants (TV)", () => {
       size: "md",
     });
 
-    expectTv(base({class: "class--base"}), [
-      "text-3xl",
-      "font-bold",
-      "underline",
-      "color--secondary-base",
-      "class--base",
-    ]);
+    // base
+    expectTv(base({class: "text-xl"}), ["text-xl", "font-bold", "underline"]);
+    expectTv(base({className: "text-xl"}), ["text-xl", "font-bold", "underline"]);
+    // title
     expectTv(
       title({
-        className: "classname--title",
+        class: "text-2xl",
       }),
-      ["size--md-title", "color--secondary-title", "classname--title"],
+      ["text-2xl", "text-white"],
+    );
+    expectTv(
+      title({
+        className: "text-2xl",
+      }),
+      ["text-2xl", "text-white"],
+    );
+    //item
+    expectTv(
+      item({
+        class: "bg-purple-50",
+      }),
+      ["text-xl", "bg-purple-50", "opacity-100"],
     );
     expectTv(
       item({
-        class: "class--item",
+        className: "bg-purple-50",
       }),
-      ["text-xl", "color--secondary-item", "class--item"],
+      ["text-xl", "bg-purple-50", "opacity-100"],
+    );
+    // list
+    expectTv(
+      list({
+        class: "bg-purple-100",
+      }),
+      ["list-none", "bg-purple-100"],
     );
     expectTv(
       list({
-        className: "classname--list",
+        className: "bg-purple-100",
       }),
-      ["list-none", "color--secondary-list", "classname--list"],
+      ["list-none", "bg-purple-100"],
+    );
+    // wrapper
+    expectTv(
+      wrapper({
+        class: "bg-purple-900 flex-row",
+      }),
+      ["flex", "bg-purple-900", "flex-row"],
     );
     expectTv(
       wrapper({
-        class: "class--wrapper",
+        className: "bg-purple-900 flex-row",
       }),
-      ["flex", "flex-col", "color--secondary-wrapper", "class--wrapper"],
+      ["flex", "bg-purple-900", "flex-row"],
     );
   });
 
@@ -629,7 +668,9 @@ describe("Tailwind Variants (TV)", () => {
     expectTv(list(), ["list-none", "color--secondary-list", "compound--list"]);
     expectTv(wrapper(), ["flex", "flex-col", "color--secondary-wrapper", "compound--wrapper"]);
   });
+});
 
+describe("Tailwind Variants (TV) - Screen Variants", () => {
   test("should work with screenVariants/initial screen", () => {
     const button = tv({
       base: "text-xs font-bold",
@@ -1055,7 +1096,9 @@ describe("Tailwind Variants (TV)", () => {
       "wrapper--size--medium",
     ]);
   });
+});
 
+describe("Tailwind Variants (TV) - Extends", () => {
   test("should include the extended classes", () => {
     const p = tv({
       base: "text-base text-green-500",
