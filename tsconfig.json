@@ -13,6 +13,6 @@
     "strict": true,	
     "declaration": true,	
     "skipLibCheck": true,	
-    "allowJs": true	
+    "allowJs": false	
   }	
 }	
