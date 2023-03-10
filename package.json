@@ -35,7 +35,7 @@
     "test": "jest --verbose"
   },
   "dependencies": {
-    "tailwind-merge": "^1.8.1"
+    "tailwind-merge": "^1.10.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
