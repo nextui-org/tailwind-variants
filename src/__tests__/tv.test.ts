@@ -1354,6 +1354,47 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
       "wrapper--size--medium",
     ]);
   });
+
+  test("should not include a variant if it is not defined in the responsiveVariants key", () => {
+    const menu = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: "primary--color--variant",
+            secondary: "secondary--color--variant",
+            success: "success--color--variant",
+          },
+          size: {
+            small: "small--size--variant",
+            medium: "medium--size--variant",
+          },
+        },
+      },
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
+
+    const styles = menu({
+      color: {
+        initial: "primary",
+        sm: "secondary",
+        md: "primary",
+        lg: "secondary",
+        // @ts-ignore
+        xl: "success",
+      },
+      size: {
+        initial: "medium",
+        sm: "small",
+        md: "medium",
+        lg: "medium",
+      },
+    });
+
+    expect(styles).not.toContain("xl:success--color--variant");
+  });
 });
 
 describe("Tailwind Variants (TV) - Extends", () => {

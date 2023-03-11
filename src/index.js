@@ -66,9 +66,8 @@ export const tv = (options, config = defaultConfig) => {
     : {};
 
   const responsiveVarsEnabled =
-    typeof config.responsiveVariants === "boolean"
-      ? config.responsiveVariants
-      : Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0;
+    (Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0) ||
+    config.responsiveVariants === true;
 
   // merge slots with the "extended" slots
   const slots = isEmptyObject(options?.extend?.slots)
