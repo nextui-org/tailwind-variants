@@ -151,7 +151,7 @@ export type TV = {
     V extends TVVariants<S, B, EV> = undefined,
     CV extends TVCompoundVariants<V, EV, S, B> = undefined,
     DV extends TVDefaultVariants<V, EV, S> = undefined,
-    C extends TVConfig,
+    C extends TVConfig<V, EV>,
     B extends ClassValue = undefined,
     S extends TVSlots = undefined,
     E extends ReturnType<TV> = undefined,
