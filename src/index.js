@@ -41,6 +41,7 @@ const joinObjects = (obj1, obj2) => {
 export const defaultConfig = {
   twMerge: true,
   twMergeConfig: {},
+  responsiveVariants: false,
 };
 
 export const tv = (options, config = defaultConfig) => {
@@ -63,6 +64,11 @@ export const tv = (options, config = defaultConfig) => {
         ...slotProps,
       }
     : {};
+
+  const responsiveVarsEnabled =
+    typeof config.responsiveVariants === "boolean"
+      ? config.responsiveVariants
+      : Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0;
 
   // merge slots with the "extended" slots
   const slots = isEmptyObject(options?.extend?.slots)
@@ -137,7 +143,7 @@ export const tv = (options, config = defaultConfig) => {
       const variantKey = falsyToString(variantProp);
 
       // responsive variants
-      if (typeof variantKey === "object") {
+      if (typeof variantKey === "object" && responsiveVarsEnabled) {
         screenValues = Object.keys(variantKey).reduce((acc, screen) => {
           const screenVariantKey = variantKey[screen];
           const screenVariantValue = variantObj?.[screenVariantKey];
@@ -145,6 +151,14 @@ export const tv = (options, config = defaultConfig) => {
           if (screen === "initial") {
             defaultVariantProp = screenVariantKey;
 
+            return acc;
+          }
+
+          // if the screen is not in the responsiveVariants array, skip it
+          if (
+            Array.isArray(config.responsiveVariants) &&
+            !config.responsiveVariants.includes(screen)
+          ) {
             return acc;
           }
 

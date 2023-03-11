@@ -900,27 +900,32 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
 
 describe("Tailwind Variants (TV) - Screen Variants", () => {
   test("should work with screenVariants/initial screen", () => {
-    const button = tv({
-      base: "text-xs font-bold",
-      variants: {
-        color: {
-          primary: "text-blue-500",
-          secondary: "text-purple-500",
-          success: "text-green-500",
-          danger: "text-red-500",
-        },
-        size: {
-          sm: "text-sm",
-          md: "text-md",
-          lg: "text-lg",
-        },
-        variant: {
-          outline: "border border-blue-500",
-          solid: "bg-blue-500",
-          ghost: "bg-transparent hover:bg-blue-500",
+    const button = tv(
+      {
+        base: "text-xs font-bold",
+        variants: {
+          color: {
+            primary: "text-blue-500",
+            secondary: "text-purple-500",
+            success: "text-green-500",
+            danger: "text-red-500",
+          },
+          size: {
+            sm: "text-sm",
+            md: "text-md",
+            lg: "text-lg",
+          },
+          variant: {
+            outline: "border border-blue-500",
+            solid: "bg-blue-500",
+            ghost: "bg-transparent hover:bg-blue-500",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md"],
+      },
+    );
 
     const result = button({
       color: {
@@ -942,31 +947,36 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("the screenVariants/initial should override the defaultVariants", () => {
-    const button = tv({
-      base: "text-xs font-bold",
-      variants: {
-        color: {
-          primary: "text-blue-500",
-          secondary: "text-purple-500",
-          success: "text-green-500",
-          danger: "text-red-500",
+    const button = tv(
+      {
+        base: "text-xs font-bold",
+        variants: {
+          color: {
+            primary: "text-blue-500",
+            secondary: "text-purple-500",
+            success: "text-green-500",
+            danger: "text-red-500",
+          },
+          size: {
+            sm: "text-sm",
+            md: "text-md",
+            lg: "text-lg",
+          },
+          variant: {
+            outline: "border border-blue-500",
+            solid: "bg-blue-500",
+            ghost: "bg-transparent hover:bg-blue-500",
+          },
         },
-        size: {
-          sm: "text-sm",
-          md: "text-md",
-          lg: "text-lg",
-        },
-        variant: {
-          outline: "border border-blue-500",
-          solid: "bg-blue-500",
-          ghost: "bg-transparent hover:bg-blue-500",
+        defaultVariants: {
+          color: "primary",
+          size: "sm",
         },
       },
-      defaultVariants: {
-        color: "primary",
-        size: "sm",
+      {
+        responsiveVariants: ["md"],
       },
-    });
+    );
 
     const result = button({
       color: {
@@ -983,28 +993,33 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants single values", () => {
-    const button = tv({
-      base: "base--styles",
-      variants: {
-        color: {
-          primary: "color--primary",
-          secondary: "color--secondary",
-          success: "color--success",
-          danger: "color--danger",
-        },
-        size: {
-          mini: "size--mini",
-          small: "size--small",
-          medium: "size--medium",
-          large: "size--large",
-        },
-        variant: {
-          outline: "variant--outline",
-          solid: "variant--solid",
-          ghost: "variant--ghost",
+    const button = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: "color--primary",
+            secondary: "color--secondary",
+            success: "color--success",
+            danger: "color--danger",
+          },
+          size: {
+            mini: "size--mini",
+            small: "size--small",
+            medium: "size--medium",
+            large: "size--large",
+          },
+          variant: {
+            outline: "variant--outline",
+            solid: "variant--solid",
+            ghost: "variant--ghost",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const result = button({
       color: {
@@ -1047,28 +1062,33 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants multiple values (strings)", () => {
-    const button = tv({
-      base: "base--styles",
-      variants: {
-        color: {
-          primary: "color--primary-1 color--primary-2 color--primary-3",
-          secondary: "color--secondary-1 color--secondary-2 color--secondary-3",
-          success: "color--success-1 color--success-2 color--success-3",
-          danger: "color--danger color--danger-2 color--danger-3",
-        },
-        size: {
-          mini: "size--mini-1 size--mini-2 size--mini-3",
-          small: "size--small-1 size--small-2 size--small-3",
-          medium: "size--medium-1 size--medium-2 size--medium-3",
-          large: "size--large-1 size--large-2 size--large-3",
-        },
-        variant: {
-          outline: "variant--outline-1 variant--outline-2 variant--outline-3",
-          solid: "variant--solid-1 variant--solid-2 variant--solid-3",
-          ghost: "variant--ghost-1 variant--ghost-2 variant--ghost-3",
+    const button = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: "color--primary-1 color--primary-2 color--primary-3",
+            secondary: "color--secondary-1 color--secondary-2 color--secondary-3",
+            success: "color--success-1 color--success-2 color--success-3",
+            danger: "color--danger color--danger-2 color--danger-3",
+          },
+          size: {
+            mini: "size--mini-1 size--mini-2 size--mini-3",
+            small: "size--small-1 size--small-2 size--small-3",
+            medium: "size--medium-1 size--medium-2 size--medium-3",
+            large: "size--large-1 size--large-2 size--large-3",
+          },
+          variant: {
+            outline: "variant--outline-1 variant--outline-2 variant--outline-3",
+            solid: "variant--solid-1 variant--solid-2 variant--solid-3",
+            ghost: "variant--ghost-1 variant--ghost-2 variant--ghost-3",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const result = button({
       color: {
@@ -1135,28 +1155,33 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants multiple values (array)", () => {
-    const button = tv({
-      base: "base--styles",
-      variants: {
-        color: {
-          primary: ["color--primary-1", "color--primary-2", "color--primary-3"],
-          secondary: ["color--secondary-1", "color--secondary-2", "color--secondary-3"],
-          success: ["color--success-1", "color--success-2", "color--success-3"],
-          danger: ["color--danger", "color--danger-2", "color--danger-3"],
-        },
-        size: {
-          mini: ["size--mini-1", "size--mini-2", "size--mini-3"],
-          small: ["size--small-1", "size--small-2", "size--small-3"],
-          medium: ["size--medium-1", "size--medium-2", "size--medium-3"],
-          large: ["size--large-1", "size--large-2", "size--large-3"],
-        },
-        variant: {
-          outline: ["variant--outline-1", "variant--outline-2", "variant--outline-3"],
-          solid: ["variant--solid-1", "variant--solid-2", "variant--solid-3"],
-          ghost: ["variant--ghost-1", "variant--ghost-2", "variant--ghost-3"],
+    const button = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: ["color--primary-1", "color--primary-2", "color--primary-3"],
+            secondary: ["color--secondary-1", "color--secondary-2", "color--secondary-3"],
+            success: ["color--success-1", "color--success-2", "color--success-3"],
+            danger: ["color--danger-1", "color--danger-2", "color--danger-3"],
+          },
+          size: {
+            mini: ["size--mini-1", "size--mini-2", "size--mini-3"],
+            small: ["size--small-1", "size--small-2", "size--small-3"],
+            medium: ["size--medium-1", "size--medium-2", "size--medium-3"],
+            large: ["size--large-1", "size--large-2", "size--large-3"],
+          },
+          variant: {
+            outline: ["variant--outline-1", "variant--outline-2", "variant--outline-3"],
+            solid: ["variant--solid-1", "variant--solid-2", "variant--solid-3"],
+            ghost: ["variant--ghost-1", "variant--ghost-2", "variant--ghost-3"],
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const result = button({
       color: {
@@ -1190,7 +1215,7 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
       "md:color--secondary-1",
       "md:color--secondary-2",
       "md:color--secondary-3",
-      "lg:color--danger",
+      "lg:color--danger-1",
       "lg:color--danger-2",
       "lg:color--danger-3",
       "size--medium-1",
@@ -1223,45 +1248,50 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants single values and slots", () => {
-    const menu = tv({
-      base: "base--styles",
-      slots: {
-        title: "slots--title",
-        item: "slots--item",
-        list: "slots--list",
-        wrapper: "slots--wrapper",
-      },
-      variants: {
-        color: {
-          primary: {
-            title: "title--color--primary",
-            item: "item--color--primary",
-            list: "list--color--primary",
-            wrapper: "wrapper--color--primary",
+    const menu = tv(
+      {
+        base: "base--styles",
+        slots: {
+          title: "slots--title",
+          item: "slots--item",
+          list: "slots--list",
+          wrapper: "slots--wrapper",
+        },
+        variants: {
+          color: {
+            primary: {
+              title: "title--color--primary",
+              item: "item--color--primary",
+              list: "list--color--primary",
+              wrapper: "wrapper--color--primary",
+            },
+            secondary: {
+              title: "title--color--secondary",
+              item: "item--color--secondary",
+              list: "list--color--secondary",
+              wrapper: "wrapper--color--secondary",
+            },
           },
-          secondary: {
-            title: "title--color--secondary",
-            item: "item--color--secondary",
-            list: "list--color--secondary",
-            wrapper: "wrapper--color--secondary",
+          size: {
+            small: {
+              title: "title--size--small",
+              item: "item--size--small",
+              list: "list--size--small",
+              wrapper: "wrapper--size--small",
+            },
+            medium: {
+              title: "title--size--medium",
+              item: "item--size--medium",
+              list: "list--size--medium",
+              wrapper: "wrapper--size--medium",
+            },
           },
         },
-        size: {
-          small: {
-            title: "title--size--small",
-            item: "item--size--small",
-            list: "list--size--small",
-            wrapper: "wrapper--size--small",
-          },
-          medium: {
-            title: "title--size--medium",
-            item: "item--size--medium",
-            list: "list--size--medium",
-            wrapper: "wrapper--size--medium",
-          },
-        },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const {base, title, item, list, wrapper} = menu({
       color: {
@@ -1744,16 +1774,21 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
-      base: "text-3xl font-bold",
-      variants: {
-        color: {
-          purple: "text-purple-500",
-          green: "text-green-500",
+    const h1 = tv(
+      {
+        extend: p,
+        base: "text-3xl font-bold",
+        variants: {
+          color: {
+            purple: "text-purple-500",
+            green: "text-green-500",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg", "xl"],
+      },
+    );
 
     const result = h1({
       isBig: true,
@@ -1792,16 +1827,21 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
-      base: "text-3xl font-bold",
-      variants: {
-        color: {
-          purple: "text-purple-500 bg-purple-500",
-          green: "text-green-500 bg-green-500",
+    const h1 = tv(
+      {
+        extend: p,
+        base: "text-3xl font-bold",
+        variants: {
+          color: {
+            purple: "text-purple-500 bg-purple-500",
+            green: "text-green-500 bg-green-500",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg", "xl"],
+      },
+    );
 
     const result = h1({
       isBig: true,
