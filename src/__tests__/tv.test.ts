@@ -670,6 +670,234 @@ describe("Tailwind Variants (TV) - Slots", () => {
   });
 });
 
+describe("Tailwind Variants (TV) - Compound Slots", () => {
+  test("should work with compound slots -- without variants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+      ],
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination();
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with a single variant -- defaultVariants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "xs",
+      },
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination();
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with a single variant -- prop variant", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "sm",
+      },
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination({
+      size: "xs",
+    });
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with multiple variants -- defaultVariants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
+        },
+        color: {
+          primary: {},
+          secondary: {},
+        },
+        isBig: {
+          true: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          color: "primary",
+          isBig: true,
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "xs",
+        color: "primary",
+        isBig: true,
+      },
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination();
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with multiple variants -- prop variants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
+        },
+        color: {
+          primary: {},
+          secondary: {},
+        },
+        isBig: {
+          true: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          color: "primary",
+          isBig: true,
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "sm",
+        color: "secondary",
+        isBig: false,
+      },
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination({
+      size: "xs",
+      color: "primary",
+      isBig: true,
+    });
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+});
+
 describe("Tailwind Variants (TV) - Screen Variants", () => {
   test("should work with screenVariants/initial screen", () => {
     const button = tv({
@@ -1703,7 +1931,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expectTv(wrapper(), ["wrapper--menuBase", "wrapper--isBig--menu"]);
   });
 
-  test("should include the extended slots w/ children slots", () => {
+  test("should include the extended slots w/ children slots (same names)", () => {
     const menuBase = tv({
       base: "base--menuBase",
       slots: {
@@ -1733,6 +1961,40 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expectTv(item(), ["item--menuBase", "item--menu"]);
     expectTv(list(), ["list--menuBase", "list--menu"]);
     expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+  });
+
+  test("should include the extended slots w/ children slots (additional)", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+        extra: "extra--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper, extra} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu"]);
+    expectTv(item(), ["item--menuBase", "item--menu"]);
+    expectTv(list(), ["list--menuBase", "list--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+    expectTv(extra(), ["extra--menu"]);
   });
 
   test("should include the extended variants w/slots and defaultVariants -- parent", () => {
