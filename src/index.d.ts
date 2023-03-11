@@ -41,6 +41,13 @@ export declare const cxBase: <T extends CxOptions>(...classes: T) => CxReturn;
 
 export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConfig) => CxReturn;
 
+// compare if the value is true or array of values
+export type isTrueOrArray<T> = T extends true | (infer U)[] ? true : false;
+
+export type isStringArray<T> = T extends Array<string> ? true : false;
+
+export type WithInitialScreen<T extends Array<string>> = ["initial", ...T];
+
 /**
  * ----------------------------------------------------------------------
  * TV Types
@@ -91,32 +98,61 @@ export type TVCompoundVariants<
   } & ClassProp<SlotsClassValue<S, B> | ClassValue>
 >;
 
+export type TVCompoundSlots<
+  V extends TVVariants<S>,
+  S extends TVSlots,
+  B extends ClassValue,
+> = Array<
+  V extends undefined
+    ? {
+        slots: Array<TVSlotsWithBase<S, B>>;
+      } & ClassProp
+    : {
+        slots: Array<TVSlotsWithBase<S, B>>;
+      } & {
+        [K in keyof V]?: StringToBoolean<keyof V[K]> | StringToBoolean<keyof V[K]>[];
+      } & ClassProp
+>;
+
 export type TVDefaultVariants<V extends TVVariants<S>, EV extends TVVariants, S extends TVSlots> = {
   [K in keyof V | keyof EV]?: StringToBoolean<keyof V[K] | keyof EV[K]>;
 };
 
-export type TVScreenPropsValue<V extends TVVariants, K extends keyof V> = {
-  [Screen in TVScreens]?: StringToBoolean<keyof V[K]>;
-};
+export type TVScreenPropsValue<
+  V extends TVVariants,
+  K extends keyof V,
+  C extends TVConfig,
+> = isStringArray<C["responsiveVariants"]> extends true
+  ? {
+      [Screen in WithInitialScreen<C["responsiveVariants"]>[number]]?: StringToBoolean<keyof V[K]>;
+    }
+  : {
+      [Screen in TVScreens]?: StringToBoolean<keyof V[K]>;
+    };
 
 export type TVProps<
   V extends TVVariants<S>,
   EV extends TVVariants,
   S extends TVSlots,
+  C extends TVConfig<V, EV>,
 > = EV extends undefined
   ? V extends undefined
     ? ClassProp<ClassValue>
     : {
-        [K in keyof V]?: StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, K>;
+        [K in keyof V]?: isTrueOrArray<C["responsiveVariants"]> extends true
+          ? StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, K, C>
+          : StringToBoolean<keyof V[K]>;
       } & ClassProp<ClassValue>
   : V extends undefined
   ? {
-      [K in keyof EV]?: StringToBoolean<keyof EV[K]> | TVScreenPropsValue<EV, K>;
+      [K in keyof EV]?: isTrueOrArray<C["responsiveVariants"]> extends true
+        ? StringToBoolean<keyof EV[K]> | TVScreenPropsValue<EV, K, C>
+        : StringToBoolean<keyof EV[K]>;
     } & ClassProp<ClassValue>
   : {
-      [K in keyof V | keyof EV]?:
-        | StringToBoolean<keyof V[K] | keyof EV[K]>
-        | TVScreenPropsValue<EV & V, K>;
+      [K in keyof V | keyof EV]?: isTrueOrArray<C["responsiveVariants"]> extends true
+        ? StringToBoolean<keyof V[K] | keyof EV[K]> | TVScreenPropsValue<EV & V, K, C>
+        : StringToBoolean<keyof V[K] | keyof EV[K]>;
     } & ClassProp<ClassValue>;
 
 export type TVVariantKeys<V extends TVVariants<S>, S extends TVSlots> = V extends Object
@@ -129,6 +165,7 @@ export type TVReturnProps<V extends TVVariants<S>, S extends TVSlots, B extends 
   variants: V;
   defaultVariants: TVDefaultVariants<V, S>;
   compoundVariants: TVCompoundVariants<V, S, B>;
+  compoundSlots: TVCompoundSlots<V, S, B>;
   variantKeys: TVVariantKeys<V, S>;
 };
 
@@ -138,8 +175,9 @@ export type TVReturnType<
   S extends TVSlots,
   ES extends TVSlots,
   B extends ClassValue,
+  C extends TVConfig<V, EV>,
 > = {
-  (props?: TVProps<V, EV, S>): ES extends undefined
+  (props?: TVProps<V, EV, S, C>): ES extends undefined
     ? S extends undefined
       ? string
       : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string}
@@ -151,7 +189,7 @@ export type TV = {
     V extends TVVariants<S, B, EV> = undefined,
     CV extends TVCompoundVariants<V, EV, S, B> = undefined,
     DV extends TVDefaultVariants<V, EV, S> = undefined,
-    C extends TVConfig<V, EV>,
+    C extends TVConfig<V, EV> = undefined,
     B extends ClassValue = undefined,
     S extends TVSlots = undefined,
     E extends ReturnType<TV> = undefined,
@@ -159,15 +197,46 @@ export type TV = {
     ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
   >(
     options: {
+      /**
+       * Extend allows easily compose components.
+       * @see https://www.tailwind-variants.org/docs/composing-components
+       */
       extend?: E;
+      /**
+       * Base allows you to set a base class for a component.
+       */
       base?: B;
+      /**
+       * Slots allows you to separate an component into multiple parts.
+       * @see https://www.tailwind-variants.org/docs/slots
+       */
       slots?: S;
+      /**
+       * Variants allows you to create multiple versions of the same component.
+       * @see https://www.tailwind-variants.org/docs/variants#adding-variants
+       */
       variants?: V;
+      /**
+       * Compound variants allow apply classes to multiple variants at once.
+       * @see https://www.tailwind-variants.org/docs/variants#compound-variants
+       */
       compoundVariants?: CV;
+      /**
+       * Compound slots allow apply classes to multiple slots at once.
+       */
+      compoundSlots?: TVCompoundSlots<V, S, B>;
+      /**
+       * Default variants allow you to set default variants for a component.
+       * @see https://www.tailwind-variants.org/docs/variants#default-variants
+       */
       defaultVariants?: DV;
     },
+    /**
+     * The config object to modify the default configuration.
+     * @see https://www.tailwind-variants.org/docs/api-reference#config-optional
+     */
     config?: C,
-  ): TVReturnType<V, EV, S, ES, B>;
+  ): TVReturnType<V, EV, S, ES, B, C>;
 };
 
 // main function

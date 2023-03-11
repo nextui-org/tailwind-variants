@@ -670,29 +670,262 @@ describe("Tailwind Variants (TV) - Slots", () => {
   });
 });
 
-describe("Tailwind Variants (TV) - Screen Variants", () => {
-  test("should work with screenVariants/initial screen", () => {
-    const button = tv({
-      base: "text-xs font-bold",
+describe("Tailwind Variants (TV) - Compound Slots", () => {
+  test("should work with compound slots -- without variants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+      ],
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination();
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with a single variant -- defaultVariants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
       variants: {
-        color: {
-          primary: "text-blue-500",
-          secondary: "text-purple-500",
-          success: "text-green-500",
-          danger: "text-red-500",
-        },
         size: {
-          sm: "text-sm",
-          md: "text-md",
-          lg: "text-lg",
-        },
-        variant: {
-          outline: "border border-blue-500",
-          solid: "bg-blue-500",
-          ghost: "bg-transparent hover:bg-blue-500",
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
         },
       },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "xs",
+      },
     });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination();
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with a single variant -- prop variant", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "sm",
+      },
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination({
+      size: "xs",
+    });
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with multiple variants -- defaultVariants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
+        },
+        color: {
+          primary: {},
+          secondary: {},
+        },
+        isBig: {
+          true: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          color: "primary",
+          isBig: true,
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "xs",
+        color: "primary",
+        isBig: true,
+      },
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination();
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with multiple variants -- prop variants", () => {
+    const pagination = tv({
+      slots: {
+        base: "flex flex-wrap relative gap-1 max-w-fit",
+        item: "",
+        prev: "",
+        next: "",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+          md: {},
+          lg: {},
+          xl: {},
+        },
+        color: {
+          primary: {},
+          secondary: {},
+        },
+        isBig: {
+          true: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "prev", "next"],
+          class: ["flex", "flex-wrap", "truncate"],
+        },
+        {
+          slots: ["item", "prev", "next"],
+          size: "xs",
+          color: "primary",
+          isBig: true,
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+      defaultVariants: {
+        size: "sm",
+        color: "secondary",
+        isBig: false,
+      },
+    });
+    // with default values
+    const {base, item, prev, next, cursor} = pagination({
+      size: "xs",
+      color: "primary",
+      isBig: true,
+    });
+
+    expectTv(base(), ["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expectTv(item(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+});
+
+describe("Tailwind Variants (TV) - Screen Variants", () => {
+  test("should work with screenVariants/initial screen", () => {
+    const button = tv(
+      {
+        base: "text-xs font-bold",
+        variants: {
+          color: {
+            primary: "text-blue-500",
+            secondary: "text-purple-500",
+            success: "text-green-500",
+            danger: "text-red-500",
+          },
+          size: {
+            sm: "text-sm",
+            md: "text-md",
+            lg: "text-lg",
+          },
+          variant: {
+            outline: "border border-blue-500",
+            solid: "bg-blue-500",
+            ghost: "bg-transparent hover:bg-blue-500",
+          },
+        },
+      },
+      {
+        responsiveVariants: ["sm", "md"],
+      },
+    );
 
     const result = button({
       color: {
@@ -714,31 +947,36 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("the screenVariants/initial should override the defaultVariants", () => {
-    const button = tv({
-      base: "text-xs font-bold",
-      variants: {
-        color: {
-          primary: "text-blue-500",
-          secondary: "text-purple-500",
-          success: "text-green-500",
-          danger: "text-red-500",
+    const button = tv(
+      {
+        base: "text-xs font-bold",
+        variants: {
+          color: {
+            primary: "text-blue-500",
+            secondary: "text-purple-500",
+            success: "text-green-500",
+            danger: "text-red-500",
+          },
+          size: {
+            sm: "text-sm",
+            md: "text-md",
+            lg: "text-lg",
+          },
+          variant: {
+            outline: "border border-blue-500",
+            solid: "bg-blue-500",
+            ghost: "bg-transparent hover:bg-blue-500",
+          },
         },
-        size: {
-          sm: "text-sm",
-          md: "text-md",
-          lg: "text-lg",
-        },
-        variant: {
-          outline: "border border-blue-500",
-          solid: "bg-blue-500",
-          ghost: "bg-transparent hover:bg-blue-500",
+        defaultVariants: {
+          color: "primary",
+          size: "sm",
         },
       },
-      defaultVariants: {
-        color: "primary",
-        size: "sm",
+      {
+        responsiveVariants: ["md"],
       },
-    });
+    );
 
     const result = button({
       color: {
@@ -755,28 +993,33 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants single values", () => {
-    const button = tv({
-      base: "base--styles",
-      variants: {
-        color: {
-          primary: "color--primary",
-          secondary: "color--secondary",
-          success: "color--success",
-          danger: "color--danger",
-        },
-        size: {
-          mini: "size--mini",
-          small: "size--small",
-          medium: "size--medium",
-          large: "size--large",
-        },
-        variant: {
-          outline: "variant--outline",
-          solid: "variant--solid",
-          ghost: "variant--ghost",
+    const button = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: "color--primary",
+            secondary: "color--secondary",
+            success: "color--success",
+            danger: "color--danger",
+          },
+          size: {
+            mini: "size--mini",
+            small: "size--small",
+            medium: "size--medium",
+            large: "size--large",
+          },
+          variant: {
+            outline: "variant--outline",
+            solid: "variant--solid",
+            ghost: "variant--ghost",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const result = button({
       color: {
@@ -819,28 +1062,33 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants multiple values (strings)", () => {
-    const button = tv({
-      base: "base--styles",
-      variants: {
-        color: {
-          primary: "color--primary-1 color--primary-2 color--primary-3",
-          secondary: "color--secondary-1 color--secondary-2 color--secondary-3",
-          success: "color--success-1 color--success-2 color--success-3",
-          danger: "color--danger color--danger-2 color--danger-3",
-        },
-        size: {
-          mini: "size--mini-1 size--mini-2 size--mini-3",
-          small: "size--small-1 size--small-2 size--small-3",
-          medium: "size--medium-1 size--medium-2 size--medium-3",
-          large: "size--large-1 size--large-2 size--large-3",
-        },
-        variant: {
-          outline: "variant--outline-1 variant--outline-2 variant--outline-3",
-          solid: "variant--solid-1 variant--solid-2 variant--solid-3",
-          ghost: "variant--ghost-1 variant--ghost-2 variant--ghost-3",
+    const button = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: "color--primary-1 color--primary-2 color--primary-3",
+            secondary: "color--secondary-1 color--secondary-2 color--secondary-3",
+            success: "color--success-1 color--success-2 color--success-3",
+            danger: "color--danger color--danger-2 color--danger-3",
+          },
+          size: {
+            mini: "size--mini-1 size--mini-2 size--mini-3",
+            small: "size--small-1 size--small-2 size--small-3",
+            medium: "size--medium-1 size--medium-2 size--medium-3",
+            large: "size--large-1 size--large-2 size--large-3",
+          },
+          variant: {
+            outline: "variant--outline-1 variant--outline-2 variant--outline-3",
+            solid: "variant--solid-1 variant--solid-2 variant--solid-3",
+            ghost: "variant--ghost-1 variant--ghost-2 variant--ghost-3",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const result = button({
       color: {
@@ -907,28 +1155,33 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants multiple values (array)", () => {
-    const button = tv({
-      base: "base--styles",
-      variants: {
-        color: {
-          primary: ["color--primary-1", "color--primary-2", "color--primary-3"],
-          secondary: ["color--secondary-1", "color--secondary-2", "color--secondary-3"],
-          success: ["color--success-1", "color--success-2", "color--success-3"],
-          danger: ["color--danger", "color--danger-2", "color--danger-3"],
-        },
-        size: {
-          mini: ["size--mini-1", "size--mini-2", "size--mini-3"],
-          small: ["size--small-1", "size--small-2", "size--small-3"],
-          medium: ["size--medium-1", "size--medium-2", "size--medium-3"],
-          large: ["size--large-1", "size--large-2", "size--large-3"],
-        },
-        variant: {
-          outline: ["variant--outline-1", "variant--outline-2", "variant--outline-3"],
-          solid: ["variant--solid-1", "variant--solid-2", "variant--solid-3"],
-          ghost: ["variant--ghost-1", "variant--ghost-2", "variant--ghost-3"],
+    const button = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: ["color--primary-1", "color--primary-2", "color--primary-3"],
+            secondary: ["color--secondary-1", "color--secondary-2", "color--secondary-3"],
+            success: ["color--success-1", "color--success-2", "color--success-3"],
+            danger: ["color--danger-1", "color--danger-2", "color--danger-3"],
+          },
+          size: {
+            mini: ["size--mini-1", "size--mini-2", "size--mini-3"],
+            small: ["size--small-1", "size--small-2", "size--small-3"],
+            medium: ["size--medium-1", "size--medium-2", "size--medium-3"],
+            large: ["size--large-1", "size--large-2", "size--large-3"],
+          },
+          variant: {
+            outline: ["variant--outline-1", "variant--outline-2", "variant--outline-3"],
+            solid: ["variant--solid-1", "variant--solid-2", "variant--solid-3"],
+            ghost: ["variant--ghost-1", "variant--ghost-2", "variant--ghost-3"],
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const result = button({
       color: {
@@ -962,7 +1215,7 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
       "md:color--secondary-1",
       "md:color--secondary-2",
       "md:color--secondary-3",
-      "lg:color--danger",
+      "lg:color--danger-1",
       "lg:color--danger-2",
       "lg:color--danger-3",
       "size--medium-1",
@@ -995,45 +1248,50 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
   });
 
   test("should work with multiple screenVariants single values and slots", () => {
-    const menu = tv({
-      base: "base--styles",
-      slots: {
-        title: "slots--title",
-        item: "slots--item",
-        list: "slots--list",
-        wrapper: "slots--wrapper",
-      },
-      variants: {
-        color: {
-          primary: {
-            title: "title--color--primary",
-            item: "item--color--primary",
-            list: "list--color--primary",
-            wrapper: "wrapper--color--primary",
+    const menu = tv(
+      {
+        base: "base--styles",
+        slots: {
+          title: "slots--title",
+          item: "slots--item",
+          list: "slots--list",
+          wrapper: "slots--wrapper",
+        },
+        variants: {
+          color: {
+            primary: {
+              title: "title--color--primary",
+              item: "item--color--primary",
+              list: "list--color--primary",
+              wrapper: "wrapper--color--primary",
+            },
+            secondary: {
+              title: "title--color--secondary",
+              item: "item--color--secondary",
+              list: "list--color--secondary",
+              wrapper: "wrapper--color--secondary",
+            },
           },
-          secondary: {
-            title: "title--color--secondary",
-            item: "item--color--secondary",
-            list: "list--color--secondary",
-            wrapper: "wrapper--color--secondary",
+          size: {
+            small: {
+              title: "title--size--small",
+              item: "item--size--small",
+              list: "list--size--small",
+              wrapper: "wrapper--size--small",
+            },
+            medium: {
+              title: "title--size--medium",
+              item: "item--size--medium",
+              list: "list--size--medium",
+              wrapper: "wrapper--size--medium",
+            },
           },
         },
-        size: {
-          small: {
-            title: "title--size--small",
-            item: "item--size--small",
-            list: "list--size--small",
-            wrapper: "wrapper--size--small",
-          },
-          medium: {
-            title: "title--size--medium",
-            item: "item--size--medium",
-            list: "list--size--medium",
-            wrapper: "wrapper--size--medium",
-          },
-        },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
 
     const {base, title, item, list, wrapper} = menu({
       color: {
@@ -1095,6 +1353,47 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
       "lg:wrapper--size--medium",
       "wrapper--size--medium",
     ]);
+  });
+
+  test("should not include a variant if it is not defined in the responsiveVariants key", () => {
+    const menu = tv(
+      {
+        base: "base--styles",
+        variants: {
+          color: {
+            primary: "primary--color--variant",
+            secondary: "secondary--color--variant",
+            success: "success--color--variant",
+          },
+          size: {
+            small: "small--size--variant",
+            medium: "medium--size--variant",
+          },
+        },
+      },
+      {
+        responsiveVariants: ["sm", "md", "lg"],
+      },
+    );
+
+    const styles = menu({
+      color: {
+        initial: "primary",
+        sm: "secondary",
+        md: "primary",
+        lg: "secondary",
+        // @ts-ignore
+        xl: "success",
+      },
+      size: {
+        initial: "medium",
+        sm: "small",
+        md: "medium",
+        lg: "medium",
+      },
+    });
+
+    expect(styles).not.toContain("xl:success--color--variant");
   });
 });
 
@@ -1516,16 +1815,21 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
-      base: "text-3xl font-bold",
-      variants: {
-        color: {
-          purple: "text-purple-500",
-          green: "text-green-500",
+    const h1 = tv(
+      {
+        extend: p,
+        base: "text-3xl font-bold",
+        variants: {
+          color: {
+            purple: "text-purple-500",
+            green: "text-green-500",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg", "xl"],
+      },
+    );
 
     const result = h1({
       isBig: true,
@@ -1564,16 +1868,21 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
-      base: "text-3xl font-bold",
-      variants: {
-        color: {
-          purple: "text-purple-500 bg-purple-500",
-          green: "text-green-500 bg-green-500",
+    const h1 = tv(
+      {
+        extend: p,
+        base: "text-3xl font-bold",
+        variants: {
+          color: {
+            purple: "text-purple-500 bg-purple-500",
+            green: "text-green-500 bg-green-500",
+          },
         },
       },
-    });
+      {
+        responsiveVariants: ["sm", "md", "lg", "xl"],
+      },
+    );
 
     const result = h1({
       isBig: true,
@@ -1703,7 +2012,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expectTv(wrapper(), ["wrapper--menuBase", "wrapper--isBig--menu"]);
   });
 
-  test("should include the extended slots w/ children slots", () => {
+  test("should include the extended slots w/ children slots (same names)", () => {
     const menuBase = tv({
       base: "base--menuBase",
       slots: {
@@ -1733,6 +2042,40 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expectTv(item(), ["item--menuBase", "item--menu"]);
     expectTv(list(), ["list--menuBase", "list--menu"]);
     expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+  });
+
+  test("should include the extended slots w/ children slots (additional)", () => {
+    const menuBase = tv({
+      base: "base--menuBase",
+      slots: {
+        title: "title--menuBase",
+        item: "item--menuBase",
+        list: "list--menuBase",
+        wrapper: "wrapper--menuBase",
+      },
+    });
+
+    const menu = tv({
+      extend: menuBase,
+      base: "base--menu",
+      slots: {
+        title: "title--menu",
+        item: "item--menu",
+        list: "list--menu",
+        wrapper: "wrapper--menu",
+        extra: "extra--menu",
+      },
+    });
+
+    // with default values
+    const {base, title, item, list, wrapper, extra} = menu();
+
+    expectTv(base(), ["base--menuBase", "base--menu"]);
+    expectTv(title(), ["title--menuBase", "title--menu"]);
+    expectTv(item(), ["item--menuBase", "item--menu"]);
+    expectTv(list(), ["list--menuBase", "list--menu"]);
+    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+    expectTv(extra(), ["extra--menu"]);
   });
 
   test("should include the extended variants w/slots and defaultVariants -- parent", () => {

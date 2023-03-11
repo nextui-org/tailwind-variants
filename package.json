@@ -35,7 +35,7 @@
     "test": "jest --verbose"
   },
   "dependencies": {
-    "tailwind-merge": "^1.8.1"
+    "tailwind-merge": "^1.10.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
@@ -63,11 +63,11 @@
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
     "prettier-eslint-cli": "^5.0.1",
-    "tailwindcss": "^3.2.4",
+    "tailwindcss": "^3.2.7",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
-    "tsup": "6.4.0",
-    "typescript": "4.6.2",
+    "tsup": "6.6.3",
+    "typescript": "4.9.5",
     "webpack": "^5.53.0"
   },
   "peerDependencies": {
