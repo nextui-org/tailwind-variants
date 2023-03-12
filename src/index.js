@@ -8,20 +8,26 @@ import {
   flatMergeArrays,
 } from "./utils.js";
 
-export const cxBase = (...classes) => classes.flat(Infinity).filter(Boolean).join(" ");
+export const defaultConfig = {
+  twMerge: true,
+  twMergeConfig: {},
+  responsiveVariants: false,
+};
 
-export const cx =
+export const cnBase = (...classes) => classes.flat(Infinity).filter(Boolean).join(" ");
+
+export const cn =
   (...classes) =>
-  (config = {}) => {
+  (config = defaultConfig) => {
     if (!config.twMerge) {
-      return cxBase(classes);
+      return cnBase(classes);
     }
 
     const twMerge = !isEmptyObject(config.twMergeConfig)
       ? extendTailwindMerge(config.twMergeConfig)
       : twMergeBase;
 
-    return twMerge(cxBase(classes));
+    return twMerge(cnBase(classes));
   };
 
 const joinObjects = (obj1, obj2) => {
@@ -29,19 +35,13 @@ const joinObjects = (obj1, obj2) => {
 
   for (const key in obj2) {
     if (mergedObj.hasOwnProperty(key)) {
-      mergedObj[key] = cxBase(mergedObj[key], obj2[key]);
+      mergedObj[key] = cnBase(mergedObj[key], obj2[key]);
     } else {
       mergedObj[key] = obj2[key];
     }
   }
 
   return mergedObj;
-};
-
-export const defaultConfig = {
-  twMerge: true,
-  twMergeConfig: {},
-  responsiveVariants: false,
 };
 
 export const tv = (options, config = defaultConfig) => {
@@ -53,7 +53,7 @@ export const tv = (options, config = defaultConfig) => {
     defaultVariants: defaultVariantsProps = {},
   } = options;
 
-  const base = cxBase(options?.extend?.base, options?.base);
+  const base = cnBase(options?.extend?.base, options?.base);
   const variants = mergeObjects(variantsProps, options?.extend?.variants);
   const defaultVariants = Object.assign({}, options?.extend?.defaultVariants, defaultVariantsProps);
 
@@ -83,7 +83,7 @@ export const tv = (options, config = defaultConfig) => {
       isEmptyObject(slotProps) &&
       isEmptyObject(options?.extend?.slots)
     ) {
-      return cx(base, props?.class, props?.className)(config);
+      return cn(base, props?.class, props?.className)(config);
     }
 
     if (compoundVariants && !Array.isArray(compoundVariants)) {
@@ -245,12 +245,12 @@ export const tv = (options, config = defaultConfig) => {
 
       return compoundClassNames.reduce((acc, className) => {
         if (typeof className === "string") {
-          acc.base = cx(acc.base, className)(config);
+          acc.base = cn(acc.base, className)(config);
         }
 
         if (typeof className === "object") {
           Object.entries(className).forEach(([slot, className]) => {
-            acc[slot] = cx(acc[slot], className)(config);
+            acc[slot] = cn(acc[slot], className)(config);
           });
         }
 
@@ -300,7 +300,7 @@ export const tv = (options, config = defaultConfig) => {
         typeof slots === "object" && !isEmptyObject(slots)
           ? Object.keys(slots).reduce((acc, slotKey) => {
               acc[slotKey] = (slotProps) =>
-                cx(
+                cn(
                   slots[slotKey],
                   getVariantClassNamesBySlotKey(slotKey),
                   compoundClassNames?.[slotKey],
@@ -319,7 +319,7 @@ export const tv = (options, config = defaultConfig) => {
     }
 
     // normal variants
-    return cx(
+    return cn(
       base,
       getVariantClassNames(),
       getCompoundVariantClassNames(),

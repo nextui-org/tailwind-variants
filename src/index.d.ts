@@ -1,4 +1,4 @@
-import {TVConfig} from "./config";
+import {TVConfig, TWMConfig} from "./config";
 import {TVGeneratedScreens} from "./generated";
 
 /**
@@ -33,13 +33,13 @@ export type OmitUndefined<T> = T extends undefined ? never : T;
 
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
-export type CxOptions = ClassValue[];
+export type CnOptions = ClassValue[];
 
-export type CxReturn = string;
+export type CnReturn = string;
 
-export declare const cxBase: <T extends CxOptions>(...classes: T) => CxReturn;
+export declare const cnBase: <T extends CnOptions>(...classes: T) => CnReturn;
 
-export declare const cx: <T extends CxOptions>(...classes: T) => (config: TVConfig) => CxReturn;
+export declare const cn: <T extends CnOptions>(...classes: T) => (config?: TWMConfig) => CnReturn;
 
 // compare if the value is true or array of values
 export type isTrueOrArray<T> = T extends true | (infer U)[] ? true : false;

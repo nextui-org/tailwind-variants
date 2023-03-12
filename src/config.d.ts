@@ -2,7 +2,7 @@ import type {Config as TwMergeConfig} from "tailwind-merge";
 import type {TVVariants} from "./index";
 import type {TVGeneratedScreens} from "./generated";
 
-export type TVConfig<V extends TVVariants<S>, EV extends TVVariants> = {
+export type TWMConfig = {
   /**
    * Whether to merge the class names with `tailwind-merge` library.
    * It's avoid to have duplicate tailwind classes. (Recommended)
@@ -15,6 +15,9 @@ export type TVConfig<V extends TVVariants<S>, EV extends TVVariants> = {
    * @see https://github.com/dcastil/tailwind-merge/blob/v1.8.1/docs/configuration.md
    */
   twMergeConfig?: TwMergeConfig;
+};
+
+export type TVConfig<V extends TVVariants<S>, EV extends TVVariants> = {
   /**
    * Whether to enable responsive variant transform.
    * Which variants or screens(breakpoints) for responsive variant transform.
@@ -24,4 +27,4 @@ export type TVConfig<V extends TVVariants<S>, EV extends TVVariants> = {
     | boolean
     | TVGeneratedScreens[]
     | {[K in keyof V | keyof EV]?: boolean | TVGeneratedScreens[]};
-};
+} & TWMConfig;
