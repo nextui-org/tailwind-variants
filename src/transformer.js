@@ -4,7 +4,7 @@ import {generateTypes} from "./generator";
 
 const regExp = {
   tv: /tv\s*\((.*?)\)/gs,
-  tvExtend: /extend:\s*\w+,\s*/,
+  tvExtend: /extend:\s*\w+(,| )\s*/,
   comment: /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm,
   blankLine: /^\s*$(?:\r\n?|\n)/gm,
   extension: /\.\w+/g,
@@ -72,6 +72,8 @@ const getTVObjects = (content) => {
   if (isEmpty(tvs)) return;
 
   return tvs.map((tv) => {
+    if (!tv.includes("responsiveVariants")) return {};
+
     /**
      * avoid direct eval
      * @see https://esbuild.github.io/content-types/#direct-eval
