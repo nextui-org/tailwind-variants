@@ -16,13 +16,13 @@ export const defaultConfig = {
 
 export const voidEmpty = (value) => (!!value ? value : undefined);
 
-export const cnBase = (...classes) => classes.flat(Infinity).filter(Boolean).join(" ");
+export const cnBase = (...classes) => voidEmpty(classes.flat(Infinity).filter(Boolean).join(" "));
 
 export const cn =
   (...classes) =>
   (config = defaultConfig) => {
     if (!config.twMerge) {
-      return voidEmpty(cnBase(classes));
+      return cnBase(classes);
     }
 
     const twMerge = !isEmptyObject(config.twMergeConfig)
