@@ -1,4 +1,4 @@
-import {tv} from "../index";
+import {tv, cn} from "../index";
 
 const resultArray = (result: string) => result.split(" ");
 
@@ -179,7 +179,7 @@ describe("Tailwind Variants (TV) - Default", () => {
 
   test("should work without anything", () => {
     const styles = tv({});
-    const expectedResult = "";
+    const expectedResult = undefined;
 
     expect(styles()).toBe(expectedResult);
   });
@@ -355,10 +355,12 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const {base, title, item, list} = menu();
 
-    expectTv(base(), []);
-    expectTv(title(), []);
-    expectTv(item(), []);
-    expectTv(list(), []);
+    const expectedResult = undefined;
+
+    expect(base()).toBe(expectedResult);
+    expect(title()).toBe(expectedResult);
+    expect(item()).toBe(expectedResult);
+    expect(list()).toBe(expectedResult);
   });
 
   test("should work with slots -- default variants -- custom class & className", () => {
@@ -2362,5 +2364,20 @@ describe("Tailwind Variants (TV) - Extends", () => {
       "color--red--wrapper--menuBase",
       "color--red--isBig--wrapper--menuBase",
     ]);
+  });
+
+  test("should work with cn", () => {
+    const tvResult = ["w-fit", "h-fit"];
+    const custom = ["w-full"];
+
+    const resultWithoutMerge = cn(tvResult.concat(custom))({twMerge: false});
+    const resultWithMerge = cn(tvResult.concat(custom))({twMerge: true});
+    const emptyResultWithoutMerge = cn([].concat([]))({twMerge: false});
+    const emptyResultWithMerge = cn([].concat([]))({twMerge: true});
+
+    expect(resultWithoutMerge).toBe("w-fit h-fit w-full");
+    expect(resultWithMerge).toBe("h-fit w-full");
+    expect(emptyResultWithoutMerge).toBe(undefined);
+    expect(emptyResultWithMerge).toBe(undefined);
   });
 });

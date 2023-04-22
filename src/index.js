@@ -14,7 +14,9 @@ export const defaultConfig = {
   responsiveVariants: false,
 };
 
-export const cnBase = (...classes) => classes.flat(Infinity).filter(Boolean).join(" ");
+export const voidEmpty = (value) => (!!value ? value : undefined);
+
+export const cnBase = (...classes) => voidEmpty(classes.flat(Infinity).filter(Boolean).join(" "));
 
 export const cn =
   (...classes) =>
@@ -27,7 +29,7 @@ export const cn =
       ? extendTailwindMerge(config.twMergeConfig)
       : twMergeBase;
 
-    return twMerge(cnBase(classes));
+    return voidEmpty(twMerge(cnBase(classes)));
   };
 
 const joinObjects = (obj1, obj2) => {

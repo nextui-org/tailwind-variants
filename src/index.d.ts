@@ -35,7 +35,7 @@ export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
 export type CnOptions = ClassValue[];
 
-export type CnReturn = string;
+export type CnReturn = string | undefined;
 
 export declare const cnBase: <T extends CnOptions>(...classes: T) => CnReturn;
 
