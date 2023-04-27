@@ -4,7 +4,7 @@ import type {DefaultTheme} from "tailwindcss/types/generated/default-theme";
 export type DefaultScreens = keyof DefaultTheme["screens"];
 
 export type WithTV = {
-  <C extends Config = {}>(tvConfig: Config): C;
+  (tvConfig: Config): Config;
 };
 
 export declare const withTV: WithTV;

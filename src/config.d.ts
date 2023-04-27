@@ -17,7 +17,10 @@ export type TWMConfig = {
   twMergeConfig?: TwMergeConfig;
 };
 
-export type TVConfig<V extends TVVariants<S>, EV extends TVVariants> = {
+export type TVConfig<
+  V extends TVVariants | undefined = undefined,
+  EV extends TVVariants | undefined = undefined,
+> = {
   /**
    * Whether to enable responsive variant transform.
    * Which variants or screens(breakpoints) for responsive variant transform.
