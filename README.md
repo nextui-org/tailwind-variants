@@ -20,7 +20,6 @@
 
 ## Features
 
-- Zero runtime 
 - First-class variant API
 - Responsive variants
 - Slots support
