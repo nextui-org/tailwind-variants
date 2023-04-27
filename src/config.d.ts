@@ -18,7 +18,9 @@ export type TWMConfig = {
 };
 
 export type TVConfig<
+  // @ts-expect-error
   V extends TVVariants | undefined = undefined,
+  // @ts-expect-error
   EV extends TVVariants | undefined = undefined,
 > = {
   /**
