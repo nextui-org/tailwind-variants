@@ -42,7 +42,7 @@ export declare const cnBase: <T extends CnOptions>(...classes: T) => CnReturn;
 export declare const cn: <T extends CnOptions>(...classes: T) => (config?: TWMConfig) => CnReturn;
 
 // compare if the value is true or array of values
-export type isTrueOrArray<T> = T extends true | (infer U)[] ? true : false;
+export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
 
 export type isStringArray<T> = T extends Array<string> ? true : false;
 
@@ -192,7 +192,7 @@ export type TV = {
     C extends TVConfig<V, EV> = undefined,
     B extends ClassValue = undefined,
     S extends TVSlots = undefined,
-    E extends ReturnType<TV> = undefined,
+    E extends TVReturnType = undefined,
     EV extends TVVariants = E["variants"] extends TVVariants ? E["variants"] : undefined,
     ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
   >(
