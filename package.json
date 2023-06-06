@@ -94,7 +94,7 @@
       "esm"
     ]
   },
-  "packageManager": "pnpm@7.14.2",
+  "packageManager": "pnpm@8.3.1",
   "engines": {
     "node": ">=16.x",
     "pnpm": ">=7.x"

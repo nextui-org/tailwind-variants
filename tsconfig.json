@@ -1,18 +1,16 @@
-
-{	
-  "$schema": "https://json.schemastore.org/tsconfig",	
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist"],	
-  "compilerOptions": {	
-    "target": "esnext",	
-    "module": "esnext",	
-    "isolatedModules": true,	
-    "esModuleInterop": true,	
-    "moduleResolution": "node",	
-    "resolveJsonModule": true,	
-    "strict": true,	
-    "declaration": true,	
-    "skipLibCheck": true,	
-    "allowJs": false	
-  }	
-}	
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "strict": true,
+    "declaration": true,
+    "allowJs": false
+  }
+}
