@@ -35,7 +35,7 @@
     "test": "jest --verbose"
   },
   "dependencies": {
-    "tailwind-merge": "^1.10.0"
+    "tailwind-merge": "^1.13.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
@@ -67,7 +67,7 @@
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
     "tsup": "6.6.3",
-    "typescript": "4.9.5",
+    "typescript": "5.1.3",
     "webpack": "^5.53.0"
   },
   "peerDependencies": {
