@@ -267,7 +267,8 @@ export declare const tv: TV;
 
 export declare const defaultConfig: TVConfig;
 
-export type VariantProps<Component extends (...args: any) => any> = Omit<
-  OmitUndefined<Parameters<Component>[0]>,
-  "class" | "className"
->;
+export type VariantProps<T> = T extends {variants: infer V}
+  ? V extends TVVariantsDefault<any, undefined>
+    ? {[K in TVVariantKeys<V, any>[number]]?: keyof V[K]}
+    : never
+  : never;
