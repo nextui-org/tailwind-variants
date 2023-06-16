@@ -215,8 +215,7 @@ export type TV = {
     S extends TVSlots = undefined,
     // @ts-expect-error
     E extends TVReturnType = undefined,
-    // @ts-expect-error
-    EV extends TVVariants = E["variants"] extends TVVariants ? E["variants"] : undefined,
+    EV extends TVVariants<ES, B, E["variants"], ES> = E["variants"],
     ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
   >(
     options: {
