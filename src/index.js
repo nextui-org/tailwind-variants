@@ -6,6 +6,7 @@ import {
   mergeObjects,
   removeExtraSpaces,
   flatMergeArrays,
+  flatArray
 } from "./utils.js";
 
 export const defaultConfig = {
@@ -16,7 +17,7 @@ export const defaultConfig = {
 
 export const voidEmpty = (value) => (!!value ? value : undefined);
 
-export const cnBase = (...classes) => voidEmpty(classes.flat(Infinity).filter(Boolean).join(" "));
+export const cnBase = (...classes) => voidEmpty(flatArray(classes).filter(Boolean).join(" "));
 
 export const cn =
   (...classes) =>
@@ -25,12 +26,13 @@ export const cn =
       return cnBase(classes);
     }
 
-    const twMerge = !isEmptyObject(config.twMergeConfig)
-      ? extendTailwindMerge(config.twMergeConfig)
-      : twMergeBase;
+      const twMerge = !isEmptyObject(config.twMergeConfig)
+        ? extendTailwindMerge(config.twMergeConfig)
+        : twMergeBase;
 
-    return voidEmpty(twMerge(cnBase(classes)));
-  };
+      return voidEmpty(twMerge(cnBase(classes)));
+    };
+
 
 const joinObjects = (obj1, obj2) => {
   const mergedObj = {...obj1};
@@ -57,7 +59,7 @@ export const tv = (options, config = defaultConfig) => {
 
   const base = cnBase(options?.extend?.base, options?.base);
   const variants = mergeObjects(variantsProps, options?.extend?.variants);
-  const defaultVariants = Object.assign({}, options?.extend?.defaultVariants, defaultVariantsProps);
+  const defaultVariants = {...options?.extend?.defaultVariants, ...defaultVariantsProps};
 
   const componentSlots = !isEmptyObject(slotProps)
     ? {
@@ -66,10 +68,6 @@ export const tv = (options, config = defaultConfig) => {
         ...slotProps,
       }
     : {};
-
-  const responsiveVarsEnabled =
-    (Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0) ||
-    config.responsiveVariants === true;
 
   // merge slots with the "extended" slots
   const slots = isEmptyObject(options?.extend?.slots)
@@ -144,6 +142,11 @@ export const tv = (options, config = defaultConfig) => {
       const variantKey = falsyToString(variantProp);
 
       // responsive variants
+
+      const responsiveVarsEnabled =
+        (Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0) ||
+        config.responsiveVariants === true;
+
       if (typeof variantKey === "object" && responsiveVarsEnabled) {
         screenValues = Object.keys(variantKey).reduce((acc, screen) => {
           const screenVariantKey = variantKey[screen];
@@ -251,9 +254,11 @@ export const tv = (options, config = defaultConfig) => {
         }
 
         if (typeof className === "object") {
-          Object.entries(className).forEach(([slot, className]) => {
-            acc[slot] = cn(acc[slot], className)(config);
-          });
+          const classNameKeys = Object.keys(className);
+
+          for (const slot of classNameKeys) {
+            acc[slot] = cn(acc[slot], className[slot])(config);
+          }
         }
 
         return acc;
@@ -282,12 +287,13 @@ export const tv = (options, config = defaultConfig) => {
           }
         }
 
-        slots.forEach((slotName) => {
+        for (const slotName of slots) {
           if (!acc[slotName]) {
             acc[slotName] = [];
           }
+
           acc[slotName].push([slotClass, slotClassName]);
-        });
+        }
 
         return acc;
       }, {});
