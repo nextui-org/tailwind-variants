@@ -4,7 +4,9 @@ export const falsyToString = (value) =>
 export const isEmptyObject = (obj) =>
   !obj || typeof obj !== "object" || Object.keys(obj).length === 0;
 
-export const flatMergeArrays = (...arrays) => [...arrays].flat().filter(Boolean);
+export const flatArray = (arr) => arr.reduce((acc, item) => acc.concat(item), []);
+
+export const flatMergeArrays = (...arrays) => flatArray(arrays).filter(Boolean);
 
 export const mergeObjects = (obj1, obj2) => {
   let result = {};
