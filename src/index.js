@@ -20,7 +20,7 @@ export const cnBase = (...classes) => voidEmpty(classes.flat(Infinity).filter(Bo
 
 export const cn =
   (...classes) =>
-  (config = defaultConfig) => {
+  (config) => {
     if (!config.twMerge) {
       return cnBase(classes);
     }
@@ -46,7 +46,7 @@ const joinObjects = (obj1, obj2) => {
   return mergedObj;
 };
 
-export const tv = (options, config = defaultConfig) => {
+export const tv = (options, configProp) => {
   const {
     slots: slotProps = {},
     variants: variantsProps = {},
@@ -54,6 +54,8 @@ export const tv = (options, config = defaultConfig) => {
     compoundSlots = [],
     defaultVariants: defaultVariantsProps = {},
   } = options;
+
+  const config = Object.assign({}, defaultConfig, configProp);
 
   const base = cnBase(options?.extend?.base, options?.base);
   const variants = mergeObjects(variantsProps, options?.extend?.variants);
