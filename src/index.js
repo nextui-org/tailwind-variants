@@ -6,7 +6,7 @@ import {
   mergeObjects,
   removeExtraSpaces,
   flatMergeArrays,
-  flatArray
+  flatArray,
 } from "./utils.js";
 
 export const defaultConfig = {
@@ -26,13 +26,12 @@ export const cn =
       return cnBase(classes);
     }
 
-      const twMerge = !isEmptyObject(config.twMergeConfig)
-        ? extendTailwindMerge(config.twMergeConfig)
-        : twMergeBase;
+    const twMerge = !isEmptyObject(config.twMergeConfig)
+      ? extendTailwindMerge(config.twMergeConfig)
+      : twMergeBase;
 
-      return voidEmpty(twMerge(cnBase(classes)));
-    };
-
+    return voidEmpty(twMerge(cnBase(classes)));
+  };
 
 const joinObjects = (obj1, obj2) => {
   const mergedObj = {...obj1};
@@ -57,7 +56,7 @@ export const tv = (options, configProp) => {
     defaultVariants: defaultVariantsProps = {},
   } = options;
 
-  const config = Object.assign({}, defaultConfig, configProp);
+  const config = {...defaultConfig, ...configProp};
 
   const base = cnBase(options?.extend?.base, options?.base);
   const variants = mergeObjects(variantsProps, options?.extend?.variants);
