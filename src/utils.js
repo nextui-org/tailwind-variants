@@ -10,6 +10,7 @@ export const flatArray = (initialArray) => {
 
   while (stack.length) {
     let next = stack.pop();
+
     if (Array.isArray(next)) {
       stack.push(...next);
     } else {

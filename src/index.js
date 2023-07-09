@@ -6,7 +6,7 @@ import {
   mergeObjects,
   removeExtraSpaces,
   flatMergeArrays,
-  flatArray
+  flatArray,
 } from "./utils.js";
 
 export const defaultConfig = {
