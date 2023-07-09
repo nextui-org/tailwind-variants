@@ -6,6 +6,7 @@ import {
   mergeObjects,
   removeExtraSpaces,
   flatMergeArrays,
+  flatArray
 } from "./utils.js";
 
 export const defaultConfig = {
@@ -16,7 +17,7 @@ export const defaultConfig = {
 
 export const voidEmpty = (value) => (!!value ? value : undefined);
 
-export const cnBase = (...classes) => voidEmpty(classes.flat(Infinity).filter(Boolean).join(" "));
+export const cnBase = (...classes) => voidEmpty(flatArray(classes).filter(Boolean).join(" "));
 
 export const cn =
   (...classes) =>
@@ -55,11 +56,11 @@ export const tv = (options, configProp) => {
     defaultVariants: defaultVariantsProps = {},
   } = options;
 
-  const config = Object.assign({}, defaultConfig, configProp);
+  const config = {...defaultConfig, ...configProp};
 
   const base = cnBase(options?.extend?.base, options?.base);
   const variants = mergeObjects(variantsProps, options?.extend?.variants);
-  const defaultVariants = Object.assign({}, options?.extend?.defaultVariants, defaultVariantsProps);
+  const defaultVariants = {...options?.extend?.defaultVariants, ...defaultVariantsProps};
 
   const componentSlots = !isEmptyObject(slotProps)
     ? {
@@ -68,10 +69,6 @@ export const tv = (options, configProp) => {
         ...slotProps,
       }
     : {};
-
-  const responsiveVarsEnabled =
-    (Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0) ||
-    config.responsiveVariants === true;
 
   // merge slots with the "extended" slots
   const slots = isEmptyObject(options?.extend?.slots)
@@ -146,6 +143,11 @@ export const tv = (options, configProp) => {
       const variantKey = falsyToString(variantProp);
 
       // responsive variants
+
+      const responsiveVarsEnabled =
+        (Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0) ||
+        config.responsiveVariants === true;
+
       if (typeof variantKey === "object" && responsiveVarsEnabled) {
         screenValues = Object.keys(variantKey).reduce((acc, screen) => {
           const screenVariantKey = variantKey[screen];
@@ -253,9 +255,11 @@ export const tv = (options, configProp) => {
         }
 
         if (typeof className === "object") {
-          Object.entries(className).forEach(([slot, className]) => {
-            acc[slot] = cn(acc[slot], className)(config);
-          });
+          const classNameKeys = Object.keys(className);
+
+          for (const slot of classNameKeys) {
+            acc[slot] = cn(acc[slot], className[slot])(config);
+          }
         }
 
         return acc;
@@ -284,12 +288,13 @@ export const tv = (options, configProp) => {
           }
         }
 
-        slots.forEach((slotName) => {
+        for (const slotName of slots) {
           if (!acc[slotName]) {
             acc[slotName] = [];
           }
+
           acc[slotName].push([slotClass, slotClassName]);
-        });
+        }
 
         return acc;
       }, {});

@@ -4,7 +4,23 @@ export const falsyToString = (value) =>
 export const isEmptyObject = (obj) =>
   !obj || typeof obj !== "object" || Object.keys(obj).length === 0;
 
-export const flatMergeArrays = (...arrays) => [...arrays].flat().filter(Boolean);
+export const flatArray = (initialArray) => {
+  let result = [];
+  let stack = [...initialArray];
+
+  while (stack.length) {
+    let next = stack.pop();
+    if (Array.isArray(next)) {
+      stack.push(...next);
+    } else {
+      result.push(next);
+    }
+  }
+
+  return result.reverse();
+};
+
+export const flatMergeArrays = (...arrays) => flatArray(arrays).filter(Boolean);
 
 export const mergeObjects = (obj1, obj2) => {
   let result = {};

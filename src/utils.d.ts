@@ -2,6 +2,8 @@ export declare const falsyToString: <T>(value: T) => T | string;
 
 export declare const isEmptyObject: (obj: unknown) => boolean;
 
+export declare const flatArray: <T extends unknown[]>(array: T) => T;
+
 export declare const flatMergeArrays: <T extends unknown[]>(...arrays: T[]) => T;
 
 export declare const mergeObjects: (obj1: unknown, obj2: unknown) => unknown;
