@@ -19,6 +19,8 @@ export const voidEmpty = (value) => (!!value ? value : undefined);
 
 export const cnBase = (...classes) => voidEmpty(flatArray(classes).filter(Boolean).join(" "));
 
+let cachedTwMerge = null;
+
 export const cn =
   (...classes) =>
   (config) => {
@@ -26,25 +28,25 @@ export const cn =
       return cnBase(classes);
     }
 
-    const twMerge = !isEmptyObject(config.twMergeConfig)
-      ? extendTailwindMerge(config.twMergeConfig)
-      : twMergeBase;
+    if (!cachedTwMerge) {
+      cachedTwMerge = !isEmptyObject(config.twMergeConfig)
+        ? extendTailwindMerge(config.twMergeConfig)
+        : twMergeBase;
+    }
 
-    return voidEmpty(twMerge(cnBase(classes)));
+    return voidEmpty(cachedTwMerge(cnBase(classes)));
   };
 
 const joinObjects = (obj1, obj2) => {
-  const mergedObj = {...obj1};
-
   for (const key in obj2) {
-    if (mergedObj.hasOwnProperty(key)) {
-      mergedObj[key] = cnBase(mergedObj[key], obj2[key]);
+    if (obj1.hasOwnProperty(key)) {
+      obj1[key] = cnBase(obj1[key], obj2[key]);
     } else {
-      mergedObj[key] = obj2[key];
+      obj1[key] = obj2[key];
     }
   }
 
-  return mergedObj;
+  return obj1;
 };
 
 export const tv = (options, configProp) => {
