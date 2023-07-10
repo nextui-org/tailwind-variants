@@ -1,6 +1,7 @@
 import {twMerge as twMergeBase, extendTailwindMerge} from "tailwind-merge";
 
 import {
+  isEqual,
   isEmptyObject,
   falsyToString,
   mergeObjects,
@@ -20,6 +21,8 @@ export const voidEmpty = (value) => (!!value ? value : undefined);
 export const cnBase = (...classes) => voidEmpty(flatArray(classes).filter(Boolean).join(" "));
 
 let cachedTwMerge = null;
+let cachedTwMergeConfig = {};
+let didTwMergeConfigChange = false;
 
 export const cn =
   (...classes) =>
@@ -28,10 +31,11 @@ export const cn =
       return cnBase(classes);
     }
 
-    if (!cachedTwMerge) {
-      cachedTwMerge = !isEmptyObject(config.twMergeConfig)
-        ? extendTailwindMerge(config.twMergeConfig)
-        : twMergeBase;
+    if (!cachedTwMerge || didTwMergeConfigChange) {
+      didTwMergeConfigChange = false;
+      cachedTwMerge = isEmptyObject(cachedTwMergeConfig)
+        ? twMergeBase
+        : extendTailwindMerge(cachedTwMergeConfig);
     }
 
     return voidEmpty(cachedTwMerge(cnBase(classes)));
@@ -63,6 +67,12 @@ export const tv = (options, configProp) => {
   const base = cnBase(options?.extend?.base, options?.base);
   const variants = mergeObjects(variantsProps, options?.extend?.variants);
   const defaultVariants = {...options?.extend?.defaultVariants, ...defaultVariantsProps};
+
+  // save twMergeConfig to the cache
+  if (!isEmptyObject(config.twMergeConfig) && !isEqual(config.twMergeConfig, cachedTwMergeConfig)) {
+    didTwMergeConfigChange = true;
+    cachedTwMergeConfig = config.twMergeConfig;
+  }
 
   const componentSlots = !isEmptyObject(slotProps)
     ? {
@@ -132,23 +142,23 @@ export const tv = (options, configProp) => {
     const getVariantValue = (variant, vrs = variants, slotKey = null) => {
       const variantObj = vrs?.[variant];
 
-      if (typeof variantObj !== "object" || isEmptyObject(variantObj)) {
+      if (!variantObj || isEmptyObject(variantObj)) {
         return null;
       }
 
       const variantProp = props?.[variant];
-      let defaultVariantProp = defaultVariants?.[variant];
-      let screenValues = [];
 
       if (variantProp === null) return null;
 
       const variantKey = falsyToString(variantProp);
 
       // responsive variants
-
       const responsiveVarsEnabled =
         (Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0) ||
         config.responsiveVariants === true;
+
+      let defaultVariantProp = defaultVariants?.[variant];
+      let screenValues = [];
 
       if (typeof variantKey === "object" && responsiveVarsEnabled) {
         screenValues = Object.keys(variantKey).reduce((acc, screen) => {
@@ -186,23 +196,33 @@ export const tv = (options, configProp) => {
       return screenValues.length > 0 ? [value, ...screenValues] : value;
     };
 
-    const getVariantClassNames = () =>
-      variants ? Object.keys(variants).map((vk) => getVariantValue(vk, variants)) : null;
+    const getVariantClassNames = () => {
+      if (!variants) {
+        return null;
+      }
+
+      return Object.keys(variants).map((vk) => getVariantValue(vk, variants));
+    };
 
     const getVariantClassNamesBySlotKey = (slotKey) => {
       if (!variants || typeof variants !== "object") {
         return null;
       }
 
-      return Object.keys(variants)
-        .map((variant) => {
-          const variantValue = getVariantValue(variant, variants, slotKey);
+      return Object.keys(variants).reduce((acc, variant) => {
+        const variantValue = getVariantValue(variant, variants, slotKey);
 
-          return slotKey === "base" && typeof variantValue === "string"
+        const value =
+          slotKey === "base" && typeof variantValue === "string"
             ? variantValue
             : variantValue && variantValue[slotKey];
-        })
-        .filter(Boolean);
+
+        if (value) {
+          acc.push(value);
+        }
+
+        return acc;
+      }, []);
     };
 
     const propsWithoutUndefined =

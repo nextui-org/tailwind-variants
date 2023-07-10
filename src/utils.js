@@ -4,6 +4,8 @@ export const falsyToString = (value) =>
 export const isEmptyObject = (obj) =>
   !obj || typeof obj !== "object" || Object.keys(obj).length === 0;
 
+export const isEqual = (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2);
+
 export const flatArray = (initialArray) => {
   let result = [];
   let stack = [...initialArray];

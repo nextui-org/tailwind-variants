@@ -9,3 +9,5 @@ export declare const flatMergeArrays: <T extends unknown[]>(...arrays: T[]) => T
 export declare const mergeObjects: (obj1: unknown, obj2: unknown) => unknown;
 
 export declare const removeExtraSpaces: (str: string) => string;
+
+export declare const isEqual: (obj1: object, obj2: object) => boolean;

@@ -10,6 +10,27 @@ const expectKeys = (result: string[], expectedResult: string[]) => {
   expect(result).toEqual(expect.arrayContaining(expectedResult));
 };
 
+const COMMON_UNITS = ["small", "medium", "large"];
+
+const twMergeConfig = {
+  theme: {
+    opacity: ["disabled"],
+    spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+    borderWidth: COMMON_UNITS,
+    borderRadius: COMMON_UNITS,
+  },
+  classGroups: {
+    shadow: [{shadow: COMMON_UNITS}],
+    "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
+    "bg-image": ["bg-stripe-gradient"],
+    "min-w": [
+      {
+        "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+      },
+    ],
+  },
+};
+
 describe("Tailwind Variants (TV) - Default", () => {
   test("should work with nested arrays", () => {
     const menu = tv({
@@ -2379,5 +2400,54 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expect(resultWithMerge).toBe("h-fit w-full");
     expect(emptyResultWithoutMerge).toBe(undefined);
     expect(emptyResultWithMerge).toBe(undefined);
+  });
+});
+
+describe("Tailwind Variants (TV) - Tailwind Merge", () => {
+  it("should merge the tailwind classes correctly", () => {
+    const styles = tv({
+      base: "text-base text-yellow-400",
+      variants: {
+        color: {
+          red: "text-red-500",
+          blue: "text-blue-500",
+        },
+      },
+    });
+
+    const result = styles({
+      color: "red",
+    });
+
+    expectTv(result, ["text-base", "text-red-500"]);
+  });
+
+  it("should support custom config", () => {
+    const styles = tv(
+      {
+        base: "text-small text-yellow-400 w-unit",
+        variants: {
+          size: {
+            small: "text-small w-unit-2",
+            medium: "text-medium w-unit-4",
+            large: "text-large w-unit-6",
+          },
+          color: {
+            red: "text-red-500",
+            blue: "text-blue-500",
+          },
+        },
+      },
+      {
+        twMergeConfig,
+      },
+    );
+
+    const result = styles({
+      size: "medium",
+      color: "blue",
+    });
+
+    expectTv(result, ["text-medium", "text-blue-500", "w-unit-4"]);
   });
 });
