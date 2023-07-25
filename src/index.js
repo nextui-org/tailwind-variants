@@ -55,6 +55,7 @@ const joinObjects = (obj1, obj2) => {
 
 export const tv = (options, configProp) => {
   const {
+    extend = null,
     slots: slotProps = {},
     variants: variantsProps = {},
     compoundVariants = [],
@@ -64,9 +65,15 @@ export const tv = (options, configProp) => {
 
   const config = {...defaultConfig, ...configProp};
 
-  const base = cnBase(options?.extend?.base, options?.base);
-  const variants = mergeObjects(variantsProps, options?.extend?.variants);
-  const defaultVariants = {...options?.extend?.defaultVariants, ...defaultVariantsProps};
+  const base = extend?.base ? cnBase(extend.base, options?.base) : options?.base;
+  const variants =
+    extend?.variants && !isEmptyObject(extend.variants)
+      ? mergeObjects(variantsProps, extend.variants)
+      : variantsProps;
+  const defaultVariants =
+    extend?.defaultVariants && !isEmptyObject(extend.defaultVariants)
+      ? {...extend.defaultVariants, ...defaultVariantsProps}
+      : defaultVariantsProps;
 
   // save twMergeConfig to the cache
   if (!isEmptyObject(config.twMergeConfig) && !isEqual(config.twMergeConfig, cachedTwMergeConfig)) {
@@ -83,19 +90,15 @@ export const tv = (options, configProp) => {
     : {};
 
   // merge slots with the "extended" slots
-  const slots = isEmptyObject(options?.extend?.slots)
+  const slots = isEmptyObject(extend?.slots)
     ? componentSlots
     : joinObjects(
-        options?.extend?.slots,
+        extend?.slots,
         isEmptyObject(componentSlots) ? {base: options?.base} : componentSlots,
       );
 
   const component = (props) => {
-    if (
-      isEmptyObject(variants) &&
-      isEmptyObject(slotProps) &&
-      isEmptyObject(options?.extend?.slots)
-    ) {
+    if (isEmptyObject(variants) && isEmptyObject(slotProps) && isEmptyObject(extend?.slots)) {
       return cn(base, props?.class, props?.className)(config);
     }
 
@@ -259,7 +262,7 @@ export const tv = (options, configProp) => {
 
     const getCompoundVariantClassNames = () => {
       const cvValues = getCompoundVariantsValue(compoundVariants);
-      const ecvValues = getCompoundVariantsValue(options?.extend?.compoundVariants);
+      const ecvValues = getCompoundVariantsValue(extend?.compoundVariants);
 
       return flatMergeArrays(ecvValues, cvValues);
     };
@@ -323,7 +326,7 @@ export const tv = (options, configProp) => {
     };
 
     // with slots
-    if (!isEmptyObject(slotProps) || !isEmptyObject(options?.extend?.slots)) {
+    if (!isEmptyObject(slotProps) || !isEmptyObject(extend?.slots)) {
       const compoundClassNames = getCompoundVariantClassNamesBySlot() ?? [];
       const compoundSlotClassNames = getCompoundSlotClassNameBySlot() ?? [];
 
@@ -366,6 +369,7 @@ export const tv = (options, configProp) => {
   };
 
   component.variantKeys = getVariantKeys();
+  component.extend = extend;
   component.base = base;
   component.slots = slots;
   component.variants = variants;

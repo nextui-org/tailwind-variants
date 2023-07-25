@@ -180,7 +180,10 @@ export type TVReturnProps<
   B extends ClassValue,
   EV extends TVVariants<ES>,
   ES extends TVSlots,
+  // @ts-expect-error
+  E extends TVReturnType = undefined,
 > = {
+  extend: E;
   base: B;
   slots: S;
   variants: V;
@@ -197,13 +200,15 @@ export type TVReturnType<
   C extends TVConfig<V, EV>,
   EV extends TVVariants<ES>,
   ES extends TVSlots,
+  // @ts-expect-error
+  E extends TVReturnType = undefined,
 > = {
   (props?: TVProps<V, S, C, EV, ES>): ES extends undefined
     ? S extends undefined
       ? string
       : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string}
     : {[K in TVSlotsWithBase<ES & S, B>]: (slotProps?: ClassProp) => string};
-} & TVReturnProps<V, S, B, EV, ES>;
+} & TVReturnProps<V, S, B, EV, ES, E>;
 
 export type TV = {
   <
@@ -229,7 +234,7 @@ export type TV = {
   >(
     options: {
       /**
-       * Extend allows easily compose components.
+       * Extend allows for easy composition of components.
        * @see https://www.tailwind-variants.org/docs/composing-components
        */
       extend?: E;
@@ -238,22 +243,22 @@ export type TV = {
        */
       base?: B;
       /**
-       * Slots allows you to separate an component into multiple parts.
+       * Slots allow you to separate a component into multiple parts.
        * @see https://www.tailwind-variants.org/docs/slots
        */
       slots?: S;
       /**
-       * Variants allows you to create multiple versions of the same component.
+       * Variants allow you to create multiple versions of the same component.
        * @see https://www.tailwind-variants.org/docs/variants#adding-variants
        */
       variants?: V;
       /**
-       * Compound variants allow apply classes to multiple variants at once.
+       * Compound variants allow you to apply classes to multiple variants at once.
        * @see https://www.tailwind-variants.org/docs/variants#compound-variants
        */
       compoundVariants?: CV;
       /**
-       * Compound slots allow apply classes to multiple slots at once.
+       * Compound slots allow you to apply classes to multiple slots at once.
        */
       compoundSlots?: TVCompoundSlots<V, S, B>;
       /**
@@ -263,11 +268,11 @@ export type TV = {
       defaultVariants?: DV;
     },
     /**
-     * The config object to modify the default configuration.
+     * The config object allows you to modify the default configuration.
      * @see https://www.tailwind-variants.org/docs/api-reference#config-optional
      */
     config?: C,
-  ): TVReturnType<V, S, B, C, EV, ES>;
+  ): TVReturnType<V, S, B, C, EV, ES, E>;
 };
 
 // main function

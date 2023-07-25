@@ -7,18 +7,18 @@ export const isEmptyObject = (obj) =>
 export const isEqual = (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2);
 
 function flat(arr, target) {
-    arr.forEach(function (el) {
-          if (Array.isArray(el)) flat(el, target);
-          else target.push(el);
-        });
+  arr.forEach(function (el) {
+    if (Array.isArray(el)) flat(el, target);
+    else target.push(el);
+  });
 }
 
 export function flatArray(arr) {
-    const flattened = [];
+  const flattened = [];
 
-    flat(arr, flattened);
+  flat(arr, flattened);
 
-    return flattened;
+  return flattened;
 }
 
 export const flatMergeArrays = (...arrays) => flatArray(arrays).filter(Boolean);
