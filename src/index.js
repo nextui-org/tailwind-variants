@@ -307,7 +307,7 @@ export const tv = (options, configProp) => {
 
             // if none of the slot variant keys are included in props or default variants then skip the slot
             // if the included slot variant key is not equal to the slot variant value then skip the slot
-            if (!completePropsValue || completePropsValue !== slotVariants[key]) {
+            if (completePropsValue === undefined || completePropsValue !== slotVariants[key]) {
               return acc;
             }
           }

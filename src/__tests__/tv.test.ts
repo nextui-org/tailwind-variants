@@ -842,14 +842,14 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
           slots: ["item", "prev", "next"],
           size: "xs",
           color: "primary",
-          isBig: true,
+          isBig: false,
           class: "w-7 h-7 text-xs",
         },
       ],
       defaultVariants: {
         size: "xs",
         color: "primary",
-        isBig: true,
+        isBig: false,
       },
     });
     // with default values
