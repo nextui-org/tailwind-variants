@@ -691,6 +691,119 @@ describe("Tailwind Variants (TV) - Slots", () => {
     expectTv(list(), ["list-none", "color--secondary-list", "compound--list"]);
     expectTv(wrapper(), ["flex", "flex-col", "color--secondary-wrapper", "compound--wrapper"]);
   });
+
+  test("should support slot level variant overrides", () => {
+    const menu = tv({
+      base: "text-3xl",
+      slots: {
+        title: "text-2xl",
+      },
+      variants: {
+        color: {
+          primary: {
+            base: "color--primary-base",
+            title: "color--primary-title",
+          },
+          secondary: {
+            base: "color--secondary-base",
+            title: "color--secondary-title",
+          },
+        },
+      },
+      defaultVariants: {
+        color: "primary",
+      },
+    });
+
+    const {base, title} = menu();
+
+    expectTv(base(), ["text-3xl", "color--primary-base"]);
+    expectTv(title(), ["text-2xl", "color--primary-title"]);
+    expectTv(base({color: "secondary"}), ["text-3xl", "color--secondary-base"]);
+    expectTv(title({color: "secondary"}), ["text-2xl", "color--secondary-title"]);
+  });
+
+  test("should support slot level variant overrides - compoundSlots", () => {
+    const menu = tv({
+      base: "text-3xl",
+      slots: {
+        title: "text-2xl",
+        subtitle: "text-xl",
+      },
+      variants: {
+        color: {
+          primary: {
+            base: "color--primary-base",
+            title: "color--primary-title",
+            subtitle: "color--primary-subtitle",
+          },
+          secondary: {
+            base: "color--secondary-base",
+            title: "color--secondary-title",
+            subtitle: "color--secondary-subtitle",
+          },
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["title", "subtitle"],
+          color: "secondary",
+          class: ["truncate"],
+        },
+      ],
+      defaultVariants: {
+        color: "primary",
+      },
+    });
+
+    const {base, title, subtitle} = menu();
+
+    expectTv(base(), ["text-3xl", "color--primary-base"]);
+    expectTv(title(), ["text-2xl", "color--primary-title"]);
+    expectTv(subtitle(), ["text-xl", "color--primary-subtitle"]);
+    expectTv(base({color: "secondary"}), ["text-3xl", "color--secondary-base"]);
+    expectTv(title({color: "secondary"}), ["text-2xl", "color--secondary-title", "truncate"]);
+    expectTv(subtitle({color: "secondary"}), ["text-xl", "color--secondary-subtitle", "truncate"]);
+  });
+
+  test("should support slot level variant overrides - compoundVariants", () => {
+    const menu = tv({
+      base: "text-3xl",
+      slots: {
+        title: "text-2xl",
+      },
+      variants: {
+        color: {
+          primary: {
+            base: "color--primary-base",
+            title: "color--primary-title",
+          },
+          secondary: {
+            base: "color--secondary-base",
+            title: "color--secondary-title",
+          },
+        },
+      },
+      compoundVariants: [
+        {
+          color: "secondary",
+          class: {
+            title: "truncate",
+          },
+        },
+      ],
+      defaultVariants: {
+        color: "primary",
+      },
+    });
+
+    const {base, title} = menu();
+
+    expectTv(base(), ["text-3xl", "color--primary-base"]);
+    expectTv(title(), ["text-2xl", "color--primary-title"]);
+    expectTv(base({color: "secondary"}), ["text-3xl", "color--secondary-base"]);
+    expectTv(title({color: "secondary"}), ["text-2xl", "color--secondary-title", "truncate"]);
+  });
 });
 
 describe("Tailwind Variants (TV) - Compound Slots", () => {
