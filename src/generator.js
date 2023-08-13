@@ -1,7 +1,7 @@
-import fs from "fs";
-import path from "path";
-
 const writeFileSync = (content) => {
+  const fs = require("fs");
+  const path = require("path");
+
   fs.writeFileSync(path.join(__dirname, "generated.d.ts"), content);
 };
 
@@ -16,7 +16,9 @@ export const generateTypes = (theme) => {
     if (theme?.screens) {
       const screens = generateScreensType(theme.screens);
 
-      writeFileSync(screens);
+      if (typeof window === "undefined") {
+        writeFileSync(screens);
+      }
     }
   });
 };
