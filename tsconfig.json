@@ -10,6 +10,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
+    "exactOptionalPropertyTypes": true,
     "declaration": true,
     "allowJs": false
   }
