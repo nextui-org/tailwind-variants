@@ -24,21 +24,27 @@ export function flatArray(arr) {
 export const flatMergeArrays = (...arrays) => flatArray(arrays).filter(Boolean);
 
 export const mergeObjects = (obj1, obj2) => {
-  let result = {};
+  const result = {};
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
 
-  for (let key in obj1) {
-    if (obj2?.hasOwnProperty(key)) {
-      result[key] =
-        typeof obj1[key] === "object"
-          ? mergeObjects(obj1[key], obj2[key])
-          : obj2[key] + " " + obj1[key];
+  for (const key of keys1) {
+    if (keys2.includes(key)) {
+      const val1 = obj1[key];
+      const val2 = obj2[key];
+
+      if (typeof val1 === "object" && typeof val2 === "object") {
+        result[key] = mergeObjects(val1, val2);
+      } else {
+        result[key] = val2 + " " + val1;
+      }
     } else {
       result[key] = obj1[key];
     }
   }
 
-  for (let key in obj2) {
-    if (!result.hasOwnProperty(key)) {
+  for (const key of keys2) {
+    if (!keys1.includes(key)) {
       result[key] = obj2[key];
     }
   }
