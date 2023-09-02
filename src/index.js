@@ -118,24 +118,38 @@ export const tv = (options, configProp) => {
       let result = acc;
 
       if (typeof screenVariantValue === "string") {
-        result.push(
+        result = result.concat(
           removeExtraSpaces(screenVariantValue)
             .split(" ")
             .map((v) => `${screen}:${v}`),
         );
       } else if (Array.isArray(screenVariantValue)) {
-        result.push(screenVariantValue.flatMap((v) => `${screen}:${v}`));
+        result = result.concat(
+          screenVariantValue.reduce((acc, v) => {
+            return acc.concat(`${screen}:${v}`);
+          }, []),
+        );
       } else if (typeof screenVariantValue === "object" && typeof slotKey === "string") {
-        const value = screenVariantValue?.[slotKey];
+        for (const key in screenVariantValue) {
+          if (screenVariantValue.hasOwnProperty(key) && key === slotKey) {
+            const value = screenVariantValue[key];
 
-        if (value && typeof value === "string") {
-          const fixedValue = removeExtraSpaces(value);
+            if (value && typeof value === "string") {
+              const fixedValue = removeExtraSpaces(value);
 
-          result[slotKey] = result[slotKey]
-            ? [...result[slotKey], ...fixedValue.split(" ").map((v) => `${screen}:${v}`)]
-            : fixedValue.split(" ").map((v) => `${screen}:${v}`);
-        } else if (Array.isArray(value) && value.length > 0) {
-          result[slotKey] = value.flatMap((v) => `${screen}:${v}`);
+              if (result[slotKey]) {
+                result[slotKey] = result[slotKey].concat(
+                  fixedValue.split(" ").map((v) => `${screen}:${v}`),
+                );
+              } else {
+                result[slotKey] = fixedValue.split(" ").map((v) => `${screen}:${v}`);
+              }
+            } else if (Array.isArray(value) && value.length > 0) {
+              result[slotKey] = value.reduce((acc, v) => {
+                return acc.concat(`${screen}:${v}`);
+              }, []);
+            }
+          }
         }
       }
 
@@ -143,7 +157,7 @@ export const tv = (options, configProp) => {
     };
 
     const getVariantValue = (variant, vrs = variants, slotKey = null, slotProps = null) => {
-      const variantObj = vrs?.[variant];
+      const variantObj = vrs[variant];
 
       if (!variantObj || isEmptyObject(variantObj)) {
         return null;
@@ -164,14 +178,12 @@ export const tv = (options, configProp) => {
       let screenValues = [];
 
       if (typeof variantKey === "object" && responsiveVarsEnabled) {
-        screenValues = Object.keys(variantKey).reduce((acc, screen) => {
-          const screenVariantKey = variantKey[screen];
-          const screenVariantValue = variantObj?.[screenVariantKey];
+        for (const [screen, screenVariantKey] of Object.entries(variantKey)) {
+          const screenVariantValue = variantObj[screenVariantKey];
 
           if (screen === "initial") {
             defaultVariantProp = screenVariantKey;
-
-            return acc;
+            continue;
           }
 
           // if the screen is not in the responsiveVariants array, skip it
@@ -179,11 +191,11 @@ export const tv = (options, configProp) => {
             Array.isArray(config.responsiveVariants) &&
             !config.responsiveVariants.includes(screen)
           ) {
-            return acc;
+            continue;
           }
 
-          return getScreenVariantValues(screen, screenVariantValue, acc, slotKey);
-        }, []);
+          screenValues = getScreenVariantValues(screen, screenVariantValue, screenValues, slotKey);
+        }
       }
 
       const value = variantObj[variantKey] || variantObj[falsyToString(defaultVariantProp)];
@@ -196,7 +208,13 @@ export const tv = (options, configProp) => {
         return joinObjects(screenValues, value);
       }
 
-      return screenValues.length > 0 ? [value, ...screenValues] : value;
+      if (screenValues.length > 0) {
+        screenValues.push(value);
+
+        return screenValues;
+      }
+
+      return value;
     };
 
     const getVariantClassNames = () => {
@@ -212,7 +230,9 @@ export const tv = (options, configProp) => {
         return null;
       }
 
-      return Object.keys(variants).reduce((acc, variant) => {
+      const result = new Array();
+
+      for (const variant in variants) {
         const variantValue = getVariantValue(variant, variants, slotKey, slotProps);
 
         const value =
@@ -221,15 +241,20 @@ export const tv = (options, configProp) => {
             : variantValue && variantValue[slotKey];
 
         if (value) {
-          acc.push(value);
+          result[result.length] = value;
         }
+      }
 
-        return acc;
-      }, []);
+      return result;
     };
 
-    const propsWithoutUndefined =
-      props && Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined));
+    const propsWithoutUndefined = {};
+
+    for (const prop in props) {
+      if (props[prop] !== undefined) {
+        propsWithoutUndefined[prop] = props[prop];
+      }
+    }
 
     const getCompleteProps = (key, slotProps) => {
       const initialProp =
@@ -247,19 +272,36 @@ export const tv = (options, configProp) => {
       };
     };
 
-    const getCompoundVariantsValue = (cv = [], slotProps) =>
-      cv
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ?.filter(({class: tvClass, className: tvClassName, ...compoundVariantOptions}) =>
-          Object.entries(compoundVariantOptions).every(([key, value]) => {
-            const completeProps = getCompleteProps(key, slotProps);
+    const getCompoundVariantsValue = (cv = [], slotProps) => {
+      const result = [];
 
-            return Array.isArray(value)
-              ? value.includes(completeProps[key])
-              : completeProps[key] === value;
-          }),
-        )
-        .flatMap(({class: tvClass, className: tvClassName}) => [tvClass, tvClassName]);
+      for (const {class: tvClass, className: tvClassName, ...compoundVariantOptions} of cv) {
+        let isValid = true;
+
+        for (const [key, value] of Object.entries(compoundVariantOptions)) {
+          const completeProps = getCompleteProps(key, slotProps);
+
+          if (Array.isArray(value)) {
+            if (!value.includes(completeProps[key])) {
+              isValid = false;
+              break;
+            }
+          } else {
+            if (completeProps[key] !== value) {
+              isValid = false;
+              break;
+            }
+          }
+        }
+
+        if (isValid) {
+          tvClass && result.push(tvClass);
+          tvClassName && result.push(tvClassName);
+        }
+      }
+
+      return result;
+    };
 
     const getCompoundVariantClassNames = (slotProps) => {
       const cvValues = getCompoundVariantsValue(compoundVariants, slotProps);
@@ -275,21 +317,21 @@ export const tv = (options, configProp) => {
         return compoundClassNames;
       }
 
-      return compoundClassNames.reduce((acc, className) => {
+      const result = {};
+
+      for (const className of compoundClassNames) {
         if (typeof className === "string") {
-          acc.base = cn(acc.base, className)(config);
+          result.base = cn(result.base, className)(config);
         }
 
         if (typeof className === "object") {
-          const classNameKeys = Object.keys(className);
-
-          for (const slot of classNameKeys) {
-            acc[slot] = cn(acc[slot], className[slot])(config);
+          for (const [slot, slotClassName] of Object.entries(className)) {
+            result[slot] = cn(result[slot], slotClassName)(config);
           }
         }
+      }
 
-        return acc;
-      }, {});
+      return result;
     };
 
     const getCompoundSlotClassNameBySlot = (slotProps) => {
@@ -297,57 +339,59 @@ export const tv = (options, configProp) => {
         return null;
       }
 
-      return compoundSlots.reduce((acc, slot) => {
-        const {slots = [], class: slotClass, className: slotClassName, ...slotVariants} = slot;
+      const result = {};
 
+      for (const {
+        slots = [],
+        class: slotClass,
+        className: slotClassName,
+        ...slotVariants
+      } of compoundSlots) {
         if (!isEmptyObject(slotVariants)) {
-          const slotVariantsKeys = Object.keys(slotVariants);
+          let isValid = true;
 
-          for (const key of slotVariantsKeys) {
+          for (const key of Object.keys(slotVariants)) {
             const completePropsValue = getCompleteProps(key, slotProps)[key];
 
-            // if none of the slot variant keys are included in props or default variants then skip the slot
-            // if the included slot variant key is not equal to the slot variant value then skip the slot
             if (completePropsValue === undefined || completePropsValue !== slotVariants[key]) {
-              return acc;
+              isValid = false;
+              break;
             }
+          }
+
+          if (!isValid) {
+            continue;
           }
         }
 
         for (const slotName of slots) {
-          if (!acc[slotName]) {
-            acc[slotName] = [];
-          }
-
-          acc[slotName].push([slotClass, slotClassName]);
+          result[slotName] = result[slotName] || [];
+          result[slotName].push([slotClass, slotClassName]);
         }
+      }
 
-        return acc;
-      }, {});
+      return result;
     };
 
     // with slots
     if (!isEmptyObject(slotProps) || !isEmptyObject(extend?.slots)) {
-      const slotsFns =
-        typeof slots === "object" && !isEmptyObject(slots)
-          ? Object.keys(slots).reduce((acc, slotKey) => {
-              acc[slotKey] = (slotProps) =>
-                cn(
-                  slots[slotKey],
-                  getVariantClassNamesBySlotKey(slotKey, slotProps),
-                  (getCompoundVariantClassNamesBySlot(slotProps) ?? [])[slotKey],
-                  (getCompoundSlotClassNameBySlot(slotProps) ?? [])[slotKey],
-                  slotProps?.class,
-                  slotProps?.className,
-                )(config);
+      const slotsFns = {};
 
-              return acc;
-            }, {})
-          : {};
+      if (typeof slots === "object" && !isEmptyObject(slots)) {
+        for (const slotKey of Object.keys(slots)) {
+          slotsFns[slotKey] = (slotProps) =>
+            cn(
+              slots[slotKey],
+              getVariantClassNamesBySlotKey(slotKey, slotProps),
+              (getCompoundVariantClassNamesBySlot(slotProps) ?? [])[slotKey],
+              (getCompoundSlotClassNameBySlot(slotProps) ?? [])[slotKey],
+              slotProps?.class,
+              slotProps?.className,
+            )(config);
+        }
+      }
 
-      return {
-        ...slotsFns,
-      };
+      return slotsFns;
     }
 
     // normal variants
