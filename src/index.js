@@ -347,6 +347,11 @@ export const tv = (options, configProp) => {
         className: slotClassName,
         ...slotVariants
       } of compoundSlots) {
+        for (const slotName of slots) {
+          result[slotName] = result[slotName] || [];
+          result[slotName].push([slotClass, slotClassName]);
+        }
+
         if (!isEmptyObject(slotVariants)) {
           let isValid = true;
 
@@ -362,11 +367,6 @@ export const tv = (options, configProp) => {
           if (!isValid) {
             continue;
           }
-        }
-
-        for (const slotName of slots) {
-          result[slotName] = result[slotName] || [];
-          result[slotName].push([slotClass, slotClassName]);
         }
       }
 

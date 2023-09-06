@@ -766,6 +766,35 @@ describe("Tailwind Variants (TV) - Slots", () => {
     expectTv(subtitle({color: "secondary"}), ["text-xl", "color--secondary-subtitle", "truncate"]);
   });
 
+  test("should support slot level variant and array variants overrides - compoundSlots", () => {
+    const menu = tv({
+      slots: {
+        base: "flex flex-wrap",
+        cursor: ["absolute", "flex", "overflow-visible"],
+      },
+      variants: {
+        size: {
+          xs: {},
+          sm: {},
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["base"],
+          size: ["xs", "sm"],
+          class: "w-7 h-7 text-xs",
+        },
+      ],
+    });
+
+    const {base, cursor} = menu();
+
+    expect(base()).toEqual("flex flex-wrap w-7 h-7 text-xs");
+    expect(base({size: "xs"})).toEqual("flex flex-wrap w-7 h-7 text-xs");
+    expect(base({size: "sm"})).toEqual("flex flex-wrap w-7 h-7 text-xs");
+    expect(cursor()).toEqual("absolute flex overflow-visible");
+  });
+
   test("should support slot level variant overrides - compoundVariants", () => {
     const menu = tv({
       base: "text-3xl",
