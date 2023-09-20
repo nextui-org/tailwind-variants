@@ -1,3 +1,5 @@
+import type {ClassNameValue as ClassValue} from "tailwind-merge";
+
 import {TVConfig, TWMConfig} from "./config";
 import {TVGeneratedScreens} from "./generated";
 
@@ -7,7 +9,7 @@ import {TVGeneratedScreens} from "./generated";
  * ----------------------------------------
  */
 
-export type ClassValue = string | string[] | null | undefined | ClassValue[];
+export type {ClassValue};
 
 export type ClassProp<V extends unknown = ClassValue> =
   | {
@@ -206,8 +208,8 @@ export type TVReturnType<
   (props?: TVProps<V, S, C, EV, ES>): ES extends undefined
     ? S extends undefined
       ? string
-      : {[K in TVSlotsWithBase<S, B>]: (slotProps?: ClassProp) => string}
-    : {[K in TVSlotsWithBase<ES & S, B>]: (slotProps?: ClassProp) => string};
+      : {[K in TVSlotsWithBase<S, B>]: (slotProps?: TVProps<V, S, C, EV, ES>) => string}
+    : {[K in TVSlotsWithBase<ES & S, B>]: (slotProps?: TVProps<V, S, C, EV, ES>) => string};
 } & TVReturnProps<V, S, B, EV, ES, E>;
 
 export type TV = {
