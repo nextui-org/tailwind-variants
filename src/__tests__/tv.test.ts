@@ -2200,13 +2200,21 @@ describe("Tailwind Variants (TV) - Extends", () => {
     });
 
     // with default values
-    const {base, title, item, list, wrapper} = menu();
+    let res = menu();
 
-    expectTv(base(), ["base--menuBase", "base--menu"]);
-    expectTv(title(), ["title--menuBase", "title--menu"]);
-    expectTv(item(), ["item--menuBase", "item--menu"]);
-    expectTv(list(), ["list--menuBase", "list--menu"]);
-    expectTv(wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+    expectTv(res.base(), ["base--menuBase", "base--menu"]);
+    expectTv(res.title(), ["title--menuBase", "title--menu"]);
+    expectTv(res.item(), ["item--menuBase", "item--menu"]);
+    expectTv(res.list(), ["list--menuBase", "list--menu"]);
+    expectTv(res.wrapper(), ["wrapper--menuBase", "wrapper--menu"]);
+
+    res = menuBase();
+
+    expect(res.base()).toBe("base--menuBase");
+    expect(res.title()).toBe("title--menuBase");
+    expect(res.item()).toBe("item--menuBase");
+    expect(res.list()).toBe("list--menuBase");
+    expect(res.wrapper()).toBe("wrapper--menuBase");
   });
 
   test("should include the extended slots w/ children slots (additional)", () => {
