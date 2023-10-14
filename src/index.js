@@ -93,7 +93,7 @@ export const tv = (options, configProp) => {
   const slots = isEmptyObject(extend?.slots)
     ? componentSlots
     : joinObjects(
-        extend?.slots,
+        {...extend?.slots},
         isEmptyObject(componentSlots) ? {base: options?.base} : componentSlots,
       );
 
