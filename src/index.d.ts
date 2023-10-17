@@ -195,6 +195,12 @@ export type TVReturnProps<
   variantKeys: TVVariantKeys<V, S>;
 };
 
+type HasSlots<S extends TVSlots, ES extends TVSlots> = S extends undefined
+  ? ES extends undefined
+    ? false
+    : true
+  : true;
+
 export type TVReturnType<
   V extends TVVariants<S>,
   S extends TVSlots,
@@ -205,11 +211,19 @@ export type TVReturnType<
   // @ts-expect-error
   E extends TVReturnType = undefined,
 > = {
-  (props?: TVProps<V, S, C, EV, ES>): ES extends undefined
-    ? S extends undefined
-      ? string
-      : {[K in TVSlotsWithBase<S, B>]: (slotProps?: TVProps<V, S, C, EV, ES>) => string}
-    : {[K in TVSlotsWithBase<ES & S, B>]: (slotProps?: TVProps<V, S, C, EV, ES>) => string};
+  (props?: TVProps<V, S, C, EV, ES>): HasSlots<S, ES> extends true
+    ? {
+        [K in keyof (ES extends undefined ? {} : ES)]: (
+          slotProps?: TVProps<V, S, C, EV, ES>,
+        ) => string;
+      } & {
+        [K in keyof (S extends undefined ? {} : S)]: (
+          slotProps?: TVProps<V, S, C, EV, ES>,
+        ) => string;
+      } & {
+        [K in TVSlotsWithBase<{}, B>]: (slotProps?: TVProps<V, S, C, EV, ES>) => string;
+      }
+    : string;
 } & TVReturnProps<V, S, B, EV, ES, E>;
 
 export type TV = {
