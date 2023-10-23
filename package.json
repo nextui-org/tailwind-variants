@@ -1,6 +1,6 @@
 {
   "name": "tailwind-variants",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "🦄 Tailwindcss first-class variant API",
   "author": "Junior Garcia <jrgarciadev@gmail.com>",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "test": "jest --verbose"
   },
   "dependencies": {
-    "tailwind-merge": "^1.13.2"
+    "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
