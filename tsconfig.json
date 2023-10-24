@@ -3,6 +3,7 @@
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
+    "types": ["jest"],
     "target": "esnext",
     "module": "esnext",
     "isolatedModules": true,
@@ -10,6 +11,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
+    "exactOptionalPropertyTypes": true,
     "declaration": true,
     "allowJs": false
   }

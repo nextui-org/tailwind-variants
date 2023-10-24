@@ -152,14 +152,14 @@ export type TVProps<
     ? ClassProp<ClassValue>
     : {
         [K in keyof V]?: isTrueOrArray<C["responsiveVariants"]> extends true
-          ? StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, S, K, C>
-          : StringToBoolean<keyof V[K]>;
+          ? StringToBoolean<keyof V[K]> | TVScreenPropsValue<V, S, K, C> | undefined
+          : StringToBoolean<keyof V[K]> | undefined;
       } & ClassProp<ClassValue>
   : V extends undefined
   ? {
       [K in keyof EV]?: isTrueOrArray<C["responsiveVariants"]> extends true
-        ? StringToBoolean<keyof EV[K]> | TVScreenPropsValue<EV, ES, K, C>
-        : StringToBoolean<keyof EV[K]>;
+        ? StringToBoolean<keyof EV[K]> | TVScreenPropsValue<EV, ES, K, C> | undefined
+        : StringToBoolean<keyof EV[K]> | undefined;
     } & ClassProp<ClassValue>
   : {
       [K in keyof V | keyof EV]?: isTrueOrArray<C["responsiveVariants"]> extends true
@@ -167,9 +167,11 @@ export type TVProps<
             | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
             | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
             | TVScreenPropsValue<EV & V, S, K, C>
+            | undefined
         :
             | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
-            | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never);
+            | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
+            | undefined;
     } & ClassProp<ClassValue>;
 
 export type TVVariantKeys<V extends TVVariants<S>, S extends TVSlots> = V extends Object
