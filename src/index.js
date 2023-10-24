@@ -8,6 +8,7 @@ import {
   removeExtraSpaces,
   flatMergeArrays,
   flatArray,
+  isBoolean,
 } from "./utils.js";
 
 export const defaultConfig = {
@@ -347,18 +348,22 @@ export const tv = (options, configProp) => {
         className: slotClassName,
         ...slotVariants
       } of compoundSlots) {
-        for (const slotName of slots) {
-          result[slotName] = result[slotName] || [];
-          result[slotName].push([slotClass, slotClassName]);
-        }
-
         if (!isEmptyObject(slotVariants)) {
           let isValid = true;
 
           for (const key of Object.keys(slotVariants)) {
             const completePropsValue = getCompleteProps(key, slotProps)[key];
 
-            if (completePropsValue === undefined || completePropsValue !== slotVariants[key]) {
+            // if the value is boolean, skip it
+            if (isBoolean(slotVariants[key])) {
+              break;
+            }
+
+            if (
+              completePropsValue === undefined ||
+              !slotVariants[key] ||
+              !slotVariants[key].includes(completePropsValue)
+            ) {
               isValid = false;
               break;
             }
@@ -367,6 +372,11 @@ export const tv = (options, configProp) => {
           if (!isValid) {
             continue;
           }
+        }
+
+        for (const slotName of slots) {
+          result[slotName] = result[slotName] || [];
+          result[slotName].push([slotClass, slotClassName]);
         }
       }
 

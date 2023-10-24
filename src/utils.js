@@ -6,6 +6,8 @@ export const isEmptyObject = (obj) =>
 
 export const isEqual = (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2);
 
+export const isBoolean = (value) => typeof value === "boolean";
+
 function flat(arr, target) {
   arr.forEach(function (el) {
     if (Array.isArray(el)) flat(el, target);
