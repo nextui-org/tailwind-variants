@@ -1161,6 +1161,52 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
   });
 
+  test("should work with compound slots -- with a single variant -- boolean variant", () => {
+    const nav = tv({
+      base: "base",
+      slots: {
+        toggle: "slot--toggle",
+        item: "slot--item",
+      },
+      variants: {
+        isActive: {
+          true: "",
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "toggle"],
+          class: "compound--item-toggle",
+        },
+        {
+          slots: ["item", "toggle"],
+          isActive: true,
+          class: "compound--item-toggle--active",
+        },
+      ],
+    });
+
+    let styles = nav({isActive: false});
+
+    expectTv(styles.base(), ["base"]);
+    expectTv(styles.toggle(), ["slot--toggle", "compound--item-toggle"]);
+    expectTv(styles.item(), ["slot--item", "compound--item-toggle"]);
+
+    styles = nav({isActive: true});
+
+    expectTv(styles.base(), ["base"]);
+    expectTv(styles.toggle(), [
+      "slot--toggle",
+      "compound--item-toggle",
+      "compound--item-toggle--active",
+    ]);
+    expectTv(styles.item(), [
+      "slot--item",
+      "compound--item-toggle",
+      "compound--item-toggle--active",
+    ]);
+  });
+
   test("should work with compound slots -- with multiple variants -- defaultVariants", () => {
     const pagination = tv({
       slots: {
