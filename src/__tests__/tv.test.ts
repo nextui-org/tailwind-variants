@@ -3,10 +3,14 @@ import {tv, cn} from "../index";
 const resultArray = (result: string) => result.split(" ");
 
 const expectTv = (result: string, expectedResult: string[]) => {
-  expect(resultArray(result)).toEqual(expect.arrayContaining(expectedResult));
+  const arr = resultArray(result);
+
+  expect(arr).toHaveLength(expectedResult.length);
+  expect(arr).toEqual(expect.arrayContaining(expectedResult));
 };
 
 const expectKeys = (result: string[], expectedResult: string[]) => {
+  expect(result).toHaveLength(expectedResult.length);
   expect(result).toEqual(expect.arrayContaining(expectedResult));
 };
 
@@ -63,6 +67,9 @@ describe("Tailwind Variants (TV) - Default", () => {
 
     expectTv(base(), ["base--styles-1", "base--styles-2", "base--styles-3"]);
     expectTv(item(), [
+      "slots--item-1",
+      "slots--item-2",
+      "slots--item-3",
       "item--color--primary-1",
       "item--color--primary-2",
       "item--color--primary-3",
@@ -499,8 +506,8 @@ describe("Tailwind Variants (TV) - Slots", () => {
     });
 
     expectTv(base(), ["text-3xl", "font-bold", "underline", "color--secondary-base"]);
-    expectTv(title(), ["size--md-title", "color--secondary-title"]);
-    expectTv(item(), ["text-xl", "color--secondary-item"]);
+    expectTv(title(), ["text-2xl", "size--md-title", "color--secondary-title"]);
+    expectTv(item(), ["text-xl", "color--secondary-item", "enabled--item"]);
     expectTv(list(), ["list-none", "color--secondary-list"]);
     expectTv(wrapper(), ["flex", "flex-col", "color--secondary-wrapper"]);
   });
@@ -686,7 +693,7 @@ describe("Tailwind Variants (TV) - Slots", () => {
       "color--secondary-base",
       "compound--base",
     ]);
-    expectTv(title(), ["size--md-title", "color--secondary-title", "compound--title"]);
+    expectTv(title(), ["text-2xl", "size--md-title", "color--secondary-title", "compound--title"]);
     expectTv(item(), ["text-xl", "color--secondary-item", "enabled--item", "compound--item"]);
     expectTv(list(), ["list-none", "color--secondary-list", "compound--list"]);
     expectTv(wrapper(), ["flex", "flex-col", "color--secondary-wrapper", "compound--wrapper"]);
@@ -1152,6 +1159,52 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     expectTv(prev(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
     expectTv(next(), ["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
     expectTv(cursor(), ["absolute", "flex", "overflow-visible"]);
+  });
+
+  test("should work with compound slots -- with a single variant -- boolean variant", () => {
+    const nav = tv({
+      base: "base",
+      slots: {
+        toggle: "slot--toggle",
+        item: "slot--item",
+      },
+      variants: {
+        isActive: {
+          true: "",
+        },
+      },
+      compoundSlots: [
+        {
+          slots: ["item", "toggle"],
+          class: "compound--item-toggle",
+        },
+        {
+          slots: ["item", "toggle"],
+          isActive: true,
+          class: "compound--item-toggle--active",
+        },
+      ],
+    });
+
+    let styles = nav({isActive: false});
+
+    expectTv(styles.base(), ["base"]);
+    expectTv(styles.toggle(), ["slot--toggle", "compound--item-toggle"]);
+    expectTv(styles.item(), ["slot--item", "compound--item-toggle"]);
+
+    styles = nav({isActive: true});
+
+    expectTv(styles.base(), ["base"]);
+    expectTv(styles.toggle(), [
+      "slot--toggle",
+      "compound--item-toggle",
+      "compound--item-toggle--active",
+    ]);
+    expectTv(styles.item(), [
+      "slot--item",
+      "compound--item-toggle",
+      "compound--item-toggle--active",
+    ]);
   });
 
   test("should work with compound slots -- with multiple variants -- defaultVariants", () => {
@@ -2211,6 +2264,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
     });
 
     const expectedResult = [
+      "text-green-500",
       "font-bold",
       "lg:text-purple-500",
       "xl:text-green-500",
@@ -2264,6 +2318,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
     });
 
     const expectedResult = [
+      "text-green-500",
       "font-bold",
       "lg:text-purple-500",
       "lg:bg-purple-500",
