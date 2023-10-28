@@ -8,7 +8,6 @@ import {
   removeExtraSpaces,
   flatMergeArrays,
   flatArray,
-  isBoolean,
 } from "./utils.js";
 
 export const defaultConfig = {
@@ -426,4 +425,8 @@ export const tv = (options, configProp) => {
   component.compoundVariants = compoundVariants;
 
   return component;
+};
+
+export const createTV = (configProp) => {
+  return (options, config) => tv(options, config ? mergeObjects(configProp, config) : configProp);
 };
