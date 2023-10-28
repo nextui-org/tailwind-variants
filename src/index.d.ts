@@ -296,6 +296,8 @@ export type TV = {
 // main function
 export declare const tv: TV;
 
+export declare function createTV(config: TVConfig): TV;
+
 export declare const defaultConfig: TVConfig;
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
