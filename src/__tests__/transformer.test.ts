@@ -62,6 +62,46 @@ describe("Responsive Variants", () => {
     expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
+  test("should return a transformed content (string) for a class with ')'", () => {
+    const sourceCode = `
+    import { tv } from "tailwind-variants";
+
+    
+    export const dialog = tv(
+      {
+        variants: {
+          color: {
+            primary: "w-[calc(100%-1rem)]"
+          }
+        }
+      },
+      {
+        responsiveVariants: true
+      },
+      { responsiveVariants: ['sm'] },
+    )
+    `;
+
+    const result = tvTransformer(sourceCode, defaultScreens);
+
+    const transformedContent = [
+      {
+        color: {
+          primary: {
+            original: "w-[calc(100%-1rem)]",
+            sm: "sm:w-[calc(100%-1rem)]",
+            md: "md:w-[calc(100%-1rem)]",
+            lg: "lg:w-[calc(100%-1rem)]",
+            xl: "xl:w-[calc(100%-1rem)]",
+            "2xl": "2xl:w-[calc(100%-1rem)]",
+          },
+        },
+      },
+    ];
+
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
+  });
+
   test("should return a transformed content (array)", () => {
     const sourceCode = `
       import {tv} from "tailwind-variants";
