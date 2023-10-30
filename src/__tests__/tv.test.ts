@@ -1938,7 +1938,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
           false: "text-2xl",
         },
         color: {
-          red: "text-red-500 bg-red-100",
+          red: "text-red-500 bg-red-100 tracking-normal",
           blue: "text-blue-500",
         },
       },
@@ -1949,7 +1949,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       base: "text-3xl font-bold",
       variants: {
         color: {
-          red: "text-red-200",
+          red: ["text-red-200", "bg-red-200"],
           green: "text-green-500",
         },
       },
@@ -1960,7 +1960,13 @@ describe("Tailwind Variants (TV) - Extends", () => {
       color: "red",
     });
 
-    const expectedResult = ["font-bold", "text-red-200", "bg-red-100", "text-5xl"];
+    const expectedResult = [
+      "font-bold",
+      "text-red-200",
+      "bg-red-200",
+      "tracking-normal",
+      "text-5xl",
+    ];
 
     expectTv(result, expectedResult);
   });
