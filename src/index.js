@@ -1,4 +1,5 @@
-import {twMerge as twMergeBase, extendTailwindMerge} from "tailwind-merge";
+import {extendTailwindMerge} from "tailwind-merge";
+import {twMerge as twMergeBase} from "tailwind-merge/es5";
 
 import {
   isEqual,
@@ -35,7 +36,7 @@ export const cn =
       didTwMergeConfigChange = false;
       cachedTwMerge = isEmptyObject(cachedTwMergeConfig)
         ? twMergeBase
-        : extendTailwindMerge(cachedTwMergeConfig);
+        : extendTailwindMerge({extend: cachedTwMergeConfig});
     }
 
     return voidEmpty(cachedTwMerge(cnBase(classes)));
