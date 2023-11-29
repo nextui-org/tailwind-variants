@@ -14,7 +14,7 @@ export type TWMConfig = {
    * The config object for `tailwind-merge` library.
    * @see https://github.com/dcastil/tailwind-merge/blob/v1.8.1/docs/configuration.md
    */
-  twMergeConfig?: Partial<TwMergeConfig>;
+  twMergeConfig?: Partial<TwMergeConfig<never, never>>;
 };
 
 export type TVConfig<
