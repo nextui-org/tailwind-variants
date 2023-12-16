@@ -1,5 +1,7 @@
 import type {WithTV, TVTransformer} from "../transformer";
 
+import {expect, describe, test} from "@jest/globals";
+
 import {tvTransformer, withTV} from "../transformer";
 
 type Mock = {
