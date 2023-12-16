@@ -2816,6 +2816,22 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expect(emptyResultWithoutMerge).toBe(undefined);
     expect(emptyResultWithMerge).toBe(undefined);
   });
+
+  test("should support parent w/slots when base does not have slots", () => {
+    const menuBase = tv({base: "menuBase"});
+    const menu = tv({
+      extend: menuBase,
+      base: "menu",
+      slots: {
+        title: "title",
+      },
+    });
+
+    const {base, title} = menu();
+
+    expectTv(base(), ["menuBase", "menu"]);
+    expectTv(title(), ["title"]);
+  });
 });
 
 describe("Tailwind Variants (TV) - Tailwind Merge", () => {
