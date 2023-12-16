@@ -62,11 +62,13 @@ type SlotsClassValue<S extends TVSlots, B extends ClassValue> = {
   [K in TVSlotsWithBase<S, B>]?: ClassValue;
 };
 
-type TVVariantsDefault<S extends TVSlots, B extends ClassValue> = {
-  [key: string]: {
-    [key: string]: S extends TVSlots ? SlotsClassValue<S, B> | ClassValue : ClassValue;
-  };
-};
+type TVVariantsDefault<S extends TVSlots, B extends ClassValue> = S extends undefined
+  ? {}
+  : {
+      [key: string]: {
+        [key: string]: S extends TVSlots ? SlotsClassValue<S, B> | ClassValue : ClassValue;
+      };
+    };
 
 export type TVVariants<
   S extends TVSlots | undefined,
@@ -77,12 +79,11 @@ export type TVVariants<
   ? TVVariantsDefault<S, B>
   :
       | {
-          [K in keyof EV]?:
-            | {
-                [K2 in keyof EV[K]]?: S extends TVSlots
-                  ? SlotsClassValue<S, B> | ClassValue
-                  : ClassValue;
-              };
+          [K in keyof EV]: {
+            [K2 in keyof EV[K]]: S extends TVSlots
+              ? SlotsClassValue<S, B> | ClassValue
+              : ClassValue;
+          };
         }
       | TVVariantsDefault<S, B>;
 
