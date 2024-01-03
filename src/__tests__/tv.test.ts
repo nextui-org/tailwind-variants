@@ -2850,8 +2850,8 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const {base, title} = menu();
 
-    expectTv(base(), ["menuBase", "menu"]);
-    expectTv(title(), ["title"]);
+    expect(base()).toHaveClass(["menuBase", "menu"]);
+    expect(title()).toHaveClass(["title"]);
   });
 });
 
