@@ -81,16 +81,17 @@ export const tv = (options, configProp) => {
     cachedTwMergeConfig = config.twMergeConfig;
   }
 
+  const isExtendedSlotsEmpty = isEmptyObject(extend?.slots);
   const componentSlots = !isEmptyObject(slotProps)
     ? {
         // add "base" to the slots object
-        base: options?.base,
+        base: cnBase(options?.base, isExtendedSlotsEmpty && extend?.base),
         ...slotProps,
       }
     : {};
 
   // merge slots with the "extended" slots
-  const slots = isEmptyObject(extend?.slots)
+  const slots = isExtendedSlotsEmpty
     ? componentSlots
     : joinObjects(
         {...extend?.slots},
@@ -98,7 +99,7 @@ export const tv = (options, configProp) => {
       );
 
   const component = (props) => {
-    if (isEmptyObject(variants) && isEmptyObject(slotProps) && isEmptyObject(extend?.slots)) {
+    if (isEmptyObject(variants) && isEmptyObject(slotProps) && isExtendedSlotsEmpty) {
       return cn(base, props?.class, props?.className)(config);
     }
 
@@ -379,7 +380,7 @@ export const tv = (options, configProp) => {
     };
 
     // with slots
-    if (!isEmptyObject(slotProps) || !isEmptyObject(extend?.slots)) {
+    if (!isEmptyObject(slotProps) || !isExtendedSlotsEmpty) {
       const slotsFns = {};
 
       if (typeof slots === "object" && !isEmptyObject(slots)) {
