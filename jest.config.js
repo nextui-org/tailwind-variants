@@ -8,6 +8,7 @@ const config = {
   transform: {
     "^.+\\.(t|j)sx?$": "@swc-node/jest",
   },
+  setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
 };
 
 export default config;
