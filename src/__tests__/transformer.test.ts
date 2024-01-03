@@ -64,7 +64,7 @@ describe("Responsive Variants", () => {
     expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
-  test("should return a transformed content (string) for a class with arbitrary value", () => {
+  test("should return a transformed content (arbitrary value)", () => {
     const sourceCode = `
     import { tv } from "tailwind-variants";
 
@@ -102,7 +102,7 @@ describe("Responsive Variants", () => {
     expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
-  test("should return a transformed content (string) for a class with arbitrary value and css function", () => {
+  test("should return a transformed content (arbitrary value and css function)", () => {
     const sourceCode = `
     import { tv } from "tailwind-variants";
 
@@ -149,7 +149,7 @@ describe("Responsive Variants", () => {
     expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
-  test("should return a transformed content (string) for a class with arbitrary value, css variable and theme function", () => {
+  test("should return a transformed content (arbitrary value, css variable and theme function)", () => {
     const sourceCode = `
     import { tv } from "tailwind-variants";
 
