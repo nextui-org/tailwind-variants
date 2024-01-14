@@ -64,6 +64,139 @@ describe("Responsive Variants", () => {
     expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
+  test("should return a transformed content (arbitrary value)", () => {
+    const sourceCode = `
+    import { tv } from "tailwind-variants";
+
+    export const dialog = tv(
+      {
+        variants: {
+          size: {
+            md: "[--root:24px] w-[200px]"
+          }
+        }
+      },
+      {
+        responsiveVariants: true
+      }
+    )
+    `;
+
+    const result = tvTransformer(sourceCode, defaultScreens);
+
+    const transformedContent = [
+      {
+        size: {
+          md: {
+            original: "[--root:24px] w-[200px]",
+            sm: "sm:[--root:24px] sm:w-[200px]",
+            md: "md:[--root:24px] md:w-[200px]",
+            lg: "lg:[--root:24px] lg:w-[200px]",
+            xl: "xl:[--root:24px] xl:w-[200px]",
+            "2xl": "2xl:[--root:24px] 2xl:w-[200px]",
+          },
+        },
+      },
+    ];
+
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
+  });
+
+  test("should return a transformed content (arbitrary value and css function)", () => {
+    const sourceCode = `
+    import { tv } from "tailwind-variants";
+
+    export const dialog = tv(
+      {
+        variants: {
+          size: {
+            md: "w-[calc(100%-1rem)]",
+            max: "w-[max(20vw,100px)]"
+          }
+        }
+      },
+      {
+        responsiveVariants: true
+      }
+    )
+    `;
+
+    const result = tvTransformer(sourceCode, defaultScreens);
+
+    const transformedContent = [
+      {
+        size: {
+          md: {
+            original: "w-[calc(100%-1rem)]",
+            sm: "sm:w-[calc(100%-1rem)]",
+            md: "md:w-[calc(100%-1rem)]",
+            lg: "lg:w-[calc(100%-1rem)]",
+            xl: "xl:w-[calc(100%-1rem)]",
+            "2xl": "2xl:w-[calc(100%-1rem)]",
+          },
+          max: {
+            original: "w-[max(20vw,100px)]",
+            sm: "sm:w-[max(20vw,100px)]",
+            md: "md:w-[max(20vw,100px)]",
+            lg: "lg:w-[max(20vw,100px)]",
+            xl: "xl:w-[max(20vw,100px)]",
+            "2xl": "2xl:w-[max(20vw,100px)]",
+          },
+        },
+      },
+    ];
+
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
+  });
+
+  test("should return a transformed content (arbitrary value, css variable and theme function)", () => {
+    const sourceCode = `
+    import { tv } from "tailwind-variants";
+
+    export const dialog = tv(
+      {
+        base: "[--root:24px] [--padding:12px]",
+        variants: {
+          rounded: {
+            dynamic: "rounded-[calc(var(--root)-var(--padding))]",
+            theme: "rounded-[calc(theme(spacing.12)-var(--padding))]"
+          }
+        }
+      },
+      {
+        responsiveVariants: true
+      }
+    )
+    `;
+
+    const result = tvTransformer(sourceCode, defaultScreens);
+
+    const transformedContent = [
+      {
+        rounded: {
+          dynamic: {
+            original: "rounded-[calc(var(--root)-var(--padding))]",
+            sm: "sm:rounded-[calc(var(--root)-var(--padding))]",
+            md: "md:rounded-[calc(var(--root)-var(--padding))]",
+            lg: "lg:rounded-[calc(var(--root)-var(--padding))]",
+            xl: "xl:rounded-[calc(var(--root)-var(--padding))]",
+            "2xl": "2xl:rounded-[calc(var(--root)-var(--padding))]",
+          },
+          theme: {
+            original: "rounded-[calc(theme(spacing.12)-var(--padding))]",
+            sm: "sm:rounded-[calc(theme(spacing.12)-var(--padding))]",
+            md: "md:rounded-[calc(theme(spacing.12)-var(--padding))]",
+            lg: "lg:rounded-[calc(theme(spacing.12)-var(--padding))]",
+            xl: "xl:rounded-[calc(theme(spacing.12)-var(--padding))]",
+            "2xl": "2xl:rounded-[calc(theme(spacing.12)-var(--padding))]",
+          },
+        },
+      },
+    ];
+
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
+  });
+
   test("should return a transformed content (array)", () => {
     const sourceCode = `
       import {tv} from "tailwind-variants";
