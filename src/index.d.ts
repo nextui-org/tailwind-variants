@@ -12,12 +12,8 @@ import {TVGeneratedScreens} from "./generated";
 export type {ClassValue};
 
 export type ClassProp<V extends unknown = ClassValue> =
-  | {
-      class: V;
-      className?: never;
-    }
-  | {class?: never; className: V}
-  | {class?: never; className?: never};
+  | {class?: V; className?: never}
+  | {class?: never; className?: V};
 
 type TVBaseName = "base";
 
