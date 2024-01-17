@@ -1,4 +1,4 @@
-import type {Config as TwMergeConfig} from "tailwind-merge";
+import type {extendTailwindMerge} from "tailwind-merge";
 import type {TVVariants} from "./index";
 import type {TVGeneratedScreens} from "./generated";
 
@@ -6,15 +6,15 @@ export type TWMConfig = {
   /**
    * Whether to merge the class names with `tailwind-merge` library.
    * It's avoid to have duplicate tailwind classes. (Recommended)
-   * @see https://github.com/dcastil/tailwind-merge/blob/v1.8.1/README.md
+   * @see https://github.com/dcastil/tailwind-merge/blob/v2.2.0/README.md
    * @default true
    */
   twMerge?: boolean;
   /**
    * The config object for `tailwind-merge` library.
-   * @see https://github.com/dcastil/tailwind-merge/blob/v1.8.1/docs/configuration.md
+   * @see https://github.com/dcastil/tailwind-merge/blob/v2.2.0/docs/configuration.md
    */
-  twMergeConfig?: Partial<TwMergeConfig>;
+  twMergeConfig?: Parameters<typeof extendTailwindMerge>[0];
 };
 
 export type TVConfig<

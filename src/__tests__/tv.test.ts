@@ -5,21 +5,23 @@ import {tv, cn} from "../index";
 const COMMON_UNITS = ["small", "medium", "large"];
 
 const twMergeConfig = {
-  theme: {
-    opacity: ["disabled"],
-    spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
-    borderWidth: COMMON_UNITS,
-    borderRadius: COMMON_UNITS,
-  },
-  classGroups: {
-    shadow: [{shadow: COMMON_UNITS}],
-    "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
-    "bg-image": ["bg-stripe-gradient"],
-    "min-w": [
-      {
-        "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
-      },
-    ],
+  extend: {
+    theme: {
+      opacity: ["disabled"],
+      spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+      borderWidth: COMMON_UNITS,
+      borderRadius: COMMON_UNITS,
+    },
+    classGroups: {
+      shadow: [{shadow: COMMON_UNITS}],
+      "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
+      "bg-image": ["bg-stripe-gradient"],
+      "min-w": [
+        {
+          "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+        },
+      ],
+    },
   },
 };
 
