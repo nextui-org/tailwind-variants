@@ -314,6 +314,78 @@ describe("Tailwind Variants (TV) - Default", () => {
 
     expect(h1({color: "green", isUnderline: false})).toBe(expectedResult);
   });
+
+  test("should support boolean variants", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+          false: "truncate",
+        },
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl", "truncate"]);
+  });
+
+  test("should support boolean variants -- default variants", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+          false: "truncate",
+        },
+      },
+      defaultVariants: {
+        bool: true,
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl", "underline"]);
+  });
+
+  test("should support boolean variants -- missing false variant", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+        },
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl"]);
+  });
+
+  test("should support boolean variants -- missing false variant -- default variants", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+        },
+      },
+      defaultVariants: {
+        bool: true,
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl", "underline"]);
+  });
 });
 
 describe("Tailwind Variants (TV) - Slots", () => {
