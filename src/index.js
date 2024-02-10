@@ -35,7 +35,18 @@ export const cn =
       didTwMergeConfigChange = false;
       cachedTwMerge = isEmptyObject(cachedTwMergeConfig)
         ? twMergeBase
-        : extendTailwindMerge(cachedTwMergeConfig);
+        : extendTailwindMerge({
+            ...cachedTwMergeConfig,
+            extend: {
+              // Support for legacy tailwind-merge config shape
+              theme: cachedTwMergeConfig.theme,
+              classGroups: cachedTwMergeConfig.classGroups,
+              conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
+              conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
+              // Support for new tailwind-merge config shape
+              ...cachedTwMergeConfig.extend,
+            },
+          });
     }
 
     return voidEmpty(cachedTwMerge(cnBase(classes)));

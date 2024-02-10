@@ -2,6 +2,9 @@ import type {extendTailwindMerge} from "tailwind-merge";
 import type {TVVariants} from "./index";
 import type {TVGeneratedScreens} from "./generated";
 
+type MergeConfig = Parameters<typeof extendTailwindMerge>[0];
+type LegacyMergeConfig = Extract<MergeConfig, {extend?: unknown}>["extend"];
+
 export type TWMConfig = {
   /**
    * Whether to merge the class names with `tailwind-merge` library.
@@ -14,7 +17,7 @@ export type TWMConfig = {
    * The config object for `tailwind-merge` library.
    * @see https://github.com/dcastil/tailwind-merge/blob/v2.2.0/docs/configuration.md
    */
-  twMergeConfig?: Parameters<typeof extendTailwindMerge>[0];
+  twMergeConfig?: MergeConfig & LegacyMergeConfig;
 };
 
 export type TVConfig<
