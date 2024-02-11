@@ -35,7 +35,18 @@ export const cn =
       didTwMergeConfigChange = false;
       cachedTwMerge = isEmptyObject(cachedTwMergeConfig)
         ? twMergeBase
-        : extendTailwindMerge(cachedTwMergeConfig);
+        : extendTailwindMerge({
+            ...cachedTwMergeConfig,
+            extend: {
+              // Support for legacy tailwind-merge config shape
+              theme: cachedTwMergeConfig.theme,
+              classGroups: cachedTwMergeConfig.classGroups,
+              conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
+              conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
+              // Support for new tailwind-merge config shape
+              ...cachedTwMergeConfig.extend,
+            },
+          });
     }
 
     return voidEmpty(cachedTwMerge(cnBase(classes)));
@@ -199,7 +210,14 @@ export const tv = (options, configProp) => {
         }
       }
 
-      const value = variantObj[variantKey] || variantObj[falsyToString(defaultVariantProp)];
+      // If there is a variant key and it's not an object (screen variants),
+      // we use the variant key and ignore the default variant.
+      const key =
+        variantKey != null && typeof variantKey != "object"
+          ? variantKey
+          : falsyToString(defaultVariantProp);
+
+      const value = variantObj[key] || variantObj["false"];
 
       if (
         typeof screenValues === "object" &&

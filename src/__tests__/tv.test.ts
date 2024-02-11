@@ -5,21 +5,23 @@ import {tv, cn} from "../index";
 const COMMON_UNITS = ["small", "medium", "large"];
 
 const twMergeConfig = {
-  theme: {
-    opacity: ["disabled"],
-    spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
-    borderWidth: COMMON_UNITS,
-    borderRadius: COMMON_UNITS,
-  },
-  classGroups: {
-    shadow: [{shadow: COMMON_UNITS}],
-    "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
-    "bg-image": ["bg-stripe-gradient"],
-    "min-w": [
-      {
-        "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
-      },
-    ],
+  extend: {
+    theme: {
+      opacity: ["disabled"],
+      spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+      borderWidth: COMMON_UNITS,
+      borderRadius: COMMON_UNITS,
+    },
+    classGroups: {
+      shadow: [{shadow: COMMON_UNITS}],
+      "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
+      "bg-image": ["bg-stripe-gradient"],
+      "min-w": [
+        {
+          "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+        },
+      ],
+    },
   },
 };
 
@@ -313,6 +315,78 @@ describe("Tailwind Variants (TV) - Default", () => {
     const expectedResult = "text-3xl font-bold text-green-500 no-underline";
 
     expect(h1({color: "green", isUnderline: false})).toBe(expectedResult);
+  });
+
+  test("should support boolean variants", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+          false: "truncate",
+        },
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl", "truncate"]);
+  });
+
+  test("should support boolean variants -- default variants", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+          false: "truncate",
+        },
+      },
+      defaultVariants: {
+        bool: true,
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl", "underline"]);
+  });
+
+  test("should support boolean variants -- missing false variant", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+        },
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl"]);
+  });
+
+  test("should support boolean variants -- missing false variant -- default variants", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          true: "underline",
+        },
+      },
+      defaultVariants: {
+        bool: true,
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl", "underline"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl", "underline"]);
   });
 });
 
@@ -2850,8 +2924,8 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const {base, title} = menu();
 
-    expectTv(base(), ["menuBase", "menu"]);
-    expectTv(title(), ["title"]);
+    expect(base()).toHaveClass(["menuBase", "menu"]);
+    expect(title()).toHaveClass(["title"]);
   });
 });
 
@@ -2892,6 +2966,52 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
       },
       {
         twMergeConfig,
+      },
+    );
+
+    const result = styles({
+      size: "medium",
+      color: "blue",
+    });
+
+    expect(result).toHaveClass(["text-medium", "text-blue-500", "w-unit-4"]);
+  });
+
+  it("should support legacy custom config", () => {
+    const styles = tv(
+      {
+        base: "text-small text-yellow-400 w-unit",
+        variants: {
+          size: {
+            small: "text-small w-unit-2",
+            medium: "text-medium w-unit-4",
+            large: "text-large w-unit-6",
+          },
+          color: {
+            red: "text-red-500",
+            blue: "text-blue-500",
+          },
+        },
+      },
+      {
+        twMergeConfig: {
+          theme: {
+            opacity: ["disabled"],
+            spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+            borderWidth: COMMON_UNITS,
+            borderRadius: COMMON_UNITS,
+          },
+          classGroups: {
+            shadow: [{shadow: COMMON_UNITS}],
+            "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
+            "bg-image": ["bg-stripe-gradient"],
+            "min-w": [
+              {
+                "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+              },
+            ],
+          },
+        },
       },
     );
 

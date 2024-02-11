@@ -3,7 +3,7 @@ import resolveConfig from "tailwindcss/resolveConfig";
 import {generateTypes} from "./generator";
 
 const regExp = {
-  tv: /tv\s*\((.*?)\)/gs,
+  tv: /tv\s*\(((\([^\)]*?\)|\[[^\]]*?\]|.)*?)\)/gs,
   tvExtend: /extend:\s*\w+(,| )\s*/,
   comment: /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm,
   blankLine: /^\s*$(?:\r\n?|\n)/gm,
