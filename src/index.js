@@ -27,7 +27,7 @@ let didTwMergeConfigChange = false;
 export const cn =
   (...classes) =>
   (config) => {
-    if (!config.twMerge) {
+    if (!config?.twMerge) {
       return cnBase(classes);
     }
 
