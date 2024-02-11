@@ -5,21 +5,23 @@ import {tv, cn} from "../index";
 const COMMON_UNITS = ["small", "medium", "large"];
 
 const twMergeConfig = {
-  theme: {
-    opacity: ["disabled"],
-    spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
-    borderWidth: COMMON_UNITS,
-    borderRadius: COMMON_UNITS,
-  },
-  classGroups: {
-    shadow: [{shadow: COMMON_UNITS}],
-    "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
-    "bg-image": ["bg-stripe-gradient"],
-    "min-w": [
-      {
-        "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
-      },
-    ],
+  extend: {
+    theme: {
+      opacity: ["disabled"],
+      spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+      borderWidth: COMMON_UNITS,
+      borderRadius: COMMON_UNITS,
+    },
+    classGroups: {
+      shadow: [{shadow: COMMON_UNITS}],
+      "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
+      "bg-image": ["bg-stripe-gradient"],
+      "min-w": [
+        {
+          "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+        },
+      ],
+    },
   },
 };
 
@@ -2964,6 +2966,52 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
       },
       {
         twMergeConfig,
+      },
+    );
+
+    const result = styles({
+      size: "medium",
+      color: "blue",
+    });
+
+    expect(result).toHaveClass(["text-medium", "text-blue-500", "w-unit-4"]);
+  });
+
+  it("should support legacy custom config", () => {
+    const styles = tv(
+      {
+        base: "text-small text-yellow-400 w-unit",
+        variants: {
+          size: {
+            small: "text-small w-unit-2",
+            medium: "text-medium w-unit-4",
+            large: "text-large w-unit-6",
+          },
+          color: {
+            red: "text-red-500",
+            blue: "text-blue-500",
+          },
+        },
+      },
+      {
+        twMergeConfig: {
+          theme: {
+            opacity: ["disabled"],
+            spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+            borderWidth: COMMON_UNITS,
+            borderRadius: COMMON_UNITS,
+          },
+          classGroups: {
+            shadow: [{shadow: COMMON_UNITS}],
+            "font-size": [{text: ["tiny", ...COMMON_UNITS]}],
+            "bg-image": ["bg-stripe-gradient"],
+            "min-w": [
+              {
+                "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+              },
+            ],
+          },
+        },
       },
     );
 
