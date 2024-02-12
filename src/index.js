@@ -217,7 +217,7 @@ export const tv = (options, configProp) => {
           ? variantKey
           : falsyToString(defaultVariantProp);
 
-      const value = variantObj[key] || variantObj["false"];
+      const value = variantObj[key || "false"];
 
       if (
         typeof screenValues === "object" &&
