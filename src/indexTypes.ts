@@ -1,7 +1,6 @@
 import type {ClassNameValue as ClassValue} from "tailwind-merge";
-
-import {TVConfig, TWMConfig} from "./config";
-import {TVGeneratedScreens} from "./generated";
+import type {TVConfig, TWMConfig} from "./config";
+import type {TVGeneratedScreens} from "./generated";
 
 /**
  * ----------------------------------------
@@ -17,7 +16,7 @@ export type ClassProp<V extends unknown = ClassValue> =
 
 type TVBaseName = "base";
 
-type TVScreens = "initial" | TVGeneratedScreens;
+export type TVScreens = "initial" | TVGeneratedScreens;
 
 type TVSlots = Record<string, ClassValue> | undefined;
 

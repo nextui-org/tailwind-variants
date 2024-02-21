@@ -3,7 +3,7 @@
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "types": ["jest"],
+    "types": ["jest", "node"],
     "target": "esnext",
     "module": "esnext",
     "isolatedModules": true,

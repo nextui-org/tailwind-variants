@@ -25,6 +25,7 @@
   "rules": {
     "no-console": "warn",
     "prettier/prettier": "warn",
+    "@typescript-eslint/consistent-type-imports": 1,
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {

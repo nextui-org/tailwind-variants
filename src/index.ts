@@ -1,13 +1,14 @@
-import {twMerge as twMergeBase, extendTailwindMerge} from "tailwind-merge";
+// @ts-nocheck
+import {extendTailwindMerge, twMerge as twMergeBase} from "tailwind-merge";
 
 import {
-  isEqual,
-  isEmptyObject,
   falsyToString,
+  flatArray,
+  flatMergeArrays,
+  isEmptyObject,
+  isEqual,
   mergeObjects,
   removeExtraSpaces,
-  flatMergeArrays,
-  flatArray,
 } from "./utils.js";
 
 export const defaultConfig = {

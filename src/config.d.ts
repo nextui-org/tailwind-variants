@@ -1,5 +1,5 @@
 import type {extendTailwindMerge} from "tailwind-merge";
-import type {TVVariants} from "./index";
+import type {TVVariants} from "./indexTypes";
 import type {TVGeneratedScreens} from "./generated";
 
 type MergeConfig = Parameters<typeof extendTailwindMerge>[0];

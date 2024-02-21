@@ -1,3 +1,7 @@
+import type {Config, FilePath, RawFile, ThemeConfig} from "tailwindcss/types/config";
+import type {DefaultTheme} from "tailwindcss/types/generated/default-theme";
+import type {TV, TVVariants} from "./indexTypes";
+
 import resolveConfig from "tailwindcss/resolveConfig";
 
 import {generateTypes} from "./generator";
@@ -10,23 +14,23 @@ const regExp = {
   extension: /\.\w+/g,
 };
 
-const isArray = (param) => Array.isArray(param);
+const isArray = (param: unknown): param is any[] => Array.isArray(param);
 
-const isString = (param) => typeof param === "string";
+const isString = (param: unknown): param is string => typeof param === "string";
 
-const isObject = (param) => typeof param === "object";
+const isObject = <T = Object>(param: unknown): param is T =>
+  typeof param === "object" && param !== null && !Array.isArray(param);
 
-const isBoolean = (param) => typeof param === "boolean";
+const isBoolean = (param: unknown): param is boolean => typeof param === "boolean";
 
-const isFunction = (param) => typeof param === "function";
+const isFunction = (param: unknown): param is Function => typeof param === "function";
 
-const isEmpty = (param) => {
+const isEmpty = (param: unknown): boolean => {
   if (!param) return true;
   if (isArray(param) && param.length === 0) return true;
   if (isString(param) && param.length === 0) return true;
-  if (isObject(param) && Object.keys(param).length === 0) return true;
 
-  return false;
+  return isObject(param) && Object.keys(param).length === 0;
 };
 
 const pickByKeys = (target, keys) => {
@@ -56,20 +60,21 @@ const pipeline = (...funcs) => {
   return (input) => funcs.reduce((acc, func) => func(acc), input);
 };
 
-const getCleanContent = (content) => {
+const getCleanContent = (content: string): string[] => {
   const removeComment = content.replace(regExp.comment, "$1").toString();
   const removeBlankLine = removeComment.replace(regExp.blankLine, "").toString();
 
   // TODO: support inline tv
-  const removeExtend = (match) => match[1].replace(regExp.tvExtend, "").toString();
+  const removeExtend = (match: RegExpMatchArray) =>
+    match[1].replace(regExp.tvExtend, "").toString();
 
   return Array.from(removeBlankLine.matchAll(regExp.tv), removeExtend);
 };
 
-const getTVObjects = (content) => {
+const getTVObjects = (content: string): TV[] => {
   const tvs = getCleanContent(content);
 
-  if (isEmpty(tvs)) return;
+  if (isEmpty(tvs)) return [];
 
   return tvs.map((tv) => {
     if (!tv.includes("responsiveVariants")) return {};
@@ -129,46 +134,56 @@ const getVariants = (classNames, screens) => {
   return classNames;
 };
 
-const transformVariantsByScreens = (variants, screens) => {
-  let responsive = {};
+type TransformVariantsByScreens = {
+  (variants: TVVariants<any>, screens: string[] | DefaultScreens[]): void;
+};
 
-  for (const [variantName, variant] of Object.entries(variants)) {
+type VariantTypeStructure = Record<string, string>;
+
+interface ResponsiveStructure {
+  [variantName: string]: {
+    [variantType: string]: VariantTypeStructure | string[] | undefined;
+  };
+}
+
+const transformVariantsByScreens: TransformVariantsByScreens = (variants, screens) => {
+  let responsive: ResponsiveStructure = {};
+
+  Object.entries(variants).forEach(([variantName, variant]) => {
+    if (isEmpty(variant)) return;
+
     responsive[variantName] = {};
-    if (isEmpty(variant)) continue;
 
-    for (const [variantType, variantClassNames] of Object.entries(variant)) {
-      responsive[variantName][variantType] = {};
-      responsive[variantName][variantType].original = variantClassNames;
-
-      if (isEmpty(variantClassNames)) continue;
+    Object.entries(variant).forEach(([variantType, variantClassNames]) => {
+      if (isEmpty(variantClassNames)) return;
 
       const formattedClassNames = getVariants(variantClassNames, screens);
 
-      if (isEmpty(formattedClassNames)) continue;
+      if (isEmpty(formattedClassNames)) return;
 
-      // slots
-      if (!isArray(formattedClassNames)) {
-        responsive[variantName][variantType] = formattedClassNames;
-        continue;
-      }
+      responsive[variantName][variantType] = isArray(formattedClassNames)
+        ? formattedClassNames
+        : screens.reduce((acc, screen) => {
+            acc[screen] = formattedClassNames
+              .map((className) => `${screen}:${className}`)
+              .join(" ");
 
-      // variants
-      screens.forEach((screen) => {
-        let tempClassNames = "";
-
-        formattedClassNames.forEach((className) => {
-          tempClassNames += `${screen}:${className} `;
-        });
-
-        responsive[variantName][variantType][screen] = tempClassNames.trimEnd();
-      });
-    }
-  }
+            return acc;
+          }, {});
+    });
+  });
 
   return responsive;
 };
 
-const transformContent = ({options, config}, screens) => {
+type TransformContent = {
+  (
+    {options, config}: {options: TV["options"]; config: TV["config"]},
+    screens?: string[] | DefaultScreens,
+  ): void;
+};
+
+const transformContent: TransformContent = ({options, config}, screens) => {
   const variants = options?.variants ?? {};
   const responsiveVariants = config?.responsiveVariants ?? false;
 
@@ -205,7 +220,13 @@ const transformContent = ({options, config}, screens) => {
   }
 };
 
-export const tvTransformer = (content, screens) => {
+export type DefaultScreens = keyof DefaultTheme["screens"];
+
+export type TVTransformer = {
+  (content: string, screens?: string[] | DefaultScreens[]): string;
+};
+
+export const tvTransformer: TVTransformer = (content, screens) => {
   try {
     // TODO: support package alias
     if (!content.includes("tailwind-variants")) return content;
@@ -215,7 +236,7 @@ export const tvTransformer = (content, screens) => {
     if (isEmpty(tvs)) return content;
 
     const transformed = JSON.stringify(
-      tvs.map((tv) => transformContent(tv, screens)),
+      tvs?.map((tv) => transformContent(tv, screens)),
       undefined,
       2,
     );
@@ -231,37 +252,55 @@ export const tvTransformer = (content, screens) => {
   }
 };
 
-const getExtensions = (files) => {
-  const extensions = files
-    .map((file) => {
-      if (isObject(file) && file.extension) return file.extension;
+// Helper function to extract an extension from a string
+const extractExtensionFromString = (file: string): string[] => {
+  let fileExt: RegExpMatchArray | null | string[] = file.match(regExp.extension);
 
-      let fileExt = file.match(regExp.extension);
+  if (!fileExt) {
+    fileExt = file.split("{");
+    fileExt = fileExt?.pop()?.replace("}", "").split(",") ?? [];
+  }
 
-      if (!fileExt) {
-        fileExt = file.split("{");
-        fileExt = fileExt.pop().replace("}", "").split(",");
-      }
+  return fileExt.map((ext) => ext.replace(".", "").split(".")).flat();
+};
 
-      return fileExt.map((ext) => ext.replace(".", "").split(".")).flat();
-    })
-    .flatMap((ext) => ext);
+// Main function to get extensions
+const getExtensions = (files: (FilePath | RawFile)[]): string[] => {
+  const extensions = files.flatMap((file) => {
+    if (isObject<RawFile>(file) && file?.extension) {
+      return file.extension;
+    }
+
+    if (isString(file)) {
+      return extractExtensionFromString(file);
+    }
+
+    return [];
+  });
 
   return Array.from(new Set(extensions)).filter((ext) => ext !== "html");
 };
 
-export const withTV = (tailwindConfig) => {
+type ResolvedConfig<T extends Config> = ReturnType<typeof resolveConfig<T>>;
+
+export type WithTV = {
+  <C extends Config>(tvConfig: C): ResolvedConfig<C>;
+};
+
+export const withTV: WithTV = (tailwindConfig) => {
   let config = resolveConfig(tailwindConfig);
 
   // generate types
   generateTypes(config.theme);
 
+  const contentFiles = config?.content?.files;
+
   // invalid content files
-  if (isEmpty(config.content?.files) || !isArray(config.content.files)) return config;
+  if (isEmpty(contentFiles) || !isArray(contentFiles)) return config;
 
   // with tailwind configured screens
-  const transformer = (content) => {
-    return tvTransformer(content, Object.keys(config.theme?.screens ?? {}));
+  const transformer = (content: string) => {
+    return tvTransformer(content, Object.keys((config.theme as ThemeConfig)?.screens ?? {}));
   };
 
   // custom transform
@@ -289,7 +328,7 @@ export const withTV = (tailwindConfig) => {
 
   // extend transform object
   if (isObject(customTransform)) {
-    const extensions = getExtensions(config.content.files);
+    const extensions = getExtensions(contentFiles);
     const transformEntries = extensions.map((ext) => {
       const validTransform = isFunction(customTransform[ext]);
 
