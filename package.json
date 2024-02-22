@@ -46,6 +46,7 @@
     "@swc/cli": "0.1.57",
     "@swc/core": "1.2.198",
     "@swc/helpers": "^0.4.14",
+    "@types/benchmark": "^2.1.5",
     "@types/jest": "28.1.1",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.42.0",

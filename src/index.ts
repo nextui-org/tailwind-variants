@@ -1,4 +1,6 @@
 // @ts-nocheck
+import type {TV} from "./indexTypes";
+
 import {extendTailwindMerge, twMerge as twMergeBase} from "tailwind-merge";
 
 import {
@@ -65,7 +67,7 @@ const joinObjects = (obj1, obj2) => {
   return obj1;
 };
 
-export const tv = (options, configProp) => {
+export const tv: TV = (options, configProp) => {
   const {
     extend = null,
     slots: slotProps = {},

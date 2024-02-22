@@ -1,6 +1,6 @@
 import type {Config, FilePath, RawFile, ThemeConfig} from "tailwindcss/types/config";
 import type {DefaultTheme} from "tailwindcss/types/generated/default-theme";
-import type {TV, TVVariants} from "./indexTypes";
+import type {TVVariants} from "./indexTypes";
 
 import resolveConfig from "tailwindcss/resolveConfig";
 
@@ -71,7 +71,7 @@ const getCleanContent = (content: string): string[] => {
   return Array.from(removeBlankLine.matchAll(regExp.tv), removeExtend);
 };
 
-const getTVObjects = (content: string): TV[] => {
+const getTVObjects = (content: string): Array<{options: any; config: any}> => {
   const tvs = getCleanContent(content);
 
   if (isEmpty(tvs)) return [];
@@ -90,7 +90,7 @@ const getTVObjects = (content: string): TV[] => {
   });
 };
 
-const flatClassNames = (classNames) => {
+const flatClassNames = (classNames: string[]): string[] => {
   return classNames
     .flatMap((classNameSet) => classNameSet)
     .toString()
@@ -98,7 +98,7 @@ const flatClassNames = (classNames) => {
     .split(" ");
 };
 
-const getSlots = (classNames, screens) => {
+const getSlots = (classNames: any, screens: string[]) => {
   // responsive slot
   let rs = {};
 
@@ -126,7 +126,7 @@ const getSlots = (classNames, screens) => {
   return rs;
 };
 
-const getVariants = (classNames, screens) => {
+const getVariants = (classNames: unknown, screens: string[]): string[] | {} => {
   if (isString(classNames)) return classNames.split(" ");
   if (isArray(classNames)) return flatClassNames(classNames);
   if (isObject(classNames)) return getSlots(classNames, screens);
@@ -177,10 +177,7 @@ const transformVariantsByScreens: TransformVariantsByScreens = (variants, screen
 };
 
 type TransformContent = {
-  (
-    {options, config}: {options: TV["options"]; config: TV["config"]},
-    screens?: string[] | DefaultScreens,
-  ): void;
+  ({options, config}: {options: any; config: any}, screens?: string[] | DefaultScreens): void;
 };
 
 const transformContent: TransformContent = ({options, config}, screens) => {

@@ -1,6 +1,6 @@
 import Benchmark from "benchmark";
 
-import {tv} from "./src/index.js";
+import {tv} from "./dist/index.js";
 
 const suite = new Benchmark.Suite();
 
@@ -57,7 +57,7 @@ const noSlots = {
         class: "ring-1",
       },
       {
-        size: ["md", "lg", "xl", "2xl"],
+        size: ["md", "lg", "xl"],
         class: "ring-2",
       },
     ],
@@ -110,7 +110,7 @@ const noSlotsNoTwMerge = {
           class: "ring-1",
         },
         {
-          size: ["md", "lg", "xl", "2xl"],
+          size: ["md", "lg", "xl"],
           class: "ring-2",
         },
       ],
@@ -177,7 +177,7 @@ const noSlotsWithCustomConfig = {
           class: "ring-1",
         },
         {
-          size: ["md", "lg", "xl", "2xl"],
+          size: ["md", "lg", "xl"],
           class: "ring-2",
         },
       ],
@@ -262,7 +262,7 @@ export const avatar = (twMerge = true) =>
           class: "ring-1",
         },
         {
-          size: ["md", "lg", "xl", "2xl"],
+          size: ["md", "lg", "xl"],
           class: "ring-2",
         },
       ],

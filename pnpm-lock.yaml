@@ -31,6 +31,9 @@ devDependencies:
   '@swc/helpers':
     specifier: ^0.4.14
     version: 0.4.14
+  '@types/benchmark':
+    specifier: ^2.1.5
+    version: 2.1.5
   '@types/jest':
     specifier: 28.1.1
     version: 28.1.1
@@ -1702,6 +1705,10 @@ packages:
     resolution: {integrity: sha512-1kbcJ40lLB7MHsj39U4Sh1uTd2E7rLEa79kmDpI6cy+XiXsteB3POdQomoq4FxszMrO3ZYchkhYJw7A2862b3w==}
     dependencies:
       '@babel/types': 7.20.7
+    dev: true
+
+  /@types/benchmark@2.1.5:
+    resolution: {integrity: sha512-cKio2eFB3v7qmKcvIHLUMw/dIx/8bhWPuzpzRT4unCPRTD8VdA9Zb0afxpcxOqR4PixRS7yT42FqGS8BYL8g1w==}
     dev: true
 
   /@types/eslint-scope@3.7.4:
