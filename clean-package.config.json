@@ -8,7 +8,7 @@
       ".": {
         "require": "./dist/index.cjs",
         "import": "./dist/index.js",
-        "types": "./types/index.d.ts"
+        "types": "./dist/index.d.ts"
       },
       "./dist/*": "./dist/*",
       "./transformer": {
