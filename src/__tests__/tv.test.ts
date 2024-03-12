@@ -350,7 +350,6 @@ describe("Tailwind Variants (TV) - Default", () => {
     expect(h1({bool: undefined})).toHaveClass(["text-3xl", "truncate"]);
   });
 
-
   test("should support false only variant -- default variant", () => {
     const h1 = tv({
       base: "text-3xl",

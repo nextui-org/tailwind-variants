@@ -9,8 +9,18 @@ export type WithTV = {
 
 export declare const withTV: WithTV;
 
+export type TVTransformerConfig = {
+  /**
+   * Optional array of custom aliases where Tailwind Variants might be resolved.
+   * This can be useful if you're using a custom path to import Tailwind Variants.
+   *
+   * @example ["@/lib/tv"]
+   */
+  aliases?: string[];
+};
+
 export type TVTransformer = {
-  (content: string, screens?: string[] | DefaultScreens[]): string;
+  (content: string, screens?: string[] | DefaultScreens[], config?: TVTransformerConfig): string;
 };
 
 export declare const tvTransformer: TVTransformer;
