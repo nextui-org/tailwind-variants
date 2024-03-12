@@ -205,10 +205,16 @@ const transformContent = ({options, config}, screens) => {
   }
 };
 
-export const tvTransformer = (content, screens) => {
+export const tvTransformer = (content, screens, config) => {
   try {
-    // TODO: support package alias
-    if (!content.includes("tailwind-variants")) return content;
+    const defaultImportPaths = ["tailwind-variants"];
+
+    const importPaths = isArray(config?.aliases)
+      ? [...config.aliases, ...defaultImportPaths]
+      : defaultImportPaths;
+    const containsImportPath = importPaths.some((path) => content.includes(path));
+
+    if (!containsImportPath) return content;
 
     const tvs = getTVObjects(content);
 
@@ -250,7 +256,7 @@ const getExtensions = (files) => {
   return Array.from(new Set(extensions)).filter((ext) => ext !== "html");
 };
 
-export const withTV = (tailwindConfig) => {
+export const withTV = (tailwindConfig, transformerConfig) => {
   let config = resolveConfig(tailwindConfig);
 
   // generate types
@@ -261,7 +267,7 @@ export const withTV = (tailwindConfig) => {
 
   // with tailwind configured screens
   const transformer = (content) => {
-    return tvTransformer(content, Object.keys(config.theme?.screens ?? {}));
+    return tvTransformer(content, Object.keys(config.theme?.screens ?? {}), transformerConfig);
   };
 
   // custom transform

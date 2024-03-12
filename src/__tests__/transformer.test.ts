@@ -435,6 +435,44 @@ describe("Responsive Variants", () => {
     expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
+  test("should return a transformed content (with custom aliases)", () => {
+    const sourceCode = `
+      import {tv} from "@/lib/tv";
+
+      const button = tv(
+        {
+          variants: {
+            color: {
+              primary: "text-blue-50 bg-blue-600 rounded"
+            }
+          }
+        },
+        {
+          responsiveVariants: true
+        }
+      );
+    `;
+
+    const result = tvTransformer(sourceCode, defaultScreens, {aliases: ["@/lib/tv"]});
+
+    const transformedContent = [
+      {
+        color: {
+          primary: {
+            original: "text-blue-50 bg-blue-600 rounded",
+            sm: "sm:text-blue-50 sm:bg-blue-600 sm:rounded",
+            md: "md:text-blue-50 md:bg-blue-600 md:rounded",
+            lg: "lg:text-blue-50 lg:bg-blue-600 lg:rounded",
+            xl: "xl:text-blue-50 xl:bg-blue-600 xl:rounded",
+            "2xl": "2xl:text-blue-50 2xl:bg-blue-600 2xl:rounded",
+          },
+        },
+      },
+    ];
+
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
+  });
+
   test("should return tailwind config with built-in transformer (withTV content array)", () => {
     const expectedResult = {
       content: {

@@ -85,7 +85,7 @@ you need to add the Tailwind Variants `wrapper` to your TailwindCSS config file 
 // tailwind.config.js
  
 const { withTV } = require('tailwind-variants/transformer')
- 
+
 /** @type {import('tailwindcss').Config} */
 module.exports = withTV({
   content:  ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -93,6 +93,25 @@ module.exports = withTV({
     extend: {},
   },
   plugins: [],
+})
+```
+
+If you're using a custom path to import Tailwind variants, such as creating a custom tv instance with `createTV`, it's recommended to include this path in the transformer configuration:
+
+```js
+// tailwind.config.js
+
+const { withTV } = require('tailwind-variants/transformer')
+
+/** @type {import('tailwindcss').Config} */
+module.exports = withTV({
+  content:  ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}, {
+  aliases: ["@/lib/tv"]
 })
 ```
 
