@@ -69,7 +69,7 @@ export const tv = (options, configProp) => {
     extend = null,
     slots: slotProps = {},
     variants: variantsProps = {},
-    compoundVariants = [],
+    compoundVariants: compoundVariantsProps = [],
     compoundSlots = [],
     defaultVariants: defaultVariantsProps = {},
   } = options;
@@ -108,6 +108,11 @@ export const tv = (options, configProp) => {
         {...extend?.slots},
         isEmptyObject(componentSlots) ? {base: options?.base} : componentSlots,
       );
+
+  // merge compoundVariants with the "extended" compoundVariants
+  const compoundVariants = isEmptyObject(extend?.compoundVariants)
+    ? compoundVariantsProps
+    : flatMergeArrays(extend?.compoundVariants, compoundVariantsProps);
 
   const component = (props) => {
     if (isEmptyObject(variants) && isEmptyObject(slotProps) && isExtendedSlotsEmpty) {
@@ -322,15 +327,8 @@ export const tv = (options, configProp) => {
       return result;
     };
 
-    const getCompoundVariantClassNames = (slotProps) => {
-      const cvValues = getCompoundVariantsValue(compoundVariants, slotProps);
-      const ecvValues = getCompoundVariantsValue(extend?.compoundVariants, slotProps);
-
-      return flatMergeArrays(ecvValues, cvValues);
-    };
-
     const getCompoundVariantClassNamesBySlot = (slotProps) => {
-      const compoundClassNames = getCompoundVariantClassNames(slotProps);
+      const compoundClassNames = getCompoundVariantsValue(compoundVariants, slotProps);
 
       if (!Array.isArray(compoundClassNames)) {
         return compoundClassNames;
@@ -422,7 +420,7 @@ export const tv = (options, configProp) => {
     return cn(
       base,
       getVariantClassNames(),
-      getCompoundVariantClassNames(),
+      getCompoundVariantsValue(compoundVariants),
       props?.class,
       props?.className,
     )(config);
