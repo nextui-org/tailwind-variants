@@ -33,7 +33,8 @@
     "postpack": "clean-package restore",
     "lint": "eslint -c .eslintrc.json ./src/**/*.{ts,tsx}",
     "lint:fix": "eslint --fix -c .eslintrc.json ./src/**/*.{ts,tsx}",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "test:watch": "jest --watch --no-verbose"
   },
   "dependencies": {
     "tailwind-merge": "^2.2.0"
