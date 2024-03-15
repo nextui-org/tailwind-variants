@@ -334,6 +334,41 @@ describe("Tailwind Variants (TV) - Default", () => {
     expect(h1({bool: undefined})).toHaveClass(["text-3xl", "truncate"]);
   });
 
+  test("should support false only variant", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          false: "truncate",
+        },
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl", "truncate"]);
+  });
+
+  test("should support false only variant -- default variant", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      variants: {
+        bool: {
+          false: "truncate",
+        },
+      },
+      defaultVariants: {
+        bool: true,
+      },
+    });
+
+    expect(h1()).toHaveClass(["text-3xl"]);
+    expect(h1({bool: true})).toHaveClass(["text-3xl"]);
+    expect(h1({bool: false})).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1({bool: undefined})).toHaveClass(["text-3xl"]);
+  });
+
   test("should support boolean variants -- default variants", () => {
     const h1 = tv({
       base: "text-3xl",
@@ -2926,6 +2961,37 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     expect(base()).toHaveClass(["menuBase", "menu"]);
     expect(title()).toHaveClass(["title"]);
+  });
+
+  it("should support multi-level extends", () => {
+    const themeButton = tv({
+      base: "font-medium",
+      variants: {
+        color: {
+          primary: "text-blue-500",
+        },
+        disabled: {
+          true: "opacity-50",
+        },
+      },
+      compoundVariants: [
+        {
+          color: "primary",
+          disabled: true,
+          class: "bg-black",
+        },
+      ],
+      defaultVariants: {
+        color: "primary",
+        disabled: true,
+      },
+    });
+
+    const appButton = tv({extend: themeButton});
+    const button = tv({extend: appButton});
+
+    expect(appButton()).toHaveClass("font-medium text-blue-500 opacity-50 bg-black");
+    expect(button()).toHaveClass("font-medium text-blue-500 opacity-50 bg-black");
   });
 });
 
