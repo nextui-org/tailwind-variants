@@ -70,7 +70,7 @@ export const tv = (options, configProp) => {
     slots: slotProps = {},
     variants: variantsProps = {},
     compoundVariants: compoundVariantsProps = [],
-    compoundSlots = [],
+    compoundSlots: compoundSlotsProps = [],
     defaultVariants: defaultVariantsProps = {},
   } = options;
 
@@ -108,6 +108,11 @@ export const tv = (options, configProp) => {
         {...extend?.slots},
         isEmptyObject(componentSlots) ? {base: options?.base} : componentSlots,
       );
+
+  // merge compoundSlots with the "extended" compoundSlots
+  const compoundSlots = isEmptyObject(extend?.compoundSlots)
+    ? compoundSlotsProps
+    : flatMergeArrays(extend?.compoundSlots, compoundSlotsProps);
 
   // merge compoundVariants with the "extended" compoundVariants
   const compoundVariants = isEmptyObject(extend?.compoundVariants)

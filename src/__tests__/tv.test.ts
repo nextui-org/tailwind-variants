@@ -2966,6 +2966,10 @@ describe("Tailwind Variants (TV) - Extends", () => {
   it("should support multi-level extends", () => {
     const themeButton = tv({
       base: "font-medium",
+      slots: {
+        title: "text-lg",
+        subtitle: "text-sm",
+      },
       variants: {
         color: {
           primary: "text-blue-500",
@@ -2981,6 +2985,13 @@ describe("Tailwind Variants (TV) - Extends", () => {
           class: "bg-black",
         },
       ],
+      compoundSlots: [
+        {
+          slots: ["title", "subtitle"],
+          color: "primary",
+          class: ["font-bold"],
+        },
+      ],
       defaultVariants: {
         color: "primary",
         disabled: true,
@@ -2989,9 +3000,19 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const appButton = tv({extend: themeButton});
     const button = tv({extend: appButton});
+    const baseClasses = "font-medium text-blue-500 opacity-50 bg-black";
+    const titleClasses = "text-lg font-bold";
+    const subtitleClasses = "text-sm font-bold";
 
-    expect(appButton()).toHaveClass("font-medium text-blue-500 opacity-50 bg-black");
-    expect(button()).toHaveClass("font-medium text-blue-500 opacity-50 bg-black");
+    expect(themeButton().base()).toHaveClass(baseClasses);
+    expect(themeButton().title()).toHaveClass(titleClasses);
+    expect(themeButton().subtitle()).toHaveClass(subtitleClasses);
+    expect(appButton().base()).toHaveClass(baseClasses);
+    expect(appButton().title()).toHaveClass(titleClasses);
+    expect(appButton().subtitle()).toHaveClass(subtitleClasses);
+    expect(button().base()).toHaveClass(baseClasses);
+    expect(button().title()).toHaveClass(titleClasses);
+    expect(button().subtitle()).toHaveClass(subtitleClasses);
   });
 });
 
