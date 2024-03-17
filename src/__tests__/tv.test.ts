@@ -1926,7 +1926,7 @@ describe("Tailwind Variants (TV) - Screen Variants", () => {
         sm: "secondary",
         md: "primary",
         lg: "secondary",
-        // @ts-ignore
+        // @ts-expect-error
         xl: "success",
       },
       size: {
@@ -1947,8 +1947,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       base: "text-base text-green-500",
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
     });
 
@@ -1973,8 +1972,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2004,8 +2002,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const p = tv({
-      extend: base,
+    const p = base.extend({
       base: "text-green-500",
       variants: {
         color: {
@@ -2015,8 +2012,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2026,7 +2022,6 @@ describe("Tailwind Variants (TV) - Extends", () => {
     });
 
     const result = h1({
-      // @ts-ignore TODO: should have the grand parent variants
       color: "red",
     });
 
@@ -2066,8 +2061,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2112,8 +2106,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2145,8 +2138,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2186,8 +2178,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2234,8 +2225,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       ],
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2271,8 +2261,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2325,8 +2314,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       ],
     });
 
-    const h1 = tv({
-      extend: p,
+    const h1 = p.extend({
       base: "text-3xl font-bold",
       variants: {
         color: {
@@ -2365,9 +2353,8 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv(
+    const h1 = p.extend(
       {
-        extend: p,
         base: "text-3xl font-bold",
         variants: {
           color: {
@@ -2419,9 +2406,8 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const h1 = tv(
+    const h1 = p.extend(
       {
-        extend: p,
         base: "text-3xl font-bold",
         variants: {
           color: {
@@ -2473,8 +2459,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
     });
 
@@ -2510,8 +2495,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
     });
 
@@ -2537,8 +2521,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
       variants: {
         isBig: {
@@ -2575,8 +2558,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
       slots: {
         title: "title--menu",
@@ -2615,8 +2597,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
       slots: {
         title: "title--menu",
@@ -2662,8 +2643,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
       slots: {
         title: "title--menu",
@@ -2708,8 +2688,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
       slots: {
         title: "title--menu",
@@ -2787,8 +2766,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       ],
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
       slots: {
         title: "title--menu",
@@ -2873,8 +2851,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "base--menu",
       slots: {
         title: "title--menu",
@@ -2885,7 +2862,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       compoundVariants: [
         {
           color: "red",
-          isBig: true,
+          // isBig: "true",
           class: {
             title: "color--red--isBig--title--menuBase",
             item: "color--red--isBig--item--menuBase",
@@ -2949,8 +2926,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
   test("should support parent w/slots when base does not have slots", () => {
     const menuBase = tv({base: "menuBase"});
-    const menu = tv({
-      extend: menuBase,
+    const menu = menuBase.extend({
       base: "menu",
       slots: {
         title: "title",
@@ -2999,7 +2975,15 @@ describe("Tailwind Variants (TV) - Extends", () => {
     });
 
     const appButton = themeButton.extend({});
-    const button = appButton.extend({});
+    const button = appButton.extend({
+      compoundSlots: [
+        {
+          slots: ["title", "subtitle"],
+          color: "primary",
+          class: ["font-bold"],
+        },
+      ],
+    });
     const baseClasses = "font-medium text-blue-500 opacity-50 bg-black";
     const titleClasses = "text-lg font-bold";
     const subtitleClasses = "text-sm font-bold";

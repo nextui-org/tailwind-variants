@@ -147,7 +147,8 @@ export type TVReturnProps<B extends ClassValue, S extends TVSlots, V extends TVV
 
 type HasSlots<S extends TVSlots> = S extends undefined ? false : true;
 
-type Merge<T, U> = Exclude<T | U, undefined>;
+type MergeObj<T, U> = T extends undefined ? U : U extends undefined ? T : T & U;
+type Union<T, U> = Exclude<T | U, undefined>;
 
 export type TVReturnType<
   B extends ClassValue,
@@ -167,8 +168,6 @@ export type TVReturnType<
     ES extends TVSlots,
     EV extends TVVariants<EB, ES>,
     EC extends TVConfig<EV>,
-    ECV extends TVCompoundVariants<EB, ES, EV>,
-    EDV extends TVDefaultVariants<EB, ES, EV>,
   >(
     options: {
       /**
@@ -189,30 +188,28 @@ export type TVReturnType<
        * Compound variants allow you to apply classes to multiple variants at once.
        * @see https://www.tailwind-variants.org/docs/variants#compound-variants
        */
-      compoundVariants?: ECV;
+      compoundVariants?: TVCompoundVariants<Union<B, EB>, MergeObj<S, ES>, MergeObj<V, EV>>;
       /**
        * Compound slots allow you to apply classes to multiple slots at once.
        */
-      compoundSlots?: TVCompoundSlots<EB, ES, EV>;
+      compoundSlots?: TVCompoundSlots<Union<B, EB>, MergeObj<S, ES>, MergeObj<V, EV>>;
       /**
        * Default variants allow you to set default variants for a component.
        * @see https://www.tailwind-variants.org/docs/variants#default-variants
        */
-      defaultVariants?: EDV;
+      defaultVariants?: TVDefaultVariants<Union<B, EB>, MergeObj<S, ES>, MergeObj<V, EV>>;
     },
     /**
      * The config object allows you to modify the default configuration.
      * @see https://www.tailwind-variants.org/docs/api-reference#config-optional
      */
     config?: EC,
-  ): TVReturnType<Merge<B, EB>, Merge<S, ES>, Merge<V, EV>, Merge<C, EC>>;
+  ): TVReturnType<Union<B, EB>, MergeObj<S, ES>, MergeObj<V, EV>, MergeObj<C, EC>>;
 } & TVReturnProps<B, S, V>;
 
 export type TV = {
   <
     V extends TVVariants<B, S>,
-    CV extends TVCompoundVariants<B, S, V>,
-    DV extends TVDefaultVariants<B, S, V>,
     C extends TVConfig<V>,
     B extends ClassValue = undefined,
     S extends TVSlots = undefined,
@@ -236,7 +233,7 @@ export type TV = {
        * Compound variants allow you to apply classes to multiple variants at once.
        * @see https://www.tailwind-variants.org/docs/variants#compound-variants
        */
-      compoundVariants?: CV;
+      compoundVariants?: TVCompoundVariants<B, S, V>;
       /**
        * Compound slots allow you to apply classes to multiple slots at once.
        */
@@ -245,7 +242,7 @@ export type TV = {
        * Default variants allow you to set default variants for a component.
        * @see https://www.tailwind-variants.org/docs/variants#default-variants
        */
-      defaultVariants?: DV;
+      defaultVariants?: TVDefaultVariants<B, S, V>;
     },
     /**
      * The config object allows you to modify the default configuration.
@@ -258,8 +255,6 @@ export type TV = {
 export type CreateTV<RV extends TVConfig["responsiveVariants"] = undefined> = {
   <
     V extends TVVariants<B, S>,
-    CV extends TVCompoundVariants<B, S, V>,
-    DV extends TVDefaultVariants<B, S, V>,
     C extends TVConfig<V>,
     B extends ClassValue = undefined,
     S extends TVSlots = undefined,
@@ -283,7 +278,7 @@ export type CreateTV<RV extends TVConfig["responsiveVariants"] = undefined> = {
        * Compound variants allow you to apply classes to multiple variants at once.
        * @see https://www.tailwind-variants.org/docs/variants#compound-variants
        */
-      compoundVariants?: CV;
+      compoundVariants?: TVCompoundVariants<B, S, V>;
       /**
        * Compound slots allow you to apply classes to multiple slots at once.
        */
@@ -292,7 +287,7 @@ export type CreateTV<RV extends TVConfig["responsiveVariants"] = undefined> = {
        * Default variants allow you to set default variants for a component.
        * @see https://www.tailwind-variants.org/docs/variants#default-variants
        */
-      defaultVariants?: DV;
+      defaultVariants?: TVDefaultVariants<B, S, V>;
     },
     /**
      * The config object allows you to modify the default configuration.
