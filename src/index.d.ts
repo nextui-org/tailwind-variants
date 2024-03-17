@@ -207,6 +207,7 @@ export type TVReturnType<
   C extends TVConfig<V, EV>,
   EV extends TVVariants<ES>,
   ES extends TVSlots,
+  EB extends ClassValue = B,
   // @ts-expect-error
   E extends TVReturnType = undefined,
 > = {
@@ -220,7 +221,7 @@ export type TVReturnType<
           slotProps?: TVProps<V, S, C, EV, ES>,
         ) => string;
       } & {
-        [K in TVSlotsWithBase<{}, B>]: (slotProps?: TVProps<V, S, C, EV, ES>) => string;
+        [K in TVSlotsWithBase<{}, B | EB>]: (slotProps?: TVProps<V, S, C, EV, ES>) => string;
       }
     : string;
 } & TVReturnProps<V, S, B, EV, ES, E>;
