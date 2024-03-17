@@ -2998,8 +2998,8 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    const appButton = tv({extend: themeButton});
-    const button = tv({extend: appButton});
+    const appButton = themeButton.extend({});
+    const button = appButton.extend({});
     const baseClasses = "font-medium text-blue-500 opacity-50 bg-black";
     const titleClasses = "text-lg font-bold";
     const subtitleClasses = "text-sm font-bold";

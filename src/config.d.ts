@@ -23,8 +23,6 @@ export type TWMConfig = {
 export type TVConfig<
   // @ts-expect-error
   V extends TVVariants | undefined = undefined,
-  // @ts-expect-error
-  EV extends TVVariants | undefined = undefined,
 > = {
   /**
    * Whether to enable responsive variant transform.
@@ -34,5 +32,5 @@ export type TVConfig<
   responsiveVariants?:
     | boolean
     | TVGeneratedScreens[]
-    | {[K in keyof V | keyof EV]?: boolean | TVGeneratedScreens[]};
+    | {[K in keyof V]?: boolean | TVGeneratedScreens[]};
 } & TWMConfig;
