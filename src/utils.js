@@ -35,10 +35,10 @@ export const mergeObjects = (obj1, obj2) => {
       const val1 = obj1[key];
       const val2 = obj2[key];
 
-      if (typeof val1 === "object" && typeof val2 === "object") {
-        result[key] = mergeObjects(val1, val2);
-      } else if (Array.isArray(val1) || Array.isArray(val2)) {
+      if (Array.isArray(val1) || Array.isArray(val2)) {
         result[key] = flatMergeArrays(val2, val1);
+      } else if (typeof val1 === "object" && typeof val2 === "object") {
+        result[key] = mergeObjects(val1, val2);
       } else {
         result[key] = val2 + " " + val1;
       }
