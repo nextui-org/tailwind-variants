@@ -2350,6 +2350,115 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expect(result).toHaveClass(expectedResult);
   });
 
+  test.only("should override the extended classes with variants and compoundVariants, using array", () => {
+    const p = tv({
+      base: "text-base text-green-500",
+      variants: {
+        isBig: {
+          true: "text-5xl",
+          false: ["text-2xl"],
+        },
+        color: {
+          red: ["text-red-500 bg-red-100", "tracking-normal"],
+          blue: "text-blue-500",
+        },
+      },
+      defaultVariants: {
+        isBig: true,
+        color: "red",
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-500",
+        },
+        {
+          isBig: false,
+          color: "red",
+          class: ["bg-red-500"],
+        },
+        {
+          isBig: true,
+          color: "blue",
+          class: ["bg-blue-500"],
+        },
+        {
+          isBig: false,
+          color: "blue",
+          class: "bg-blue-500",
+        },
+      ],
+    });
+
+    const h1 = tv({
+      extend: p,
+      base: "text-3xl font-bold",
+      variants: {
+        isBig: {
+          true: "text-7xl",
+          false: "text-3xl",
+        },
+        color: {
+          red: ["text-red-200", "bg-red-200"],
+          green: ["text-green-500"],
+        },
+      },
+      compoundVariants: [
+        {
+          isBig: true,
+          color: "red",
+          class: "bg-red-600",
+        },
+        {
+          isBig: false,
+          color: "red",
+          class: "bg-red-600",
+        },
+        {
+          isBig: true,
+          color: "blue",
+          class: ["bg-blue-600"],
+        },
+        {
+          isBig: false,
+          color: "blue",
+          class: ["bg-blue-600"],
+        },
+      ],
+    });
+
+    expect(h1({isBig: true, color: "red"})).toHaveClass([
+      "font-bold",
+      "text-red-200",
+      "bg-red-600",
+      "tracking-normal",
+      "text-7xl",
+    ]);
+
+    expect(h1({isBig: true, color: "blue"})).toHaveClass([
+      "font-bold",
+      "text-blue-500",
+      "bg-blue-600",
+      "text-7xl",
+    ]);
+
+    expect(h1({isBig: false, color: "red"})).toHaveClass([
+      "font-bold",
+      "text-red-200",
+      "bg-red-600",
+      "tracking-normal",
+      "text-3xl",
+    ]);
+
+    expect(h1({isBig: false, color: "blue"})).toHaveClass([
+      "font-bold",
+      "text-blue-500",
+      "bg-blue-600",
+      "text-3xl",
+    ]);
+  });
+
   test("should include the extended classes with screenVariants single values", () => {
     const p = tv({
       base: "text-base text-green-500",
