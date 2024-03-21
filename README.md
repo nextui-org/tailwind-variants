@@ -17,7 +17,6 @@
   </a>
 </p>
 
-
 ## Features
 
 - First-class variant API
@@ -34,8 +33,8 @@ For full documentation, visit [tailwind-variants.org](https://tailwind-variants.
 
 ## Quick Start
 
-1. Installation: 
-To use Tailwind Variants in your project, you can install it as a dependency:
+1. Installation:
+   To use Tailwind Variants in your project, you can install it as a dependency:
 
 ```bash
 yarn add tailwind-variants
@@ -46,8 +45,8 @@ npm i tailwind-variants
 2. Usage:
 
 ```js
-import { tv } from 'tailwind-variants';
- 
+import {tv} from "tailwind-variants";
+
 const button = tv({
   base: "font-medium bg-blue-500 text-white rounded-full active:opacity-80",
   variants: {
@@ -70,30 +69,28 @@ const button = tv({
   defaultVariants: {
     size: "md",
     color: "primary",
-  }
+  },
 });
- 
-return (
-  <button className={button({ size: 'sm', color: 'secondary' })}>Click me</button>
-)
+
+return <button className={button({size: "sm", color: "secondary"})}>Click me</button>;
 ```
 
 3. Responsive variants configuration (optional): If you want to use responsive variants
-you need to add the Tailwind Variants `wrapper` to your TailwindCSS config file `tailwind.config.js`.
+   you need to add the Tailwind Variants `wrapper` to your TailwindCSS config file `tailwind.config.js`.
 
 ```js
 // tailwind.config.js
- 
-const { withTV } = require('tailwind-variants/transformer')
+
+const {withTV} = require("tailwind-variants/transformer");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = withTV({
-  content:  ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {},
   },
   plugins: [],
-})
+});
 ```
 
 If you're using a custom path to import Tailwind variants, such as creating a custom tv instance with `createTV`, it's recommended to include this path in the transformer configuration:
@@ -101,29 +98,30 @@ If you're using a custom path to import Tailwind variants, such as creating a cu
 ```js
 // tailwind.config.js
 
-const { withTV } = require('tailwind-variants/transformer')
+const {withTV} = require("tailwind-variants/transformer");
 
 /** @type {import('tailwindcss').Config} */
-module.exports = withTV({
-  content:  ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  theme: {
-    extend: {},
+module.exports = withTV(
+  {
+    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+    theme: {
+      extend: {},
+    },
+    plugins: [],
   },
-  plugins: [],
-}, {
-  aliases: ["@/lib/tv"]
-})
+  {
+    aliases: ["@/lib/tv"],
+  },
+);
 ```
-
 
 ## Acknowledgements
 
-- [**cva**](https://github.com/joe-bell/cva) ([Joe Bell](https://github.com/joe-bell)) 
+- [**cva**](https://github.com/joe-bell/cva) ([Joe Bell](https://github.com/joe-bell))
   This project as started as an extension of Joe's work on `cva` – a great tool for generating variants for a single element with Tailwind CSS. Big shoutout to [Joe Bell](https://github.com/joe-bell) and [contributors](https://github.com/joe-bell/cva/graphs/contributors) you guys rock! 🤘 - we recommend to use `cva` if don't need any of the **Tailwind Variants** features listed [here](https://www.tailwind-variants.org/docs/comparison).
 
 - [**Stitches**](https://stitches.dev/) ([Modulz](https://modulz.app))  
   The pioneers of the `variants` API movement. Inmense thanks to [Modulz](https://modulz.app) for their work on Stitches and the community around it. 🙏
-
 
 ## Community
 
