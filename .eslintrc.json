@@ -5,9 +5,7 @@
     "es2021": true,
     "node": true
   },
-  "extends": [
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["plugin:prettier/recommended"],
   "plugins": ["prettier", "import", "@typescript-eslint"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -22,6 +20,13 @@
       "version": "detect"
     }
   },
+  "overrides": [
+    {
+      "files": ["*/__tests__/**"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended"]
+    }
+  ],
   "rules": {
     "no-console": "warn",
     "prettier/prettier": "warn",
