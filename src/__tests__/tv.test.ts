@@ -2350,7 +2350,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expect(result).toHaveClass(expectedResult);
   });
 
-  test.only("should override the extended classes with variants and compoundVariants, using array", () => {
+  test("should override the extended classes with variants and compoundVariants, using array", () => {
     const p = tv({
       base: "text-base text-green-500",
       variants: {

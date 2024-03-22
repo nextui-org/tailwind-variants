@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Benchmark from "benchmark";
 
 import {tv} from "./src/index.js";
