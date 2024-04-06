@@ -52,6 +52,7 @@
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "benchmark": "2.1.4",
+    "class-variance-authority": "^0.7.0",
     "clean-package": "2.1.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
