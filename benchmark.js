@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import Benchmark from "benchmark";
+import {cva} from "class-variance-authority";
+import {extendTailwindMerge} from "tailwind-merge";
 
 import {tv} from "./src/index.js";
 
@@ -322,6 +324,57 @@ export const avatarWithCustomConfig = tv(
   },
 );
 
+// CVA without tw-merge config
+const cvaNoMerge = {
+  avatar: cva("relative flex shrink-0 overflow-hidden rounded-full", {
+    variants: {
+      size: {
+        xs: "h-6 w-6",
+        sm: "h-8 w-8",
+        md: "h-10 w-10",
+        lg: "h-12 w-12",
+        xl: "h-14 w-14",
+      },
+    },
+    defaultVariants: {
+      size: "md",
+    },
+    compoundVariants: [
+      {
+        size: ["xs", "sm"],
+        class: "ring-1",
+      },
+      {
+        size: ["md", "lg", "xl", "2xl"],
+        class: "ring-2",
+      },
+    ],
+  }),
+  image: cva("aspect-square h-full w-full", {
+    variants: {
+      withBorder: {
+        true: "border-1.5 border-white",
+      },
+    },
+  }),
+  fallback: cva("flex h-full w-full items-center justify-center rounded-full bg-muted", {
+    variants: {
+      size: {
+        xs: "text-xs",
+        sm: "text-sm",
+        md: "text-base",
+        lg: "text-lg",
+        xl: "text-xl",
+      },
+    },
+    defaultVariants: {
+      size: "md",
+    },
+  }),
+};
+
+const cvaMerge = extendTailwindMerge({extend: twMergeConfig});
+
 // add tests
 suite
   .add("TV without slots & tw-merge (enabled)", function () {
@@ -359,6 +412,16 @@ suite
     base();
     fallback();
     image();
+  })
+  .add("CVA without slots & tw-merge (enabled)", function () {
+    cvaMerge(cvaNoMerge.avatar({size: "md"}));
+    cvaMerge(cvaNoMerge.fallback());
+    cvaMerge(cvaNoMerge.image());
+  })
+  .add("CVA without slots & tw-merge (disabled)", function () {
+    cvaNoMerge.avatar({size: "md"});
+    cvaNoMerge.fallback();
+    cvaNoMerge.image();
   })
 
   // add listeners

@@ -46,6 +46,9 @@ devDependencies:
   benchmark:
     specifier: 2.1.4
     version: 2.1.4
+  class-variance-authority:
+    specifier: ^0.7.0
+    version: 0.7.0
   clean-package:
     specifier: 2.1.1
     version: 2.1.1
@@ -2607,6 +2610,12 @@ packages:
     resolution: {integrity: sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==}
     dev: true
 
+  /class-variance-authority@0.7.0:
+    resolution: {integrity: sha512-jFI8IQw4hczaL4ALINxqLEXQbWcNjoSkloa4IaufXCJr6QawJyw7tuRysRsrE8w2p/4gGaxKIt/hX3qz/IbD1A==}
+    dependencies:
+      clsx: 2.0.0
+    dev: true
+
   /clean-package@2.1.1:
     resolution: {integrity: sha512-+svGAs1RfjguW3Yi0uk1F2gu56jt0nkpFW6Gd9BDK0w7xcIokFwrQOWuRn5NO5pfTDkLCVP1ttIjvJwXaSvRsA==}
     hasBin: true
@@ -2621,6 +2630,11 @@ packages:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
+    dev: true
+
+  /clsx@2.0.0:
+    resolution: {integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==}
+    engines: {node: '>=6'}
     dev: true
 
   /co@4.6.0:
