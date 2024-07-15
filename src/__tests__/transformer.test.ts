@@ -3,6 +3,7 @@ import type {WithTV, TVTransformer} from "../transformer";
 import {expect, describe, test} from "@jest/globals";
 
 import {tvTransformer, withTV} from "../transformer";
+import {tv, cn} from "../index";
 
 type Mock = {
   withTV: WithTV;
@@ -315,6 +316,78 @@ describe("Responsive Variants", () => {
       },
     ];
 
+    expect(result).toBe(expectedContent(sourceCode, transformedContent));
+  });
+
+  test("should return a transformed content (responsive default base with slot variant)", () => {
+    const sourceCode = `
+      import {tv} from "tailwind-variants";
+
+      const button = tv(
+        {
+          base: "w-fit",
+          slots: {
+            icon: "text-lg"
+          },
+          variants: {
+            size: {
+              sm: "w-[100px]",
+              md: "w-[200px]"
+            }
+          }
+        },
+        {
+          responsiveVariants: true
+        }
+      );
+    `;
+
+    const button = tv(
+      {
+        base: "w-fit",
+        slots: {
+          icon: "text-lg",
+        },
+        variants: {
+          size: {
+            sm: "w-[100px]",
+            md: "w-[200px]",
+          },
+        },
+      },
+      {
+        responsiveVariants: true,
+      },
+    );
+
+    const result = tvTransformer(sourceCode, defaultScreens);
+
+    const {base} = button({size: {initial: "sm", md: "md"}});
+
+    const transformedContent = [
+      {
+        size: {
+          sm: {
+            original: "w-[100px]",
+            sm: "sm:w-[100px]",
+            md: "md:w-[100px]",
+            lg: "lg:w-[100px]",
+            xl: "xl:w-[100px]",
+            "2xl": "2xl:w-[100px]",
+          },
+          md: {
+            original: "w-[200px]",
+            sm: "sm:w-[200px]",
+            md: "md:w-[200px]",
+            lg: "lg:w-[200px]",
+            xl: "xl:w-[200px]",
+            "2xl": "2xl:w-[200px]",
+          },
+        },
+      },
+    ];
+
+    expect(base()).toBe("md:w-[200px] w-[100px]");
     expect(result).toBe(expectedContent(sourceCode, transformedContent));
   });
 
