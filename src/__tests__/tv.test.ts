@@ -151,17 +151,33 @@ describe("Tailwind Variants (TV) - Default", () => {
           color: "red",
           class: "bg-red-500",
         },
+        {
+          isBig: false,
+          color: "red",
+          class: "underline",
+        },
       ],
     });
 
-    const result = h1({
-      isBig: true,
-      color: "red",
-    });
+    expect(
+      h1({
+        isBig: true,
+        color: "red",
+      }),
+    ).toHaveClass(["text-5xl", "font-bold", "text-red-500", "bg-red-500"]);
 
-    const expectedResult = ["text-5xl", "font-bold", "text-red-500", "bg-red-500"];
+    expect(
+      h1({
+        isBig: false,
+        color: "red",
+      }),
+    ).toHaveClass(["text-2xl", "font-bold", "text-red-500", "underline"]);
 
-    expect(result).toHaveClass(expectedResult);
+    expect(
+      h1({
+        color: "red",
+      }),
+    ).toHaveClass(["text-2xl", "font-bold", "text-red-500", "underline"]);
   });
 
   test("should throw error if the compoundVariants is not an array", () => {

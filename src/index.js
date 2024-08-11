@@ -311,6 +311,10 @@ export const tv = (options, configProp) => {
               break;
             }
           } else {
+            const isBlankOrFalse = (v) => v == null || v === false;
+
+            if (isBlankOrFalse(value) && isBlankOrFalse(completeProps[key])) continue;
+
             if (completeProps[key] !== value) {
               isValid = false;
               break;
