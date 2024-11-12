@@ -15,18 +15,10 @@ jobs:
         script: [lint, test, build]
     steps:
       - name: Checkout Codebase
-        uses: actions/checkout@v3
-      - name: Setup Pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          run_install: false
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          cache: "pnpm"
-          check-latest: true
-          node-version-file: ".nvmrc"
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/install
+
       - name: Run Script ${{ matrix.script }}
         run: pnpm ${{ matrix.script }}

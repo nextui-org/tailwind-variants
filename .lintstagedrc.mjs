@@ -1,6 +1,6 @@
-const {relative} = require("path");
+import {relative} from "path";
 
-const {ESLint} = require("eslint");
+import {ESLint} from "eslint";
 
 const removeIgnoredFiles = async (files) => {
   const cwd = process.cwd();
@@ -12,7 +12,8 @@ const removeIgnoredFiles = async (files) => {
   return filteredFiles.join(" ");
 };
 
-module.exports = {
+
+const lintStaged = {
   // *.!(js|ts|jsx|tsx|d.ts)
   "**/*.{js,cjs,mjs,ts,jsx,tsx,json,md}": async (files) => {
     const filesToLint = await removeIgnoredFiles(files);
@@ -25,3 +26,5 @@ module.exports = {
     return [`eslint -c .eslintrc.json --max-warnings=0 --fix ${filesToLint}`];
   },
 };
+
+export default lintStaged;

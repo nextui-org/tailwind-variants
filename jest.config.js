@@ -6,9 +6,10 @@ const config = {
     },
   },
   transform: {
-    "^.+\\.(t|j)sx?$": "@swc-node/jest",
+    "^.+\\.(t|j)sx?$": "@swc/jest",
   },
   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
+  extensionsToTreatAsEsm: [".ts"],
 };
 
 export default config;

@@ -1,6 +1,7 @@
-const conventional = require("@commitlint/config-conventional");
+import conventional from "@commitlint/config-conventional";
 
-module.exports = {
+
+const commitLintConfig = {
   extends: ["@commitlint/config-conventional"],
   plugins: ["commitlint-plugin-function-rules"],
   helpUrl:
@@ -15,3 +16,5 @@ module.exports = {
     "function-rules/header-max-length": [0],
   },
 };
+
+export default commitLintConfig;
