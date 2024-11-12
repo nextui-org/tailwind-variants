@@ -20,9 +20,5 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/install
 
-      - name: Install Dependencies
-        shell: bash
-        run: pnpm install --frozen-lockfile
-
       - name: Run Script ${{ matrix.script }}
         run: pnpm ${{ matrix.script }}
