@@ -37,7 +37,7 @@
     "test:watch": "jest --watch --no-verbose"
   },
   "dependencies": {
-    "tailwind-merge": "^2.2.0"
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",

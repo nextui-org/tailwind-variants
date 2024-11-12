@@ -3,7 +3,7 @@ import type {WithTV, TVTransformer} from "../transformer";
 import {expect, describe, test} from "@jest/globals";
 
 import {tvTransformer, withTV} from "../transformer";
-import {tv, cn} from "../index";
+import {tv} from "../index";
 
 type Mock = {
   withTV: WithTV;
