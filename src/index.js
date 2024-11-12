@@ -235,6 +235,10 @@ export const tv = (options, configProp) => {
       if (screenValues.length > 0) {
         screenValues.push(value);
 
+        if (slotKey === "base") {
+          return screenValues.join(" ");
+        }
+
         return screenValues;
       }
 
