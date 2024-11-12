@@ -4,31 +4,29 @@ on: [pull_request]
 
 jobs:
   commitlint:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    environment: Preview
+
     steps:
-      - name: Checkout Codebase
-        uses: actions/checkout@v3
+      - name: Checkout codebase
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          run_install: false
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          cache: "pnpm"
-          check-latest: true
-          node-version-file: ".nvmrc"
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Run Commitlint
+
+      - name: Install dependencies
+        uses: ./.github/actions/install
+
+      - name: Run commitlint
         id: run_commitlint
-        uses: wagoid/commitlint-github-action@v5
+        uses: wagoid/commitlint-github-action@v6
         with:
-          configFile: .commitlintrc.cjs
+          configFile: .commitlintrc.mjs
         env:
           NODE_PATH: ${{ github.workspace }}/node_modules
-      - name: Show Outputs
+
+      - name: Show outputs
         if: ${{ always() }}
         run: echo ${{ toJSON(steps.run_commitlint.outputs.results) }}
