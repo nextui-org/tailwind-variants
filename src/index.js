@@ -235,6 +235,10 @@ export const tv = (options, configProp) => {
       if (screenValues.length > 0) {
         screenValues.push(value);
 
+        if (slotKey === "base") {
+          return screenValues.join(" ");
+        }
+
         return screenValues;
       }
 
@@ -303,15 +307,19 @@ export const tv = (options, configProp) => {
         let isValid = true;
 
         for (const [key, value] of Object.entries(compoundVariantOptions)) {
-          const completeProps = getCompleteProps(key, slotProps);
+          const completePropsValue = getCompleteProps(key, slotProps)[key];
 
           if (Array.isArray(value)) {
-            if (!value.includes(completeProps[key])) {
+            if (!value.includes(completePropsValue)) {
               isValid = false;
               break;
             }
           } else {
-            if (completeProps[key] !== value) {
+            const isBlankOrFalse = (v) => v == null || v === false;
+
+            if (isBlankOrFalse(value) && isBlankOrFalse(completePropsValue)) continue;
+
+            if (completePropsValue !== value) {
               isValid = false;
               break;
             }
